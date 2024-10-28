@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thank You For the purchase</title>
+    <title>Thank You</title>
     <style>
         * {
             margin: 0;
@@ -340,6 +340,21 @@
         </div>
         <div class="copyright">© 2024 Pyronix. All rights reserved.</div>
     </footer>
+    <script>
+        async function fetchInvoices() {
+            try {
+                const response = await fetch('https://ppcrossoriginrelayhandler.rzotime.workers.dev/');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const rawData = await response.text();
+                console.log('Raw data from worker:', rawData);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+        window.onload = fetchInvoices;
+    </script>
 </body>
 
 </html>
