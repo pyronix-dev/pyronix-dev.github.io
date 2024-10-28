@@ -13,12 +13,18 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
+        html,
         body {
-            background-color: #0a0a0a;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background: #121212;
             color: #ffffff;
-            min-height: 100vh;
             display: flex;
             flex-direction: column;
+            line-height: 1.6;
         }
 
         nav {
@@ -26,12 +32,37 @@
             display: flex;
             justify-content: flex-end;
             gap: 2rem;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
         }
 
         nav a {
-            color: #888;
+            color: #a0a0a0;
             text-decoration: none;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #4a9eff;
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #ffffff;
+        }
+
+        nav a:hover::after {
+            width: 100%;
         }
 
         .main-content {
@@ -39,76 +70,146 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            /* Center vertically */
             align-items: center;
-            /* Center horizontally */
             text-align: center;
-            padding: 2rem;
-            position: relative;
-            z-index: 1;
+            padding: 0 2rem;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(74, 158, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 20px rgba(74, 158, 255, 0.6);
+        }
+
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.20);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .success-icon svg {
+            width: 40px;
+            height: 40px;
+            color: #4a9eff;
         }
 
         h1 {
-            font-size: 3rem;
+            font-size: 2.5rem;
             margin-bottom: 1.5rem;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            padding-bottom: 15px;
+            background: linear-gradient(135deg, #4a9eff 0%, #74b4ff 100%);
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
         }
 
+
         p {
-            color: #888;
+            color: #a0a0a0;
             margin-bottom: 1rem;
-            font-size: 1rem;
+            font-size: 1.1rem;
+            max-width: 600px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .contact {
-            margin-top: auto;
-            color: #666;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .contact a {
-            color: #888;
+            color: #4a9eff;
             text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact a:hover {
+            color: #74b4ff;
         }
 
         footer {
-            padding: 1rem 0;
-            text-align: center;
+            padding: 1.5rem 0;
             color: #666;
-            border-top: 1px solid #222;
-            font-size: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .social-links {
             display: flex;
-            gap: 1rem;
+            gap: 1.5rem;
             justify-content: center;
             margin: 0.5rem 0;
         }
 
         .social-links a {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: #222;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #888;
             text-decoration: none;
             transition: all 0.3s ease;
-            font-size: 1rem;
-            /* Adjust size for icons */
+        }
+
+        .social-links svg {
+            width: 24px;
+            height: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .social-links svg path {
+            fill: #a0a0a0;
+            transition: fill 0.3s ease;
         }
 
         .social-links a:hover {
-            background: #333;
-            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .social-links a:hover svg path {
+            fill: #ffba00;
         }
 
         .footer-links {
             display: flex;
-            gap: 1rem;
+            gap: 2rem;
             justify-content: center;
             margin-top: 0.5rem;
         }
@@ -116,12 +217,49 @@
         .footer-links a {
             color: #666;
             text-decoration: none;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #a0a0a0;
         }
 
         .copyright {
-            font-size: 11px;
-            padding-top: 5px;
+            font-size: 0.8rem;
+            padding-top: 0.5rem;
+            color: #444;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            nav {
+                padding: 1rem;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .main-content {
+                opacity: 0;
+                transform: translateY(20px);
+                animation: fadeInUp 0.8s ease-out forwards;
+                animation-delay: 0.2s;
+            }
+
+            @keyframes fadeInUp {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
         }
     </style>
 </head>
@@ -132,20 +270,34 @@
         <a href="#faq">FAQ</a>
     </nav>
     <main class="main-content">
-        <h1>Thank You For Your Purchase.</h1>
+        <div class="success-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+        </div>
+        <h1>Thank You For Your Purchase</h1>
         <p>Check your email inbox. I sent you the license key.</p>
         <p>No email? Be sure to check your spam folder.</p>
         <div class="contact">
-            You can contact us at <a href="mailto:admin0mrx@proton.me">admin0mrx@proton.me</a><br>
-            if you need additional assistance.
+            Need help? Contact us at <a href="mailto:admin0mrx@proton.me">admin0mrx@proton.me</a><br>
+            We're here to assist you.
         </div>
     </main>
 
     <footer>
         <div class="social-links">
-            <a href="#twitter" aria-label="Twitter">X</a>
-            <a href="#facebook" aria-label="Facebook">f</a>
-            <a href="#github" aria-label="GitHub">G</a>
+            <a href="#twitter" aria-label="Twitter">
+                <svg viewBox="0 0 112.5 112.5">
+                    <path
+                        d="M 13.261719 13.441406 L 46.105469 61.320312 L 13.957031 98.558594 L 21.078125 98.558594 L 49.25 65.90625 L 71.648438 98.558594 L 98.558594 98.558594 L 64.246094 48.539062 L 94.527344 13.441406 L 87.425781 13.441406 L 61.097656 43.941406 L 40.171875 13.441406 Z M 21.765625 17.921875 L 37.8125 17.921875 L 90.054688 94.078125 L 74.007812 94.078125 Z" />
+                </svg>
+            </a>
+            <a href="https://github.com/pyronix-dev" aria-label="GitHub">
+                <svg viewBox="0 0 96 96">
+                    <path
+                        d="M 48 16 C 65.671875 16 80 30.328125 80 48 C 80 62.207031 70.734375 74.246094 57.921875 78.425781 C 57.925781 78.410156 57.929688 78.394531 57.929688 78.394531 C 57.929688 78.394531 55.769531 77.382812 55.816406 75.574219 C 55.867188 73.589844 55.816406 68.949219 55.816406 67.246094 C 55.816406 64.320312 53.964844 62.25 53.964844 62.25 C 53.964844 62.25 68.476562 62.410156 68.476562 46.929688 C 68.476562 40.953125 65.355469 37.84375 65.355469 37.84375 C 65.355469 37.84375 66.996094 31.464844 64.785156 28.761719 C 62.3125 28.496094 57.878906 31.128906 55.988281 32.359375 C 55.988281 32.359375 52.988281 31.128906 48 31.128906 C 43.007812 31.128906 40.011719 32.359375 40.011719 32.359375 C 38.117188 31.128906 33.683594 28.496094 31.210938 28.761719 C 29.003906 31.46875 30.644531 37.84375 30.644531 37.84375 C 30.644531 37.84375 27.519531 40.953125 27.519531 46.929688 C 27.519531 62.410156 42.03125 62.25 42.03125 62.25 C 42.03125 62.25 40.570312 63.902344 40.25 66.332031 C 39.238281 66.675781 37.746094 67.097656 36.542969 67.097656 C 33.394531 67.097656 31 64.039062 30.121094 62.621094 C 29.257812 61.222656 27.480469 60.050781 25.828125 60.050781 C 24.738281 60.050781 24.207031 60.597656 24.207031 61.21875 C 24.207031 61.84375 25.734375 62.277344 26.742188 63.433594 C 28.867188 65.867188 28.828125 71.34375 36.402344 71.34375 C 37.222656 71.34375 38.902344 71.140625 40.164062 70.96875 C 40.15625 72.695312 40.15625 74.511719 40.183594 75.574219 C 40.226562 77.382812 38.066406 78.394531 38.066406 78.394531 C 38.066406 78.394531 38.074219 78.410156 38.078125 78.425781 C 25.265625 74.246094 16 62.207031 16 48 C 16 30.328125 30.328125 16 48 16 Z" />
+                </svg>
+            </a>
         </div>
         <div class="footer-links">
             <a href="#contact">Contact</a>
@@ -154,27 +306,20 @@
         </div>
         <p class="copyright">© Copyright 2024. All rights reserved.</p>
     </footer>
-    <!-- JavaScript for Fetching PayPal Transactions -->
+
     <script>
         async function fetchInvoices() {
             try {
                 const response = await fetch('https://ppcrossoriginrelayhandler.rzotime.workers.dev/');
-                // Check if the response is OK
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
-
-                // Get the raw response text
                 const rawData = await response.text();
-
-                // Log the raw data to the console
                 console.log('Raw data from worker:', rawData);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         }
-
-        // Call the function to fetch data when the page loads
         window.onload = fetchInvoices;
     </script>
 </body>
