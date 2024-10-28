@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thank You</title>
+    <title>Thank You For the purchase</title>
     <style>
         * {
             margin: 0;
@@ -88,7 +88,6 @@
             box-shadow: 0 0 20px rgba(74, 158, 255, 0.6);
         }
 
-
         @keyframes pulse {
             0% {
                 transform: scale(1);
@@ -117,7 +116,6 @@
             -webkit-text-fill-color: transparent;
             font-weight: 700;
         }
-
 
         p {
             color: #a0a0a0;
@@ -159,7 +157,7 @@
         }
 
         footer {
-            padding: 1.5rem 0;
+            padding: 0.8rem 0;
             color: #666;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             background: rgba(0, 0, 0, 0.3);
@@ -238,12 +236,15 @@
             }
 
             nav {
-                padding: 1rem;
+                padding: 0.4rem;
+                flex-direction: column-reverse;
+                align-items: center;
+                gap: 0.1rem;
             }
 
             .footer-links {
-                flex-direction: column;
-                gap: 0.5rem;
+                flex-direction: row;
+                gap: 1rem;
             }
 
             .main-content {
@@ -253,13 +254,46 @@
                 animation-delay: 0.2s;
             }
 
+            .contact {
+                padding: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .success-icon {
+                width: 60px;
+                height: 60px;
+                margin-bottom: 1.5rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+
             @keyframes fadeInUp {
                 to {
                     opacity: 1;
                     transform: translateY(0);
                 }
             }
+        }
 
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .success-icon {
+                width: 50px;
+                height: 50px;
+            }
+
+            p {
+                font-size: 0.9rem;
+            }
+
+            .contact {
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
@@ -300,28 +334,12 @@
             </a>
         </div>
         <div class="footer-links">
-            <a href="#contact">Contact</a>
             <a href="#privacy">Privacy Policy</a>
             <a href="#terms">Terms of Service</a>
+            <a href="#support">Support</a>
         </div>
-        <p class="copyright">© Copyright 2024. All rights reserved.</p>
+        <div class="copyright">© 2024 Pyronix. All rights reserved.</div>
     </footer>
-
-    <script>
-        async function fetchInvoices() {
-            try {
-                const response = await fetch('https://ppcrossoriginrelayhandler.rzotime.workers.dev/');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const rawData = await response.text();
-                console.log('Raw data from worker:', rawData);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        }
-        window.onload = fetchInvoices;
-    </script>
 </body>
 
 </html>
