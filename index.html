@@ -308,9 +308,11 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
             </svg>
         </div>
-        <h1>Thank You For Your Purchase</h1>
-        <p>Check your email inbox. I sent you the license key.</p>
-        <p>No email? Be sure to check your spam folder.</p>
+        <div id="thank-you-message"></div>
+
+        <!-- Purchase Details Section -->
+        <div id="purchase-details" style="margin-top: 20px;"></div>
+
         <div class="contact">
             Need help? Contact us at <a href="mailto:admin0mrx@proton.me">admin0mrx@proton.me</a><br>
             We're here to assist you.
@@ -339,20 +341,47 @@
         </div>
         <div class="copyright">© 2024 Pyronix. All rights reserved.</div>
     </footer>
+
     <script>
-        async function fetchInvoices() {
-            try {
-                const response = await fetch('https://ppcrossoriginrelayhandler.rzotime.workers.dev/');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const rawData = await response.text();
-                console.log('Raw data from worker:', rawData);
-            } catch (error) {
-                console.error('Error fetching data:', error);
+        // Function to get query parameters
+        const getQueryParams = () => {
+            const params = {};
+            const queryString = window.location.search.substring(1);
+            const regex = /([^&=]+)=([^&]*)/g;
+            let m;
+            while (m = regex.exec(queryString)) {
+                params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
             }
-        }
-        window.onload = fetchInvoices;
+            return params;
+        };
+
+        // Display purchase data
+        const displayPurchaseData = () => {
+            const params = getQueryParams();
+            const purchaseData = params.purchaseData ? JSON.parse(params.purchaseData) : null;
+            const thankYouMessage = document.getElementById('thank-you-message');
+
+            if (purchaseData) {
+                thankYouMessage.innerHTML = `
+                    <h1>Thank You For Your Purchase</h1>
+                    <p>Check your email inbox. I sent you the license key.</p>
+                    <p>No email? Be sure to check your spam folder.</p>`;
+                
+                const purchaseDetails = document.getElementById('purchase-details');
+                purchaseDetails.innerHTML = `
+                    <h2>Purchase Summary</h2>
+                    <p>Order ID: ${purchaseData.id}</p>
+                    <p>Status: ${purchaseData.status}</p>
+                    <p>Amount: ${purchaseData.purchase_units[0].amount.value} ${purchaseData.purchase_units[0].amount.currency_code}</p>
+                `;
+            } else {
+                thankYouMessage.innerHTML = ''; // Clear the message if no purchase details
+                const purchaseDetails = document.getElementById('purchase-details');
+                purchaseDetails.innerHTML = `<p>No purchase details available.</p>`;
+            }
+        };
+
+        displayPurchaseData();
     </script>
 </body>
 
