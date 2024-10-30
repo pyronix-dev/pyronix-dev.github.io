@@ -483,52 +483,24 @@
                         const firstCapture = firstPurchaseUnit.payments.captures[0];
                         if (firstCapture.amount) {
                             purchaseDetails.innerHTML = `
-                        <div class="purchase-summary">
-                            <h2>Purchase Summary</h2>
-                            <div class="purchase-detail">
-                                <svg class="detail-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#74b4ff">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
-                                </svg>
-                                <div class="detail-content">
-                                    <div class="detail-label">Order ID</div>
-                                    <div class="detail-value">${purchaseData.id || 'N/A'}</div>
-                                </div>
-                            </div>
-                            
-                            <div class="purchase-detail">
-                                <svg class="detail-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#8afc8a">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <div class="detail-content">
-                                    <div class="detail-label">Status</div>
-                                    <div class="detail-value">${purchaseData.status || 'N/A'}</div>
-                                </div>
-                            </div>
-                            
-                            <div class="purchase-detail">
-                                <svg class="detail-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#74b4ff">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <div class="detail-content">
-                                    <div class="detail-label">Amount</div>
-                                    <div class="amount-value">${firstCapture.amount.value || 'N/A'} ${firstCapture.amount.currency_code || 'N/A'}</div>
-                                </div>
-                            </div>
-                        </div>
+                        <h2>Purchase Summary</h2>
+                        <p><span>Order ID:</span> ${purchaseData.id || 'N/A'}</p>
+                        <p><span>Status:</span> ${purchaseData.status || 'N/A'}</p>
+                        <p><span>Amount:</span> ${firstCapture.amount.value || 'N/A'} ${firstCapture.amount.currency_code || 'N/A'}</p>
                     `;
                         } else {
-                            purchaseDetails.innerHTML = `<div class="purchase-summary"><p>Purchase amount details are not available.</p></div>`;
+                            purchaseDetails.innerHTML = `<p>Purchase amount details are not available.</p>`;
                         }
                     } else {
-                        purchaseDetails.innerHTML = `<div class="purchase-summary"><p>No payment capture details available.</p></div>`;
+                        purchaseDetails.innerHTML = `<p>No payment capture details available.</p>`;
                     }
                 } else {
-                    purchaseDetails.innerHTML = `<div class="purchase-summary"><p>No purchase details available.</p></div>`;
+                    purchaseDetails.innerHTML = `<p>No purchase details available.</p>`;
                 }
             } else {
                 thankYouMessage.innerHTML = '';
                 const purchaseDetails = document.getElementById('purchase-details');
-                purchaseDetails.innerHTML = `<div class="purchase-summary"><p>No purchase details available.</p></div>`;
+                purchaseDetails.innerHTML = `<p>No purchase details available.</p>`;
             }
         };
 
