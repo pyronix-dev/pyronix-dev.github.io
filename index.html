@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thank You</title>
+    <title>Thank You for Your Purchase</title>
     <style>
         * {
             margin: 0;
@@ -307,6 +307,44 @@
             #purchase-details {
                 margin-top: 10px;
             }
+
+            .purchase-summary {
+                margin-top: 2rem;
+                padding: 2rem;
+                background: linear-gradient(135deg, #2e2e2e, #1c1c1c);
+                border-radius: 15px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+                max-width: 600px;
+                width: 100%;
+                text-align: left;
+            }
+
+            .purchase-summary h2 {
+                font-size: 1.8rem;
+                color: #74b4ff;
+                margin-bottom: 1rem;
+            }
+
+            .purchase-summary p {
+                font-size: 1.1rem;
+                margin: 0.5rem 0;
+                color: #cccccc;
+                display: flex;
+                align-items: center;
+            }
+
+            .purchase-summary p span {
+                font-weight: bold;
+                color: #8afc8a;
+            }
+
+            .purchase-summary-icon {
+                width: 24px;
+                height: 24px;
+                margin-right: 10px;
+                color: #4a9eff;
+            }
+
         }
     </style>
 </head>
@@ -378,27 +416,22 @@
 
             if (purchaseData) {
                 thankYouMessage.innerHTML = `
-                    <h1>Thank You For Your Purchase</h1>
-                    <p>Check your email inbox. I sent you the license key.</p>`;
+            <h1>Thank You For Your Purchase</h1>
+            <p>Check your email inbox. I sent you the license key.</p>`;
 
                 const purchaseDetails = document.getElementById('purchase-details');
 
-                // Check if purchase_units exists and has at least one item
                 if (Array.isArray(purchaseData.purchase_units) && purchaseData.purchase_units.length > 0) {
                     const firstPurchaseUnit = purchaseData.purchase_units[0];
-
-                    // Check if payments and captures exist
                     if (firstPurchaseUnit.payments && firstPurchaseUnit.payments.captures && firstPurchaseUnit.payments.captures.length > 0) {
                         const firstCapture = firstPurchaseUnit.payments.captures[0];
-
-                        // Check if amount exists
                         if (firstCapture.amount) {
                             purchaseDetails.innerHTML = `
-                                <h2>Purchase Summary</h2>
-                                <p>Order ID: ${purchaseData.id || 'N/A'}</p>
-                                <p>Status: ${purchaseData.status || 'N/A'}</p>
-                                <p>Amount: ${firstCapture.amount.value || 'N/A'} ${firstCapture.amount.currency_code || 'N/A'}</p>
-                            `;
+                        <h2>Purchase Summary</h2>
+                        <p><span>Order ID:</span> ${purchaseData.id || 'N/A'}</p>
+                        <p><span>Status:</span> ${purchaseData.status || 'N/A'}</p>
+                        <p><span>Amount:</span> ${firstCapture.amount.value || 'N/A'} ${firstCapture.amount.currency_code || 'N/A'}</p>
+                    `;
                         } else {
                             purchaseDetails.innerHTML = `<p>Purchase amount details are not available.</p>`;
                         }
@@ -409,13 +442,14 @@
                     purchaseDetails.innerHTML = `<p>No purchase details available.</p>`;
                 }
             } else {
-                thankYouMessage.innerHTML = ''; // Clear the message if no purchase details
+                thankYouMessage.innerHTML = '';
                 const purchaseDetails = document.getElementById('purchase-details');
                 purchaseDetails.innerHTML = `<p>No purchase details available.</p>`;
             }
         };
 
         displayPurchaseData();
+
     </script>
 </body>
 
