@@ -358,7 +358,7 @@
         // Display purchase data
         const displayPurchaseData = () => {
             const params = getQueryParams();
-            const purchaseData = params.purchaseData ? JSON.parse(params.purchaseData) : null;
+            const purchaseData = params.purchaseData ? JSON.parse(decodeURIComponent(params.purchaseData)) : null;
             const thankYouMessage = document.getElementById('thank-you-message');
 
             if (purchaseData) {
@@ -366,14 +366,34 @@
                     <h1>Thank You For Your Purchase</h1>
                     <p>Check your email inbox. I sent you the license key.</p>
                     <p>No email? Be sure to check your spam folder.</p>`;
-                
+
                 const purchaseDetails = document.getElementById('purchase-details');
-                purchaseDetails.innerHTML = `
-                    <h2>Purchase Summary</h2>
-                    <p>Order ID: ${purchaseData.id}</p>
-                    <p>Status: ${purchaseData.status}</p>
-                    <p>Amount: ${purchaseData.purchase_units[0].amount.value} ${purchaseData.purchase_units[0].amount.currency_code}</p>
-                `;
+
+                // Check if purchase_units exists and has at least one item
+                if (Array.isArray(purchaseData.purchase_units) && purchaseData.purchase_units.length > 0) {
+                    const firstPurchaseUnit = purchaseData.purchase_units[0];
+
+                    // Check if payments and captures exist
+                    if (firstPurchaseUnit.payments && firstPurchaseUnit.payments.captures && firstPurchaseUnit.payments.captures.length > 0) {
+                        const firstCapture = firstPurchaseUnit.payments.captures[0];
+
+                        // Check if amount exists
+                        if (firstCapture.amount) {
+                            purchaseDetails.innerHTML = `
+                                <h2>Purchase Summary</h2>
+                                <p>Order ID: ${purchaseData.id || 'N/A'}</p>
+                                <p>Status: ${purchaseData.status || 'N/A'}</p>
+                                <p>Amount: ${firstCapture.amount.value || 'N/A'} ${firstCapture.amount.currency_code || 'N/A'}</p>
+                            `;
+                        } else {
+                            purchaseDetails.innerHTML = `<p>Purchase amount details are not available.</p>`;
+                        }
+                    } else {
+                        purchaseDetails.innerHTML = `<p>No payment capture details available.</p>`;
+                    }
+                } else {
+                    purchaseDetails.innerHTML = `<p>No purchase details available.</p>`;
+                }
             } else {
                 thankYouMessage.innerHTML = ''; // Clear the message if no purchase details
                 const purchaseDetails = document.getElementById('purchase-details');
