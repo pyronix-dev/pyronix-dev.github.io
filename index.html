@@ -396,42 +396,74 @@
     </footer>
 
     <script>
-        // Function to get query parameters
-        const getQueryParams = () => {
-            const params = {};
-            const queryString = window.location.search.substring(1);
-            const regex = /([^&=]+)=([^&]*)/g;
-            let m;
-            while (m = regex.exec(queryString)) {
-                params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+        const WORKER_URL = 'https://ppcrossoriginrelayhandler.rzotime.workers.dev';
+    
+        // Function to get query parameters from URL
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            const result = {};
+            for (const [key, value] of params) {
+                result[key] = value;
             }
-            return params;
-        };
-
+            console.log('Query Parameters:', result); // Log all query parameters
+            return result;
+        }
+    
+        // Function to fetch order details from PayPal
+        async function fetchOrderDetails(orderId) {
+            console.log('Fetching order details for orderId:', orderId); // Log the orderId
+            try {
+                const response = await fetch(`${WORKER_URL}/api/get-order`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ orderId })
+                });
+    
+                if (!response.ok) {
+                    throw new Error('Failed to fetch order details');
+                }
+    
+                const data = await response.json();
+                console.log('Order Details:', data); // Log the order details
+                return data;
+            } catch (error) {
+                console.error('Error fetching order details:', error);
+                return null;
+            }
+        }
+    
         // Display purchase data
-        const displayPurchaseData = () => {
+        async function displayPurchaseData() {
             const params = getQueryParams();
-            const purchaseData = params.purchaseData ? JSON.parse(decodeURIComponent(params.purchaseData)) : null;
+            const orderId = params.orderID;
+            let purchaseData;
+    
+            if (orderId) {
+                purchaseData = await fetchOrderDetails(orderId);
+            }
+    
             const thankYouMessage = document.getElementById('thank-you-message');
-
+            const purchaseDetails = document.getElementById('purchase-details');
+    
             if (purchaseData) {
                 thankYouMessage.innerHTML = `
-            <h1>Thank You For Your Purchase</h1>
-            <p>Check your email inbox. I sent you the license key.</p>`;
-
-                const purchaseDetails = document.getElementById('purchase-details');
-
-                if (Array.isArray(purchaseData.purchase_units) && purchaseData.purchase_units.length > 0) {
+                    <h1>Thank You For Your Purchase</h1>
+                    <p>Check your email inbox. I sent you the license key.</p>
+                `;
+    
+                if (purchaseData.purchase_units && purchaseData.purchase_units.length > 0) {
                     const firstPurchaseUnit = purchaseData.purchase_units[0];
                     if (firstPurchaseUnit.payments && firstPurchaseUnit.payments.captures && firstPurchaseUnit.payments.captures.length > 0) {
                         const firstCapture = firstPurchaseUnit.payments.captures[0];
                         if (firstCapture.amount) {
                             purchaseDetails.innerHTML = `
-                        <h2>Purchase Summary</h2>
-                        <p><span>Order ID:</span> ${purchaseData.id || 'N/A'}</p>
-                        <p><span>Status:</span> ${purchaseData.status || 'N/A'}</p>
-                        <p><span>Amount:</span> ${firstCapture.amount.value || 'N/A'} ${firstCapture.amount.currency_code || 'N/A'}</p>
-                    `;
+                                <h2>Purchase Summary</h2>
+                                <p><span>Order ID:</span> <span>${purchaseData.id || 'N/A'}</span></p>
+                                <p><span>Status:</span> <span>${purchaseData.status || 'N/A'}</span></p>
+                                <p><span>Amount:</span> <span>${firstCapture.amount.value || 'N/A'} ${firstCapture.amount.currency_code || 'N/A'}</span></p>
+                            `;
                         } else {
                             purchaseDetails.innerHTML = `<p>Purchase amount details are not available.</p>`;
                         }
@@ -443,12 +475,12 @@
                 }
             } else {
                 thankYouMessage.innerHTML = '';
-                const purchaseDetails = document.getElementById('purchase-details');
                 purchaseDetails.innerHTML = `<p>No purchase details available.</p>`;
             }
-        };
-
-        displayPurchaseData();
+        }
+    
+        // Call displayPurchaseData when the page loads
+        window.addEventListener('DOMContentLoaded', displayPurchaseData);
     </script>
 </body>
 
