@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thank You for Your Purchase</title>
     <style>
+        :root {
+            --primary: #8afc8a;
+            --accent: #4a9eff;
+            --background: #0a0a0a;
+            --surface: #121212;
+            --text: #ffffff;
+            --text-secondary: #a0a0a0;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,127 +22,74 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
-        :root {
-            --primary: #8afc8a;
-            --primary-dark: #4b8a4b;
-            --accent: #4a9eff;
-            --background: #0a0a0a;
-            --surface: #121212;
-            --surface-light: rgba(255, 255, 255, 0.05);
-            --text: #ffffff;
-            --text-secondary: #a0a0a0;
-            --border: rgba(255, 255, 255, 0.1);
-        }
-
-        html, body {
-            height: 100%;
+        body {
             background: var(--background);
             color: var(--text);
-            line-height: 1.6;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Improved Navigation */
         nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 0.75rem 1.5rem;
             background: rgba(10, 10, 10, 0.8);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border);
-            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .logo {
-            font-weight: 700;
-            font-size: 1.2rem;
+            font-weight: 600;
+            font-size: 1.1rem;
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-
         nav a {
             color: var(--text-secondary);
             text-decoration: none;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            position: relative;
-            padding: 0.5rem 0;
-        }
-
-        nav a::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--accent);
-            transition: width 0.3s ease;
+            font-size: 0.9rem;
+            margin-left: 1.5rem;
+            transition: color 0.2s ease;
         }
 
         nav a:hover {
             color: var(--text);
         }
 
-        nav a:hover::after {
-            width: 100%;
-        }
-
-        /* Main Content Improvements */
         .main-content {
-            min-height: 100vh;
+            flex: 1;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            text-align: center;
-            padding: 4rem 2rem;
-            background: radial-gradient(circle at center, rgba(74, 158, 255, 0.1) 0%, transparent 70%);
+            justify-content: center;
+            padding: 2rem 1rem;
         }
 
         .success-card {
             background: var(--surface);
-            padding: 3rem;
-            border-radius: 24px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
             border: 1px solid var(--border);
-            max-width: 600px;
             width: 100%;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .success-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
+            max-width: 480px;
+            text-align: center;
         }
 
         .success-icon {
-            width: 88px;
-            height: 88px;
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.5rem;
+            background: rgba(138, 252, 138, 0.1);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 2rem;
-            background: rgba(138, 252, 138, 0.1);
-            animation: pulse 2s infinite;
             position: relative;
         }
 
@@ -147,57 +104,47 @@
         }
 
         @keyframes ripple {
-            0% {
-                transform: scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(1.5);
+            to {
+                transform: scale(1.3);
                 opacity: 0;
             }
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
         .success-icon svg {
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             color: var(--primary);
         }
 
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-weight: 700;
+        }
+
+        p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
         }
 
         .purchase-summary {
-            margin: 2rem 0;
-            padding: 1.5rem;
-            background: var(--surface-light);
-            border-radius: 16px;
-            border: 1px solid var(--border);
-        }
-
-        .purchase-info {
-            display: grid;
-            gap: 1rem;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
             text-align: left;
         }
 
         .purchase-info p {
             display: flex;
             justify-content: space-between;
-            padding: 0.5rem;
+            padding: 0.5rem 0;
             border-bottom: 1px solid var(--border);
+            margin: 0;
         }
 
         .purchase-info p:last-child {
@@ -205,86 +152,72 @@
         }
 
         .contact {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: var(--surface-light);
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            transition: all 0.3s ease;
-        }
-
-        .contact:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(138, 252, 138, 0.1);
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            font-size: 0.9rem;
         }
 
         .contact a {
             color: var(--primary);
             text-decoration: none;
-            transition: color 0.3s ease;
+            transition: color 0.2s;
         }
 
         .contact a:hover {
             color: var(--accent);
         }
 
-        /* Enhanced Footer */
         footer {
-            padding: 2rem 0;
-            background: var(--surface);
+            padding: 1.5rem;
+            text-align: center;
             border-top: 1px solid var(--border);
         }
 
         .social-links {
             display: flex;
-            gap: 1.5rem;
             justify-content: center;
-            margin-bottom: 1.5rem;
+            gap: 1rem;
+            margin-bottom: 1rem;
         }
 
         .social-links a {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            background: var(--surface-light);
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
         }
 
         .social-links svg {
-            width: 24px;
-            height: 24px;
-            transition: all 0.3s ease;
-        }
-
-        .social-links svg path {
+            width: 20px;
+            height: 20px;
             fill: var(--text-secondary);
-            transition: fill 0.3s ease;
+            transition: fill 0.2s;
         }
 
         .social-links a:hover {
-            transform: translateY(-3px);
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
         }
 
-        .social-links a:hover svg path {
+        .social-links a:hover svg {
             fill: var(--primary);
         }
 
         .footer-links {
-            display: flex;
-            gap: 2rem;
-            justify-content: center;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
 
         .footer-links a {
             color: var(--text-secondary);
             text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.3s ease;
+            font-size: 0.85rem;
+            margin: 0 0.75rem;
         }
 
         .footer-links a:hover {
@@ -292,98 +225,63 @@
         }
 
         .copyright {
-            text-align: center;
             color: var(--text-secondary);
             font-size: 0.8rem;
         }
 
-        @media (max-width: 768px) {
-            nav {
-                padding: 1rem;
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .success-card {
-                padding: 2rem 1.5rem;
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-
-            .success-icon {
-                width: 72px;
-                height: 72px;
-            }
-
-            .purchase-info {
-                font-size: 0.9rem;
-            }
-        }
-
         @media (max-width: 480px) {
-            .main-content {
-                padding: 2rem 1rem;
+            .success-card {
+                padding: 1.5rem;
             }
 
             h1 {
-                font-size: 1.8rem;
+                font-size: 1.5rem;
             }
 
             .success-icon {
-                width: 64px;
-                height: 64px;
+                width: 56px;
+                height: 56px;
             }
 
-            .footer-links {
-                flex-direction: column;
-                align-items: center;
-                gap: 1rem;
+            .success-icon svg {
+                width: 28px;
+                height: 28px;
             }
         }
     </style>
 </head>
-
 <body>
     <nav>
         <div class="logo">Pyronix</div>
-        <div class="nav-links">
+        <div>
             <a href="#home">Home</a>
             <a href="#faq">FAQ</a>
         </div>
     </nav>
+
     <main class="main-content">
-        <div class="success-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
-        </div>
-        <div id="thank-you-message"></div>
-
-        <!-- Purchase Details Section -->
-        <div id="purchase-details" class="purchase-summary"></div>
-
-
-        <div class="contact">
-            Need help? Contact us at <a href="mailto:admin0mrx@proton.me">admin0mrx@proton.me</a><br>
-            We're here to assist you.
+        <div class="success-card">
+            <div class="success-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+            <div id="thank-you-message"></div>
+            <div id="purchase-details" class="purchase-summary"></div>
+            <div class="contact">
+                Need help? Contact us at <a href="mailto:admin0mrx@proton.me">admin0mrx@proton.me</a>
+                <br>We're here to assist you 24/7.
+            </div>
         </div>
     </main>
 
     <footer>
         <div class="social-links">
             <a href="#twitter" aria-label="Twitter">
-                <svg viewBox="0 0 112.5 112.5">
-                    <path
-                        d="M 13.261719 13.441406 L 46.105469 61.320312 L 13.957031 98.558594 L 21.078125 98.558594 L 49.25 65.90625 L 71.648438 98.558594 L 98.558594 98.558594 L 64.246094 48.539062 L 94.527344 13.441406 L 87.425781 13.441406 L 61.097656 43.941406 L 40.171875 13.441406 Z M 21.765625 17.921875 L 37.8125 17.921875 L 90.054688 94.078125 L 74.007812 94.078125 Z" />
-                </svg>
+                <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
             </a>
             <a href="https://github.com/pyronix-dev" aria-label="GitHub">
-                <svg viewBox="0 0 96 96">
-                    <path
-                        d="M 48 16 C 65.671875 16 80 30.328125 80 48 C 80 62.207031 70.734375 74.246094 57.921875 78.425781 C 57.925781 78.410156 57.929688 78.394531 57.929688 78.394531 C 57.929688 78.394531 55.769531 77.382812 55.816406 75.574219 C 55.867188 73.589844 55.816406 68.949219 55.816406 67.246094 C 55.816406 64.320312 53.964844 62.25 53.964844 62.25 C 53.964844 62.25 68.476562 62.410156 68.476562 46.929688 C 68.476562 40.953125 65.355469 37.84375 65.355469 37.84375 C 65.355469 37.84375 66.996094 31.464844 64.785156 28.761719 C 62.3125 28.496094 57.878906 31.128906 55.988281 32.359375 C 55.988281 32.359375 52.988281 31.128906 48 31.128906 C 43.007812 31.128906 40.011719 32.359375 40.011719 32.359375 C 38.117188 31.128906 33.683594 28.496094 31.210938 28.761719 C 29.003906 31.46875 30.644531 37.84375 30.644531 37.84375 C 30.644531 37.84375 27.519531 40.953125 27.519531 46.929688 C 27.519531 62.410156 42.03125 62.25 42.03125 62.25 C 42.03125 62.25 40.570312 63.902344 40.25 66.332031 C 39.238281 66.675781 37.746094 67.097656 36.542969 67.097656 C 33.394531 67.097656 31 64.039062 30.121094 62.621094 C 29.257812 61.222656 27.480469 60.050781 25.828125 60.050781 C 24.738281 60.050781 24.207031 60.597656 24.207031 61.21875 C 24.207031 61.84375 25.734375 62.277344 26.742188 63.433594 C 28.867188 65.867188 28.828125 71.34375 36.402344 71.34375 C 37.222656 71.34375 38.902344 71.140625 40.164062 70.96875 C 40.15625 72.695312 40.15625 74.511719 40.183594 75.574219 C 40.226562 77.382812 38.066406 78.394531 38.066406 78.394531 C 38.066406 78.394531 38.074219 78.410156 38.078125 78.425781 C 25.265625 74.246094 16 62.207031 16 48 C 16 30.328125 30.328125 16 48 16 Z" />
-                </svg>
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z"/></svg>
             </a>
         </div>
         <div class="footer-links">
@@ -397,20 +295,16 @@
     <script>
         const WORKER_URL = 'https://ppcrossoriginrelayhandler.rzotime.workers.dev';
 
-        // Function to get query parameters from URL
         function getQueryParams() {
             const params = new URLSearchParams(window.location.search);
             const result = {};
             for (const [key, value] of params) {
                 result[key] = value;
             }
-            console.log('Query Parameters:', result); // Log all query parameters
             return result;
         }
 
-        // Function to fetch order details from Database
         async function fetchOrderDetails(orderId) {
-            console.log('Fetching order details for orderId:', orderId); // Log the orderId
             try {
                 const response = await fetch(`${WORKER_URL}/api/get-order`, {
                     method: 'POST',
@@ -424,16 +318,13 @@
                     throw new Error('Failed to fetch order details');
                 }
 
-                const data = await response.json();
-                console.log('Order Details:', data); // Log the order details
-                return data;
+                return await response.json();
             } catch (error) {
                 console.error('Error fetching order details:', error);
                 return null;
             }
         }
 
-        // Display purchase data
         async function displayPurchaseData() {
             const params = getQueryParams();
             const orderId = params.orderID;
@@ -451,20 +342,19 @@
                 const capture = captureData.purchase_units[0]?.payments?.captures[0];
 
                 thankYouMessage.innerHTML = `
-            <h1>Thank You For Your Purchase</h1>
-            <p>Check your email inbox. I sent you the license key.</p>
-        `;
+                    <h1>Thank You For Your Purchase</h1>
+                    <p>Check your email inbox. I sent you the license key.</p>
+                `;
 
                 if (capture) {
                     purchaseDetails.innerHTML = `
-                <h2>Purchase Summary</h2>
-                <div class="purchase-info">
-                    <p><strong>Order ID:</strong> ${captureData.id || 'N/A'}</p>
-                    <p><strong>Status:</strong> ${captureData.status || 'N/A'}</p>
-                    <p><strong>Amount:</strong> ${capture.amount.value} ${capture.amount.currency_code}</p>
-                    <p><strong>Payment Date:</strong> ${new Date(capture.create_time).toLocaleString()}</p>
-                </div>
-            `;
+                        <div class="purchase-info">
+                            <p><span>Order ID:</span> <span>${captureData.id || 'N/A'}</span></p>
+                            <p><span>Status:</span> <span>${captureData.status || 'N/A'}</span></p>
+                            <p><span>Amount:</span> <span>${capture.amount.value} ${capture.amount.currency_code}</span></p>
+                            <p><span>Payment Date:</span> <span>${new Date(capture.create_time).toLocaleString()}</span></p>
+                        </div>
+                    `;
                 } else {
                     purchaseDetails.innerHTML = `<p>Detailed purchase information is not available.</p>`;
                 }
@@ -474,9 +364,7 @@
             }
         }
 
-        // Call displayPurchaseData when the page loads
         window.addEventListener('DOMContentLoaded', displayPurchaseData);
     </script>
 </body>
-
 </html>
