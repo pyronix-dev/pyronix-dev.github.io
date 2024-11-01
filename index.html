@@ -410,6 +410,30 @@
         }
 
         // Function to fetch order details from Database
+        async function fetchOrderDetails(orderId) {
+            console.log('Fetching order details for orderId:', orderId); // Log the orderId
+            try {
+                const response = await fetch(`${WORKER_URL}/api/get-order`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ orderId })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch order details');
+                }
+
+                const data = await response.json();
+                console.log('Order Details:', data); // Log the order details
+                return data;
+            } catch (error) {
+                console.error('Error fetching order details:', error);
+                return null;
+            }
+        }
+
         // Display purchase data
         async function displayPurchaseData() {
             const params = getQueryParams();
