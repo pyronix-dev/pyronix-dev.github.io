@@ -279,6 +279,9 @@
         @media (max-width: 480px) {
             h1 {
                 font-size: 1.8rem;
+                background: linear-gradient(135deg, #8afc8a 0%, #74b4ff 100%);
+                background-clip: text;
+                -webkit-text-fill-color: transparent;
             }
 
             .success-icon {
@@ -288,45 +291,22 @@
 
             p {
                 font-size: 0.9rem;
+                color: #a0a0a0;
             }
 
             .contact {
                 font-size: 0.8rem;
-            }
-
-            .purchase-summary h2 {
-                font-size: 1.5rem;
-                margin-bottom: 5px;
-            }
-
-            .purchase-summary p {
-                font-size: 0.9rem;
-                margin: 2px 0;
-            }
-
-            #purchase-details {
-                margin-top: 10px;
-            }
-
-            .purchase-summary {
-                margin-top: 2rem;
-                padding: 2rem;
-                border-radius: 15px;
-                max-width: 600px;
-                width: 100%;
-                text-align: center;
+                color: #a0a0a0;
             }
 
             .purchase-summary h2 {
                 font-size: 1.8rem;
                 color: #74b4ff;
-                margin-bottom: 1rem;
             }
 
             .purchase-summary p {
-                font-size: 0.9rem;
-                margin: 0.5rem 0;
-                align-items: center;
+                font-size: 1.1rem;
+                color: #cccccc;
             }
 
             .purchase-summary p span {
@@ -337,7 +317,6 @@
             .purchase-summary-icon {
                 width: 24px;
                 height: 24px;
-                margin-right: 10px;
                 color: #4a9eff;
             }
 
@@ -429,7 +408,7 @@
                 return null;
             }
         }
-        
+
         // Display purchase data
         async function displayPurchaseData() {
             const params = getQueryParams();
