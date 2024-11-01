@@ -397,7 +397,7 @@
 
     <script>
         const WORKER_URL = 'https://ppcrossoriginrelayhandler.rzotime.workers.dev';
-    
+
         // Function to get query parameters from URL
         function getQueryParams() {
             const params = new URLSearchParams(window.location.search);
@@ -408,8 +408,8 @@
             console.log('Query Parameters:', result); // Log all query parameters
             return result;
         }
-    
-        // Function to fetch order details from PayPal
+
+        // Function to fetch order details from Database
         async function fetchOrderDetails(orderId) {
             console.log('Fetching order details for orderId:', orderId); // Log the orderId
             try {
@@ -420,11 +420,11 @@
                     },
                     body: JSON.stringify({ orderId })
                 });
-    
+
                 if (!response.ok) {
                     throw new Error('Failed to fetch order details');
                 }
-    
+
                 const data = await response.json();
                 console.log('Order Details:', data); // Log the order details
                 return data;
@@ -433,37 +433,37 @@
                 return null;
             }
         }
-    
+
         // Display purchase data
         async function displayPurchaseData() {
             const params = getQueryParams();
             const orderId = params.orderID;
             let purchaseData;
-    
+
             if (orderId) {
                 purchaseData = await fetchOrderDetails(orderId);
             }
-    
+
             const thankYouMessage = document.getElementById('thank-you-message');
             const purchaseDetails = document.getElementById('purchase-details');
-    
+
             if (purchaseData) {
                 thankYouMessage.innerHTML = `
-                    <h1>Thank You For Your Purchase</h1>
-                    <p>Check your email inbox. I sent you the license key.</p>
-                `;
-    
+            <h1>Thank You For Your Purchase</h1>
+            <p>Check your email inbox. I sent you the license key.</p>
+        `;
+
                 if (purchaseData.purchase_units && purchaseData.purchase_units.length > 0) {
                     const firstPurchaseUnit = purchaseData.purchase_units[0];
                     if (firstPurchaseUnit.payments && firstPurchaseUnit.payments.captures && firstPurchaseUnit.payments.captures.length > 0) {
                         const firstCapture = firstPurchaseUnit.payments.captures[0];
                         if (firstCapture.amount) {
                             purchaseDetails.innerHTML = `
-                                <h2>Purchase Summary</h2>
-                                <p><span>Order ID:</span> <span>${purchaseData.id || 'N/A'}</span></p>
-                                <p><span>Status:</span> <span>${purchaseData.status || 'N/A'}</span></p>
-                                <p><span>Amount:</span> <span>${firstCapture.amount.value || 'N/A'} ${firstCapture.amount.currency_code || 'N/A'}</span></p>
-                            `;
+                        <h2>Purchase Summary</h2>
+                        <p><span>Order ID:</span> <span>${purchaseData.id || 'N/A'}</span></p>
+                        <p><span>Status:</span> <span>${purchaseData.status || 'N/A'}</span></p>
+                        <p><span>Amount:</span> <span>${firstCapture.amount.value || 'N/A'} ${firstCapture.amount.currency_code || 'N/A'}</span></p>
+                    `;
                         } else {
                             purchaseDetails.innerHTML = `<p>Purchase amount details are not available.</p>`;
                         }
@@ -478,7 +478,7 @@
                 purchaseDetails.innerHTML = `<p>No purchase details available.</p>`;
             }
         }
-    
+
         // Call displayPurchaseData when the page loads
         window.addEventListener('DOMContentLoaded', displayPurchaseData);
     </script>
