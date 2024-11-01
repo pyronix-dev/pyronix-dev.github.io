@@ -435,6 +435,7 @@
         }
 
         // Display purchase data
+        // Display purchase data
         async function displayPurchaseData() {
             const params = getQueryParams();
             const orderId = params.orderID;
@@ -450,15 +451,13 @@
             if (purchaseData && purchaseData.captureData) {
                 const captureData = purchaseData.captureData;
                 const capture = captureData.purchase_units[0]?.payments?.captures[0];
-                const payer = captureData.payer;
-                const shipping = captureData.purchase_units[0]?.shipping;
 
                 thankYouMessage.innerHTML = `
             <h1>Thank You For Your Purchase</h1>
             <p>Check your email inbox. I sent you the license key.</p>
         `;
 
-                if (capture && payer) {
+                if (capture) {
                     purchaseDetails.innerHTML = `
                 <h2>Purchase Summary</h2>
                 <div class="purchase-info">
@@ -466,28 +465,6 @@
                     <p><strong>Status:</strong> ${captureData.status || 'N/A'}</p>
                     <p><strong>Amount:</strong> ${capture.amount.value} ${capture.amount.currency_code}</p>
                     <p><strong>Payment Date:</strong> ${new Date(capture.create_time).toLocaleString()}</p>
-                    
-                    <h3>Buyer Details</h3>
-                    <p><strong>Name:</strong> ${payer.name.given_name} ${payer.name.surname}</p>
-                    <p><strong>Email:</strong> ${payer.email_address}</p>
-                    <p><strong>Country:</strong> ${payer.address.country_code}</p>
-
-                    ${shipping ? `
-                    <h3>Shipping Details</h3>
-                    <p><strong>Name:</strong> ${shipping.name.full_name}</p>
-                    <p><strong>Address:</strong> 
-                        ${shipping.address.address_line_1}, 
-                        ${shipping.address.admin_area_2}, 
-                        ${shipping.address.admin_area_1}, 
-                        ${shipping.address.country_code} 
-                        ${shipping.address.postal_code}
-                    </p>
-                    ` : ''}
-
-                    <h3>Payment Details</h3>
-                    <p><strong>Gross Amount:</strong> ${capture.seller_receivable_breakdown.gross_amount.value} ${capture.seller_receivable_breakdown.gross_amount.currency_code}</p>
-                    <p><strong>PayPal Fee:</strong> ${capture.seller_receivable_breakdown.paypal_fee.value} ${capture.seller_receivable_breakdown.paypal_fee.currency_code}</p>
-                    <p><strong>Net Amount:</strong> ${capture.seller_receivable_breakdown.net_amount.value} ${capture.seller_receivable_breakdown.net_amount.currency_code}</p>
                 </div>
             `;
                 } else {
