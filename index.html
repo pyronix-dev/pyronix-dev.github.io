@@ -44,7 +44,7 @@
         .logo {
             font-weight: 600;
             font-size: 1.1rem;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            background: white;
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -294,7 +294,7 @@
 
     <script>
         const WORKER_URL = 'https://ppcrossoriginrelayhandler.rzotime.workers.dev';
-
+    
         function getQueryParams() {
             const params = new URLSearchParams(window.location.search);
             const result = {};
@@ -303,7 +303,7 @@
             }
             return result;
         }
-
+    
         async function fetchOrderDetails(orderId) {
             try {
                 const response = await fetch(`${WORKER_URL}/api/get-order`, {
@@ -313,58 +313,59 @@
                     },
                     body: JSON.stringify({ orderId })
                 });
-
+    
                 if (!response.ok) {
                     throw new Error('Failed to fetch order details');
                 }
-
+    
                 return await response.json();
             } catch (error) {
                 console.error('Error fetching order details:', error);
                 return null;
             }
         }
-
+    
         async function displayPurchaseData() {
             const params = getQueryParams();
             const orderId = params.orderID;
             let purchaseData;
-
+    
             if (orderId) {
                 purchaseData = await fetchOrderDetails(orderId);
             }
-
+    
             const thankYouMessage = document.getElementById('thank-you-message');
             const purchaseDetails = document.getElementById('purchase-details');
-
+    
             if (purchaseData && purchaseData.captureData) {
                 const captureData = purchaseData.captureData;
                 const capture = captureData.purchase_units[0]?.payments?.captures[0];
-
+    
                 thankYouMessage.innerHTML = `
                     <h1>Thank You For Your Purchase</h1>
                     <p>Check your email inbox. I sent you the license key.</p>
                 `;
-
+    
                 if (capture) {
                     purchaseDetails.innerHTML = `
                         <div class="purchase-info">
                             <p><span>Order ID:</span> <span>${captureData.id || 'N/A'}</span></p>
                             <p><span>Status:</span> <span>${captureData.status || 'N/A'}</span></p>
                             <p><span>Amount:</span> <span>${capture.amount.value} ${capture.amount.currency_code}</span></p>
+                            <p><span>License Key:</span> <span>${purchaseData.licenseKey || 'N/A'}</span></p>
                             <p><span>Payment Date:</span> <span>${new Date(capture.create_time).toLocaleString()}</span></p>
                         </div>
                     `;
                 } else {
-                    purchaseDetails.innerHTML = `<p>Detailed purchase information is not available.</p>`;
+                    purchaseDetails.innerHTML = `<p>Failed to load purchase details.</p>`;
                 }
             } else {
                 thankYouMessage.innerHTML = '';
                 purchaseDetails.innerHTML = `<p>No purchase details available.</p>`;
             }
         }
-
+    
         window.addEventListener('DOMContentLoaded', displayPurchaseData);
-    </script>
+    </script>    
 </body>
 </html>
