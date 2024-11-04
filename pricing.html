@@ -3,8 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <style>
+        /* Base styles */
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             display: flex;
@@ -13,8 +14,11 @@
             min-height: 100vh;
             margin: 0;
             background-color: #f5f5f5;
+            padding-bottom: 60px;
+            /* Space for footer */
         }
 
+        /* Payment Container */
         .payment-container {
             background: white;
             border-radius: 16px;
@@ -22,6 +26,7 @@
             width: 100%;
             max-width: 440px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin: 20px;
         }
 
         h1 {
@@ -30,6 +35,7 @@
             margin: 0 0 24px 0;
         }
 
+        /* Select Container */
         .select-container {
             border: 2px solid #e0e7ff;
             border-radius: 16px;
@@ -52,6 +58,7 @@
             padding: 16px 20px 0;
         }
 
+        /* Dropdown Header */
         .dropdown-header {
             padding: 8px 20px 16px;
             display: flex;
@@ -81,6 +88,7 @@
             transform: rotate(180deg);
         }
 
+        /* Select Options */
         .select-options {
             max-height: 0;
             opacity: 0;
@@ -141,6 +149,7 @@
             transform: scale(1);
         }
 
+        /* Total and Disclaimer */
         .total {
             display: flex;
             justify-content: space-between;
@@ -158,6 +167,7 @@
             margin-top: 24px;
         }
 
+        /* PayPal Button Container */
         #paypal-button-container {
             margin-top: 24px;
             opacity: 0;
@@ -172,12 +182,58 @@
             }
         }
 
-        /* Add ripple effect */
-        .select-item {
-            position: relative;
-            overflow: hidden;
+        /* Footer Styles */
+        .footer-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px 10px;
+            z-index: 1000;
         }
 
+        .footer-links {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            max-width: 100%;
+            padding: 0 10px;
+        }
+
+        .footer-links a {
+            color: #000;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-weight: 600;
+            font-size: 12px;
+            padding: 4px 3px;
+            white-space: nowrap;
+            font-weight: bold;
+        }
+
+        .footer-links a:hover {
+            color: #333;
+        }
+
+        .footer-links a:active {
+            opacity: 0.7;
+        }
+
+        .separator {
+            display: inline-block;
+            width: 1px;
+            height: 14px;
+            background-color: #000;
+            margin: 0 5px;
+        }
+
+        /* Ripple Effect */
         .select-item::after {
             content: '';
             position: absolute;
@@ -208,9 +264,81 @@
             }
         }
 
+        /* Price Transitions */
         #total-price {
             opacity: 1;
             transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        /* Media Queries */
+        @media screen and (max-width: 480px) {
+            .payment-container {
+                margin: 10px;
+                padding: 20px;
+            }
+
+            .footer-links {
+                gap: 4px;
+            }
+
+            .footer-links a {
+                font-size: 11px;
+            }
+
+            .separator {
+                height: 12px;
+                margin: 0 3px;
+            }
+        }
+
+        @media screen and (max-width: 360px) {
+            .footer-links {
+                gap: 2px;
+            }
+
+            .footer-links a {
+                font-size: 10px;
+            }
+
+            .separator {
+                height: 10px;
+                margin: 0 2px;
+            }
+        }
+
+        /* Safe Area Support */
+        @supports (padding: max(0px)) {
+            .footer-container {
+                padding-bottom: max(15px, env(safe-area-inset-bottom));
+                padding-left: max(10px, env(safe-area-inset-left));
+                padding-right: max(10px, env(safe-area-inset-right));
+            }
+        }
+
+        /* Additional Mobile Optimizations */
+        @media screen and (max-height: 700px) {
+            body {
+                padding-top: 10px;
+            }
+
+            .payment-container {
+                margin-top: 0;
+            }
+        }
+
+        /* Touch Device Optimizations */
+        @media (hover: none) {
+            .select-container:hover {
+                border-color: #e0e7ff;
+            }
+
+            .select-item:hover {
+                background-color: transparent;
+            }
+
+            .footer-links a:hover {
+                color: #000;
+            }
         }
     </style>
 </head>
@@ -254,6 +382,20 @@
         <div class="disclaimer">
             By clicking Pay button, you agree to our Terms of Service and Privacy Policy.
         </div>
+
+        <div class="footer-container">
+            <div class="footer-links">
+                <a href="https://pyronix-dev.github.io/pricing">Pricing</a>
+                <span class="separator"></span>
+                <a href="#">FAQ</a>
+                <span class="separator"></span>
+                <a href="#">Legal</a>
+                <span class="separator"></span>
+                <a href="#">Privacy</a>
+                <span class="separator"></span>
+                <a href="#" target="_blank">Pyronix Dev</a>
+            </div>
+        </div>
     </div>
 
     <!-- PayPal SDK -->
@@ -261,11 +403,11 @@
         src="https://www.paypal.com/sdk/js?client-id=AaX0q5hvdrlbISpP0I91ZFKzW1DIYK_00T4u-eYTlW-fzFOeOEzofd_UkTSh2o2V3TaZa7nvIJNyP0Nr&currency=USD"></script>
 
     <script>
+        // JavaScript remains the same
         const WORKER_URL = 'https://ppcrossoriginrelayhandler.rzotime.workers.dev';
-        let totalPrice = 45.95; // Initial price
-        let priceType = 'monthly'; // Default price type
+        let totalPrice = 45.95;
+        let priceType = 'monthly';
 
-        // Dropdown functionality
         const dropdown = document.querySelector('.dropdown-header');
         const options = document.querySelector('.select-options');
         const chevron = document.querySelector('.chevron');
@@ -282,11 +424,9 @@
             item.addEventListener('click', (e) => {
                 e.stopPropagation();
 
-                // Add ripple effect
                 const ripple = document.createElement('div');
                 ripple.classList.add('ripple');
 
-                // Update selected state with animation
                 items.forEach(i => {
                     i.classList.remove('selected');
                     i.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
@@ -294,7 +434,6 @@
 
                 item.classList.add('selected');
 
-                // Update dropdown header text with fade effect
                 const headerText = dropdown.querySelector('span');
                 headerText.style.opacity = '0';
                 setTimeout(() => {
@@ -302,21 +441,19 @@
                     headerText.style.opacity = '1';
                 }, 150);
 
-                // Close dropdown with delay for smooth animation
                 setTimeout(() => {
                     options.classList.remove('active');
                     chevron.classList.remove('active');
                     dropdown.classList.remove('active');
                 }, 200);
 
-                // Update total price with animation
                 const totalElement = document.getElementById('total-price');
                 totalElement.style.opacity = '0';
                 totalElement.style.transform = 'translateY(5px)';
 
                 setTimeout(() => {
                     totalPrice = parseFloat(item.dataset.price);
-                    priceType = item.dataset.type; // Get the type (monthly or yearly)
+                    priceType = item.dataset.type;
                     totalElement.textContent = `${totalPrice.toFixed(2)} USD`;
                     totalElement.style.opacity = '1';
                     totalElement.style.transform = 'translateY(0)';
@@ -324,7 +461,6 @@
             });
         });
 
-        // Close dropdown when clicking outside
         document.addEventListener('click', () => {
             if (options.classList.contains('active')) {
                 options.classList.remove('active');
@@ -333,7 +469,6 @@
             }
         });
 
-        // PayPal integration
         paypal.Buttons({
             style: {
                 layout: 'vertical',
@@ -349,7 +484,7 @@
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ priceType }) // Send the selected price type
+                        body: JSON.stringify({ priceType })
                     });
 
                     if (!response.ok) {
@@ -382,8 +517,7 @@
                     const captureData = await response.json();
                     console.log('Payment successful:', captureData);
 
-                    // Redirect to thank you page with order ID
-                    window.location.href = `https://pyronix-dev.github.io/?orderID=${data.orderID}`;
+                    window.location.href = `https://pyronix-dev.github.io/success?orderID=${data.orderID}`;
                 } catch (error) {
                     console.error('Error:', error);
                     alert('Payment failed. Please try again.');
