@@ -429,6 +429,7 @@
             }
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
     <nav>
@@ -455,7 +456,7 @@
                 </svg>
             </div>
             <h1 class="card-title" style="color: var(--foreground)">Thank You For Your Purchase</h1>
-            <p class="card-description">Check your email inbox. We've sent you the license key.</p>
+            <p class="card-description">Keep your license key secure and do not share it with others.</p>
             <div id="purchase-details" class="purchase-info">
                 <!-- Content will be dynamically inserted here -->
             </div>
@@ -544,6 +545,14 @@
             const purchaseDetails = document.getElementById('purchase-details');
             
             if (purchaseData && purchaseData.captureData) {
+                // Trigger confetti animation when purchase data loads successfully
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#00dc82', '#0ea5e9', '#6b7280']
+                });
+                
                 const capture = purchaseData.captureData.purchase_units[0]?.payments?.captures[0];
                 
                 purchaseDetails.innerHTML = `
