@@ -6,35 +6,48 @@
     <title>Thank You for Your Purchase</title>
     <style>
         :root {
-            --primary: #8afc8a;
-            --accent: #4a9eff;
-            --background: #0a0a0a;
-            --surface: #121212;
-            --text: #ffffff;
-            --text-secondary: #a0a0a0;
-            --border: rgba(255, 255, 255, 0.1);
+            --primary: #00dc82;
+            --secondary: #0ea5e9;
+            --background: #ffffff;
+            --foreground: #000000;
+            --muted: #f3f4f6;
+            --muted-foreground: #6b7280;
+            --border: #e5e7eb;
+            --card: #ffffff;
+        }
+
+        .dark {
+            --background: #000000;
+            --foreground: #ffffff;
+            --muted: #1a1a1a;
+            --muted-foreground: #a1a1aa;
+            --border: #27272a;
+            --card: #111111;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, system-ui, sans-serif;
         }
 
         body {
             background: var(--background);
-            color: var(--text);
-            line-height: 1.5;
+            color: var(--foreground);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            transition: all 0.2s ease;
         }
 
         nav {
-            padding: 0.75rem 1.5rem;
-            background: rgba(10, 10, 10, 0.8);
-            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            padding: 1rem;
+            background: var(--background);
+            backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
@@ -43,23 +56,41 @@
 
         .logo {
             font-weight: 600;
-            font-size: 1.1rem;
-            background: white;
+            font-size: 1.25rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: transparent;
         }
 
-        nav a {
-            color: var(--text-secondary);
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-links a {
+            color: var(--muted-foreground);
             text-decoration: none;
-            font-size: 0.9rem;
-            margin-left: 1.5rem;
-            transition: color 0.2s ease;
+            font-size: 0.875rem;
+            transition: color 0.2s;
         }
 
-        nav a:hover {
-            color: var(--text);
+        .nav-links a:hover {
+            color: var(--foreground);
+        }
+
+        #theme-toggle {
+            background: none;
+            border: none;
+            color: var(--foreground);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+        }
+
+        #theme-toggle:hover {
+            background: var(--muted);
         }
 
         .main-content {
@@ -67,106 +98,165 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2rem 1rem;
+            padding: 1rem;
         }
 
-        .success-card {
-            background: var(--surface);
-            padding: 2rem;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+        .card {
+            background: var(--card);
+            border-radius: 0.75rem;
             border: 1px solid var(--border);
             width: 100%;
-            max-width: 480px;
-            text-align: center;
+            max-width: 28rem;
+            padding: 1.5rem;
         }
 
         .success-icon {
-            width: 64px;
-            height: 64px;
+            width: 4rem;
+            height: 4rem;
             margin: 0 auto 1.5rem;
-            background: rgba(138, 252, 138, 0.1);
+            background: rgba(0, 220, 130, 0.1);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-        }
-
-        .success-icon::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 2px solid var(--primary);
-            animation: ripple 1.5s infinite;
-        }
-
-        @keyframes ripple {
-            to {
-                transform: scale(1.3);
-                opacity: 0;
-            }
+            animation: scaleIn 0.3s ease-out;
         }
 
         .success-icon svg {
-            width: 32px;
-            height: 32px;
+            width: 2rem;
+            height: 2rem;
             color: var(--primary);
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: drawCheck 1s ease-out forwards;
         }
 
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        @keyframes scaleIn {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes drawCheck {
+            0% { stroke-dashoffset: 100; }
+            100% { stroke-dashoffset: 0; }
+        }
+
+        .card-title {
+            font-size: 1.875rem;
+            text-align: center;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
+            color: transparent;
             margin-bottom: 0.5rem;
         }
 
-        .purchase-summary {
-            margin: 1.5rem 0;
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
+        .card-description {
             text-align: center;
+            color: var(--muted-foreground);
+            margin-bottom: 1.5rem;
         }
 
-        .purchase-info p {
+        .purchase-info {
+            margin: 2rem 0;
+            background: linear-gradient(145deg, 
+                var(--card) 0%,
+                rgba(0, 220, 130, 0.02) 100%);
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .purchase-row {
             display: flex;
             justify-content: space-between;
-            padding: 0.5rem 0;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            transition: background 0.2s ease;
+        }
+
+        .purchase-row:hover {
+            background: rgba(0, 220, 130, 0.05);
+        }
+
+        .purchase-row:not(:last-child) {
             border-bottom: 1px solid var(--border);
-            margin: 0;
         }
 
-        .purchase-info p:last-child {
-            border-bottom: none;
-        }
-
-        .contact {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
+        .purchase-label {
+            color: var(--muted-foreground);
             font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .contact a {
+        .purchase-label svg {
+            width: 1rem;
+            height: 1rem;
             color: var(--primary);
-            text-decoration: none;
-            transition: color 0.2s;
         }
 
-        .contact a:hover {
-            color: var(--accent);
+        .purchase-value {
+            font-weight: 500;
+            color: var(--foreground);
+        }
+
+        .purchase-value.license-key {
+            font-family: monospace;
+            font-size: 0.9rem;
+            padding: 0.25rem 0.5rem;
+            background: rgba(0, 220, 130, 0.1);
+            border-radius: 0.25rem;
+            border: 1px solid rgba(0, 220, 130, 0.2);
+        }
+
+        .skeleton-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+        }
+
+        .skeleton-row:not(:last-child) {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .skeleton {
+            height: 1.25rem;
+            background: linear-gradient(
+                90deg,
+                var(--muted) 0%,
+                var(--muted-foreground) 50%,
+                var(--muted) 100%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+            border-radius: 0.25rem;
+        }
+
+        .skeleton.label {
+            width: 30%;
+        }
+
+        .skeleton.value {
+            width: 40%;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .card-footer {
+            text-align: center;
+            margin-top: 1.5rem;
         }
 
         footer {
@@ -182,105 +272,216 @@
             margin-bottom: 1rem;
         }
 
-        .social-links a {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.03);
+        .social-link {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: var(--muted);
+            border-radius: 0.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
+            transition: all 0.3s;
         }
 
-        .social-links svg {
-            width: 20px;
-            height: 20px;
-            fill: var(--text-secondary);
-            transition: fill 0.2s;
-        }
-
-        .social-links a:hover {
-            background: rgba(255, 255, 255, 0.08);
+        .social-link:hover {
+            background: var(--muted-foreground);
             transform: translateY(-2px);
         }
 
-        .social-links a:hover svg {
-            fill: var(--primary);
+        .social-link svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            fill: var(--foreground);
         }
 
         .footer-links {
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
         }
 
         .footer-links a {
-            color: var(--text-secondary);
+            color: var(--muted-foreground);
             text-decoration: none;
-            font-size: 0.85rem;
-            margin: 0 0.75rem;
+            margin: 0 1rem;
+            font-size: 0.875rem;
         }
 
         .footer-links a:hover {
-            color: var(--text);
+            color: var(--foreground);
         }
 
         .copyright {
-            color: var(--text-secondary);
-            font-size: 0.8rem;
+            color: var(--muted-foreground);
+            font-size: 0.75rem;
         }
 
-        @media (max-width: 480px) {
-            .success-card {
-                padding: 1.5rem;
+        .contact-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: linear-gradient(145deg, 
+                var(--card) 0%,
+                rgba(0, 220, 130, 0.05) 100%);
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            opacity: 0.5;
+        }
+
+        .contact-email {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .contact-email:hover {
+            color: var(--secondary);
+        }
+
+        .contact-email::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: currentColor;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+
+        .contact-email:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        .support-text {
+            color: var(--muted-foreground);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .support-text svg {
+            width: 1rem;
+            height: 1rem;
+            color: var(--primary);
+        }
+
+        @media (max-width: 640px) {
+            .card {
+                margin: 1rem;
+                padding: 1rem;
             }
 
-            h1 {
+            .purchase-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .purchase-value {
+                width: 100%;
+                word-break: break-all;
+            }
+
+            .footer-links {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .footer-links a {
+                margin: 0;
+            }
+
+            .social-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .card-title {
                 font-size: 1.5rem;
             }
 
-            .success-icon {
-                width: 56px;
-                height: 56px;
+            .nav-links {
+                gap: 0.5rem;
             }
 
-            .success-icon svg {
-                width: 28px;
-                height: 28px;
+            .nav-links a {
+                font-size: 0.8rem;
             }
         }
     </style>
 </head>
 <body>
     <nav>
-        <div class="logo">Pyronix</div>
-        <div>
+        <style>
+            .nav-links {
+                margin-left: auto;
+            }
+        </style>
+        <div class="nav-links">
             <a href="#home">Home</a>
             <a href="#faq">FAQ</a>
+            <button id="theme-toggle" aria-label="Toggle theme">
+                <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+            </button>
         </div>
     </nav>
 
     <main class="main-content">
-        <div class="success-card">
+        <div class="card">
             <div class="success-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
             </div>
-            <div id="thank-you-message"></div>
-            <div id="purchase-details" class="purchase-summary"></div>
-            <div class="contact">
-                Need help? Contact us at <a href="mailto:admin0mrx@proton.me">admin0mrx@proton.me</a>
-                <br>We're here to assist you 24/7.
+            <h1 class="card-title" style="color: var(--foreground)">Thank You For Your Purchase</h1>
+            <p class="card-description">Check your email inbox. We've sent you the license key.</p>
+            <div id="purchase-details" class="purchase-info">
+                <!-- Content will be dynamically inserted here -->
+            </div>
+            <div style="text-align: center">
+                <p>Need help? Contact us at: admin0mrx@proton.me</p>
+                <p class="support-text">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+                        <path d="M12 6v6l4 2"/>
+                    </svg>
+                    24/7 Support
+                </p>
             </div>
         </div>
     </main>
 
     <footer>
         <div class="social-links">
-            <a href="#twitter" aria-label="Twitter">
+            <a href="#twitter" class="social-link" aria-label="Twitter">
                 <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
             </a>
-            <a href="https://github.com/pyronix-dev" aria-label="GitHub">
+            <a href="#tiktok" class="social-link" aria-label="TikTok">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
+                </svg>
+            </a>
+            <a href="https://github.com/pyronix-dev" class="social-link" aria-label="GitHub">
                 <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z"/></svg>
             </a>
         </div>
@@ -289,21 +490,34 @@
             <a href="#terms">Terms of Service</a>
             <a href="#support">Support</a>
         </div>
-        <div class="copyright">© 2024 Pyronix. All rights reserved.</div>
+        <div class="copyright">© 2024 All rights reserved.</div>
     </footer>
 
     <script>
         const WORKER_URL = 'https://ppcrossoriginrelayhandler.rzotime.workers.dev';
-    
-        function getQueryParams() {
-            const params = new URLSearchParams(window.location.search);
-            const result = {};
-            for (const [key, value] of params) {
-                result[key] = value;
-            }
-            return result;
+
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = document.querySelector('.sun-icon');
+        const moonIcon = document.querySelector('.moon-icon');
+
+        function setTheme(isDark) {
+            document.body.classList.toggle('dark', isDark);
+            sunIcon.style.display = isDark ? 'none' : 'block';
+            moonIcon.style.display = isDark ? 'block' : 'none';
         }
-    
+
+        // Check system preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            setTheme(true);
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const isDark = document.body.classList.toggle('dark');
+            setTheme(isDark);
+        });
+
+        // Purchase data handling
         async function fetchOrderDetails(orderId) {
             try {
                 const response = await fetch(`${WORKER_URL}/api/get-order`, {
@@ -313,59 +527,116 @@
                     },
                     body: JSON.stringify({ orderId })
                 });
-    
+
                 if (!response.ok) {
                     throw new Error('Failed to fetch order details');
                 }
-    
+
                 return await response.json();
             } catch (error) {
                 console.error('Error fetching order details:', error);
                 return null;
             }
         }
-    
-        async function displayPurchaseData() {
-            const params = getQueryParams();
-            const orderId = params.orderID;
-            let purchaseData;
-    
-            if (orderId) {
-                purchaseData = await fetchOrderDetails(orderId);
-            }
-    
-            const thankYouMessage = document.getElementById('thank-you-message');
+
+        function displayPurchaseData(purchaseData) {
             const purchaseDetails = document.getElementById('purchase-details');
-    
+            
             if (purchaseData && purchaseData.captureData) {
-                const captureData = purchaseData.captureData;
-                const capture = captureData.purchase_units[0]?.payments?.captures[0];
-    
-                thankYouMessage.innerHTML = `
-                    <h1>Thank You For Your Purchase</h1>
-                    <p>Check your email inbox. I sent you the license key.</p>
+                const capture = purchaseData.captureData.purchase_units[0]?.payments?.captures[0];
+                
+                purchaseDetails.innerHTML = `
+                    <div class="purchase-row">
+                        <span class="purchase-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            Order ID
+                        </span>
+                        <span class="purchase-value">${purchaseData.captureData.id || 'N/A'}</span>
+                    </div>
+                    <div class="purchase-row">
+                        <span class="purchase-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                                <path d="M9 12l2 2 4-4"></path>
+                            </svg>
+                            Status
+                        </span>
+                        <span class="purchase-value">${purchaseData.captureData.status || 'N/A'}</span>
+                    </div>
+                    <div class="purchase-row">
+                        <span class="purchase-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            </svg>
+                            Amount
+                        </span>
+                        <span class="purchase-value">${capture.amount.value} ${capture.amount.currency_code}</span>
+                    </div>
+                    <div class="purchase-row">
+                        <span class="purchase-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            License Key
+                        </span>
+                        <span class="purchase-value license-key">${purchaseData.licenseKey || 'N/A'}</span>
+                    </div>
+                    <div class="purchase-row">
+                        <span class="purchase-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            Payment Date
+                        </span>
+                        <span class="purchase-value">${new Date(capture.create_time).toLocaleString()}</span>
+                    </div>
                 `;
-    
-                if (capture) {
-                    purchaseDetails.innerHTML = `
-                        <div class="purchase-info">
-                            <p><span>Order ID:</span> <span>${captureData.id || 'N/A'}</span></p>
-                            <p><span>Status:</span> <span>${captureData.status || 'N/A'}</span></p>
-                            <p><span>Amount:</span> <span>${capture.amount.value} ${capture.amount.currency_code}</span></p>
-                            <p><span>License Key:</span> <span>${purchaseData.licenseKey || 'N/A'}</span></p>
-                            <p><span>Payment Date:</span> <span>${new Date(capture.create_time).toLocaleString()}</span></p>
-                        </div>
-                    `;
-                } else {
-                    purchaseDetails.innerHTML = `<p>Failed to load purchase details.</p>`;
-                }
             } else {
-                thankYouMessage.innerHTML = '';
-                purchaseDetails.innerHTML = `<p>No purchase details available.</p>`;
+                purchaseDetails.innerHTML = `
+                    <div class="skeleton-row">
+                        <div class="skeleton label"></div>
+                        <div class="skeleton value"></div>
+                    </div>
+                    <div class="skeleton-row">
+                        <div class="skeleton label"></div>
+                        <div class="skeleton value"></div>
+                    </div>
+                    <div class="skeleton-row">
+                        <div class="skeleton label"></div>
+                        <div class="skeleton value"></div>
+                    </div>
+                    <div class="skeleton-row">
+                        <div class="skeleton label"></div>
+                        <div class="skeleton value"></div>
+                    </div>
+                    <div class="skeleton-row">
+                        <div class="skeleton label"></div>
+                        <div class="skeleton value"></div>
+                    </div>
+                `;
             }
         }
-    
-        window.addEventListener('DOMContentLoaded', displayPurchaseData);
-    </script>    
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            const orderId = params.get('orderID');
+            
+            displayPurchaseData(null); // Show loading state
+            
+            if (orderId) {
+                const data = await fetchOrderDetails(orderId);
+                displayPurchaseData(data);
+            }
+        });
+    </script>
 </body>
 </html>
