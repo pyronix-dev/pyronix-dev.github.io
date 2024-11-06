@@ -428,6 +428,59 @@
                 font-size: 0.8rem;
             }
         }
+
+        .sun-icon, .moon-icon {
+            transition: transform 0.5s ease;
+        }
+
+        .sun-icon.rotate {
+            transform: rotate(180deg);
+        }
+
+        .moon-icon.rotate {
+            transform: rotate(-180deg);
+        }
+
+        /* Custom widths matching exact content, accounting for SVG icons */
+        .skeleton-row:nth-child(1) .skeleton.label {
+            width: 95px;  /* "Order ID" + 24px icon + 6px padding */
+        }
+
+        .skeleton-row:nth-child(1) .skeleton.value {
+            width: 155px;  /* "23C15298CD8285017" */
+        }
+
+        .skeleton-row:nth-child(2) .skeleton.label {
+            width: 85px;  /* "Status" + 24px icon + 6px padding */
+        }
+
+        .skeleton-row:nth-child(2) .skeleton.value {
+            width: 85px;  /* "COMPLETED" */
+        }
+
+        .skeleton-row:nth-child(3) .skeleton.label {
+            width: 95px;  /* "Amount" + 24px icon + 6px padding */
+        }
+
+        .skeleton-row:nth-child(3) .skeleton.value {
+            width: 90px;  /* "45.95 USD" */
+        }
+
+        .skeleton-row:nth-child(4) .skeleton.label {
+            width: 115px;  /* "License Key" + 24px icon + 6px padding */
+        }
+
+        .skeleton-row:nth-child(4) .skeleton.value {
+            width: 240px;  /* "V0OWbag8jcwONlIIUttXaF8qgqPSkQ" */
+        }
+
+        .skeleton-row:nth-child(5) .skeleton.label {
+            width: 135px;  /* "Payment Date" + 24px icon + 6px padding */
+        }
+
+        .skeleton-row:nth-child(5) .skeleton.value {
+            width: 170px;  /* "11/6/2024, 12:25:14 AM" */
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
@@ -505,8 +558,23 @@
 
         function setTheme(isDark) {
             document.body.classList.toggle('dark', isDark);
-            sunIcon.style.display = isDark ? 'none' : 'block';
-            moonIcon.style.display = isDark ? 'block' : 'none';
+            
+            // Remove existing rotation classes
+            sunIcon.classList.remove('rotate');
+            moonIcon.classList.remove('rotate');
+            
+            // Add rotation to the icon that's being hidden
+            if (isDark) {
+                sunIcon.classList.add('rotate');
+            } else {
+                moonIcon.classList.add('rotate');
+            }
+            
+            // Delay the display change to allow for animation
+            setTimeout(() => {
+                sunIcon.style.display = isDark ? 'none' : 'block';
+                moonIcon.style.display = isDark ? 'block' : 'none';
+            }, 250); // Half of the transition time
         }
 
         // Check system preference
@@ -576,7 +644,7 @@
                             </svg>
                             Status
                         </span>
-                        <span class="purchase-value">${purchaseData.captureData.status || 'Unavailable'}</span>
+                        <span class="purchase-value">${purchaseData.captureData.status || 'N/A'}</span>
                     </div>
                     <div class="purchase-row">
                         <span class="purchase-label">
@@ -586,7 +654,7 @@
                             </svg>
                             Amount
                         </span>
-                        <span class="purchase-value">${capture?.amount ? `${capture.amount.value} ${capture.amount.currency_code}` : 'Unavailable'}</span>
+                        <span class="purchase-value">${capture.amount.value} ${capture.amount.currency_code}</span>
                     </div>
                     <div class="purchase-row">
                         <span class="purchase-label">
@@ -596,7 +664,7 @@
                             </svg>
                             License Key
                         </span>
-                        <span class="purchase-value license-key">${purchaseData.licenseKey || 'Unavailable'}</span>
+                        <span class="purchase-value license-key">${purchaseData.licenseKey || 'N/A'}</span>
                     </div>
                     <div class="purchase-row">
                         <span class="purchase-label">
@@ -606,7 +674,7 @@
                             </svg>
                             Payment Date
                         </span>
-                        <span class="purchase-value">${capture?.create_time ? new Date(capture.create_time).toLocaleString() : 'Unavailable'}</span>
+                        <span class="purchase-value">${new Date(capture.create_time).toLocaleString()}</span>
                     </div>
                 `;
             } else {
