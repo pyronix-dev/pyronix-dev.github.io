@@ -566,7 +566,7 @@
                             </svg>
                             Order ID
                         </span>
-                        <span class="purchase-value">${purchaseData.captureData.id || 'N/A'}</span>
+                        <span class="purchase-value">${purchaseData.captureData.id || 'Unavailable'}</span>
                     </div>
                     <div class="purchase-row">
                         <span class="purchase-label">
@@ -576,7 +576,7 @@
                             </svg>
                             Status
                         </span>
-                        <span class="purchase-value">${purchaseData.captureData.status || 'N/A'}</span>
+                        <span class="purchase-value">${purchaseData.captureData.status || 'Unavailable'}</span>
                     </div>
                     <div class="purchase-row">
                         <span class="purchase-label">
@@ -586,7 +586,7 @@
                             </svg>
                             Amount
                         </span>
-                        <span class="purchase-value">${capture.amount.value} ${capture.amount.currency_code}</span>
+                        <span class="purchase-value">${capture?.amount ? `${capture.amount.value} ${capture.amount.currency_code}` : 'Unavailable'}</span>
                     </div>
                     <div class="purchase-row">
                         <span class="purchase-label">
@@ -596,7 +596,7 @@
                             </svg>
                             License Key
                         </span>
-                        <span class="purchase-value license-key">${purchaseData.licenseKey || 'N/A'}</span>
+                        <span class="purchase-value license-key">${purchaseData.licenseKey || 'Unavailable'}</span>
                     </div>
                     <div class="purchase-row">
                         <span class="purchase-label">
@@ -606,7 +606,7 @@
                             </svg>
                             Payment Date
                         </span>
-                        <span class="purchase-value">${new Date(capture.create_time).toLocaleString()}</span>
+                        <span class="purchase-value">${capture?.create_time ? new Date(capture.create_time).toLocaleString() : 'Unavailable'}</span>
                     </div>
                 `;
             } else {
