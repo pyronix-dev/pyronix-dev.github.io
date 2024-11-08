@@ -495,45 +495,91 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error('Failed to fetch error details');
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
                 return await response.json();
             } catch (error) {
                 console.error('Error fetching details:', error);
-                return null;
+                return {
+                    code: 'FETCH_ERROR',
+                    message: 'Failed to load error details. Please try refreshing the page.',
+                    transactionId: 'N/A'
+                };
             }
         }
 
         function displayErrorData(errorData) {
             const errorDetails = document.getElementById('error-details');
 
-            if (errorData) {
+            if (errorData && !errorData.error) {  // Check if it's not an error response
                 errorDetails.innerHTML = `
                     <div class="error-row">
-                        <span class="error-label">Error Code</span>
+                        <span class="error-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="8" x2="12" y2="12"/>
+                                <line x1="12" y1="16" x2="12.01" y2="16"/>
+                            </svg>
+                            Error Code
+                        </span>
                         <span class="error-value">${errorData.code || 'Unknown'}</span>
                     </div>
                     <div class="error-row">
-                        <span class="error-label">Message</span>
+                        <span class="error-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            Message
+                        </span>
                         <span class="error-value">${errorData.message || 'An unknown error occurred'}</span>
                     </div>
                     <div class="error-row">
-                        <span class="error-label">Transaction ID</span>
+                        <span class="error-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            Transaction ID
+                        </span>
                         <span class="error-value">${errorData.transactionId || 'N/A'}</span>
                     </div>
                     <div class="error-row">
-                        <span class="error-label">Time</span>
-                        <span class="error-value">${new Date().toLocaleString()}</span>
+                        <span class="error-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                            Time
+                        </span>
+                        <span class="error-value">${new Date(errorData.timestamp || Date.now()).toLocaleString()}</span>
                     </div>
                 `;
             } else {
+                // Display a user-friendly error message
                 errorDetails.innerHTML = `
                     <div class="error-row">
-                        <span class="error-value">We encountered an unexpected error while processing your payment. Please try again or contact support if the issue persists.</span>
+                        <span class="error-value">
+                            ${errorData?.error || 'We encountered an unexpected error while processing your payment. Please try again or contact support if the issue persists.'}
+                        </span>
                     </div>
                 `;
             }
+        }
+
+        // Initialize with loading state
+        function showLoadingState() {
+            const errorDetails = document.getElementById('error-details');
+            errorDetails.innerHTML = `
+                <div class="error-row">
+                    <span class="error-label">Loading</span>
+                    <span class="error-value"><div class="skeleton" style="width: 150px;"></div></span>
+                </div>
+                <div class="error-row">
+                    <span class="error-label">Please wait</span>
+                    <span class="error-value"><div class="skeleton" style="width: 200px;"></div></span>
+                </div>
+            `;
         }
 
         // Initialize
@@ -542,10 +588,13 @@
             const errorId = params.get('errorID');
 
             if (errorId) {
+                showLoadingState();
                 const data = await fetchErrorDetails(errorId);
                 displayErrorData(data);
             } else {
-                displayErrorData(null);
+                displayErrorData({
+                    error: 'No error ID provided. Please try the payment again or contact support.'
+                });
             }
         });
     </script>
