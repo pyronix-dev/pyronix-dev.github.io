@@ -248,11 +248,14 @@
             filter: blur(5px);
             transition: filter 0.2s ease;
             user-select: none;
+            outline: none;
         }
 
         .license-key:hover {
             filter: blur(0);
             user-select: text;
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
         }
 
         .license-key-hint::after {
@@ -555,17 +558,34 @@
 
         .license-key {
             cursor: pointer;
-            transition: color 0.3s ease;
+            transition: all 0.3s ease;
+            outline: none;
         }
 
         .license-key:hover {
             color: var(--primary);
-        }
-
-        /* Add focus styles for accessibility */
-        .license-key:focus {
             outline: 2px solid var(--primary);
             outline-offset: 2px;
+        }
+
+        .license-key-hint::after {
+            content: attr(data-hint);
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .license-key-hint:hover::after {
+            opacity: 1;
         }
 
         @media (hover: none) {
