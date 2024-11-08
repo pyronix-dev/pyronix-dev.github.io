@@ -592,6 +592,38 @@
                 opacity: 1;
             }
         }
+
+        /* Add these styles for better copy feedback */
+        .license-key {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .license-key.copied {
+            color: var(--primary) !important;
+            background: rgba(0, 220, 130, 0.2);
+        }
+
+        .license-key.copied::after {
+            content: 'Copied!';
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            animation: fadeInOut 1.5s ease forwards;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translate(-50%, 10px); }
+            20% { opacity: 1; transform: translate(-50%, 0); }
+            80% { opacity: 1; transform: translate(-50%, 0); }
+            100% { opacity: 0; transform: translate(-50%, -10px); }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
@@ -851,14 +883,12 @@
                 try {
                     await navigator.clipboard.writeText(text);
                     
-                    // Show feedback
-                    const originalText = licenseKey.textContent;
-                    licenseKey.textContent = 'Copied!';
-                    licenseKey.style.color = 'var(--primary)';
+                    // Add copied class for visual feedback
+                    licenseKey.classList.add('copied');
                     
+                    // Remove the class after animation
                     setTimeout(() => {
-                        licenseKey.textContent = originalText;
-                        licenseKey.style.color = '';
+                        licenseKey.classList.remove('copied');
                     }, 1500);
                 } catch (err) {
                     console.error('Failed to copy:', err);
