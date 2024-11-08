@@ -552,6 +552,46 @@
             width: 170px;
             /* "11/6/2024, 12:25:14 AM" */
         }
+
+        .license-key {
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .license-key:hover {
+            color: var(--primary);
+        }
+
+        /* Add focus styles for accessibility */
+        .license-key:focus {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        @media (hover: none) {
+            .license-key {
+                position: relative;
+            }
+            
+            .license-key::after {
+                content: 'Long press to copy';
+                position: absolute;
+                bottom: -25px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: var(--muted);
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 0.75rem;
+                white-space: nowrap;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+            
+            .license-key:active::after {
+                opacity: 1;
+            }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
@@ -759,7 +799,7 @@
                             </svg>
                             License Key
                         </span>
-                        <span class="purchase-value license-key">${purchaseData.licenseKey || 'N/A'}</span>
+                        <span class="purchase-value license-key" role="button" tabindex="0" title="Click or long press to copy">${purchaseData.licenseKey || 'N/A'}</span>
                     </div>
                     <div class="purchase-row">
                         <span class="purchase-label">
@@ -798,6 +838,50 @@
             }
         }
 
+        // License key copy functionality
+        function setupLicenseKeyCopy() {
+            let longPressTimer;
+            const licenseKey = document.querySelector('.license-key');
+            
+            if (!licenseKey) return;
+
+            // Copy function
+            const copyLicenseKey = async () => {
+                const text = licenseKey.textContent;
+                try {
+                    await navigator.clipboard.writeText(text);
+                    
+                    // Show feedback
+                    const originalText = licenseKey.textContent;
+                    licenseKey.textContent = 'Copied!';
+                    licenseKey.style.color = 'var(--primary)';
+                    
+                    setTimeout(() => {
+                        licenseKey.textContent = originalText;
+                        licenseKey.style.color = '';
+                    }, 1500);
+                } catch (err) {
+                    console.error('Failed to copy:', err);
+                }
+            };
+
+            // Click handler
+            licenseKey.addEventListener('click', copyLicenseKey);
+
+            // Long press handlers for mobile
+            licenseKey.addEventListener('touchstart', () => {
+                longPressTimer = setTimeout(copyLicenseKey, 500);
+            });
+
+            licenseKey.addEventListener('touchend', () => {
+                clearTimeout(longPressTimer);
+            });
+
+            licenseKey.addEventListener('touchmove', () => {
+                clearTimeout(longPressTimer);
+            });
+        }
+
         // Initialize
         window.addEventListener('DOMContentLoaded', async () => {
             const params = new URLSearchParams(window.location.search);
@@ -808,6 +892,7 @@
             if (orderId) {
                 const data = await fetchOrderDetails(orderId);
                 displayPurchaseData(data);
+                setupLicenseKeyCopy(); // Setup copy functionality after data is loaded
             }
         });
     </script>
