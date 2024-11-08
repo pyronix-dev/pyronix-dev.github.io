@@ -188,10 +188,10 @@
 
         .purchase-row {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 0.75rem 1rem;
-            transition: background 0.2s ease;
+            gap: 1rem;
+            width: fit-content;
+            max-width: 100%;
         }
 
         .purchase-row:hover {
@@ -222,15 +222,14 @@
         }
 
         .purchase-value.license-key {
-            font-family: monospace;
-            font-size: 0.9rem;
-            padding: 0.25rem 0.5rem;
-            background: rgba(0, 220, 130, 0.1);
-            border-radius: 0.25rem;
-            border: 1px solid rgba(0, 220, 130, 0.2);
+            display: inline-block;
             filter: blur(5px);
             transition: filter 0.2s ease;
             user-select: none;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            width: auto;
         }
 
         .purchase-value.license-key:hover {
@@ -759,7 +758,7 @@
                             </svg>
                             License Key
                         </span>
-                        <span class="purchase-value license-key" title="Hover to reveal">${purchaseData.licenseKey || 'N/A'}</span>
+                        <span class="purchase-value license-key">${purchaseData.licenseKey || 'N/A'}</span>
                     </div>
                     <div class="purchase-row">
                         <span class="purchase-label">
