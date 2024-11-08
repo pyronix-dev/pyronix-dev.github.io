@@ -608,6 +608,8 @@
                 });
 
                 if (!response.ok) {
+                    // Redirect to failed page if the response is not OK
+                    window.location.href = `https://pyronix-dev.github.io/failed?orderID=${data.orderID}`;
                     throw new Error('Failed to capture order');
                 }
 
@@ -618,7 +620,8 @@
                 window.location.href = `https://pyronix-dev.github.io/success?orderID=${data.orderID}`;
             } catch (error) {
                 console.error('Error:', error);
-                alert('Payment failed. Please try again.');
+                // Redirect to failed page on any error
+                window.location.href = `https://pyronix-dev.github.io/failed?orderID=${data.orderID}`;
             }
         }
 
