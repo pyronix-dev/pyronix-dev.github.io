@@ -644,6 +644,13 @@
             80% { opacity: 1; transform: translate(-50%, 0); }
             100% { opacity: 0; transform: translate(-50%, -10px); }
         }
+
+        /* Show outline only on click and maintain it until mouse leaves */
+        .license-key.copied {
+            color: var(--primary) !important;
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
@@ -906,10 +913,14 @@
                     // Add copied class for visual feedback
                     licenseKey.classList.add('copied');
                     
-                    // Remove the class after animation
-                    setTimeout(() => {
+                    // Remove the copied class when mouse leaves the element
+                    const removecopied = () => {
                         licenseKey.classList.remove('copied');
-                    }, 1500);
+                        licenseKey.removeEventListener('mouseleave', removecopied);
+                    };
+                    
+                    licenseKey.addEventListener('mouseleave', removecopied);
+                    
                 } catch (err) {
                     console.error('Failed to copy:', err);
                 }
