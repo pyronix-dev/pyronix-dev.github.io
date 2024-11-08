@@ -573,7 +573,6 @@
             };
         }
 
-        // Enhanced PayPal integration with better error handling
         async function createPayPalOrder() {
             try {
                 const response = await fetch(`${WORKER_URL}/api/create-paypal-order`, {
@@ -585,22 +584,6 @@
                 });
 
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    // Store error details in Firebase and get error ID
-                    const errorResponse = await fetch(`${WORKER_URL}/api/store-error`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            type: 'create_order_failed',
-                            details: errorData,
-                            timestamp: new Date().toISOString()
-                        })
-                    });
-                    
-                    const { errorId } = await errorResponse.json();
-                    window.location.href = `https://pyronix-dev.github.io/failed?errorID=${errorId}`;
                     throw new Error('Failed to create order');
                 }
 
@@ -608,24 +591,6 @@
                 return order.id;
             } catch (error) {
                 console.error('Error:', error);
-                // Store unexpected errors
-                const errorResponse = await fetch(`${WORKER_URL}/api/store-error`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        type: 'unexpected_error',
-                        details: {
-                            message: error.message,
-                            stack: error.stack
-                        },
-                        timestamp: new Date().toISOString()
-                    })
-                });
-                
-                const { errorId } = await errorResponse.json();
-                window.location.href = `https://pyronix-dev.github.io/failed?errorID=${errorId}`;
                 throw error;
             }
         }
@@ -643,104 +608,29 @@
                 });
 
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    // Store error details and get error ID
-                    const errorResponse = await fetch(`${WORKER_URL}/api/store-error`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            type: 'capture_failed',
-                            orderId: data.orderID,
-                            details: errorData,
-                            timestamp: new Date().toISOString()
-                        })
-                    });
-                    
-                    const { errorId } = await errorResponse.json();
-                    window.location.href = `https://pyronix-dev.github.io/failed?errorID=${errorId}`;
+                    // Redirect to failed page if the response is not OK
+                    window.location.href = `https://pyronix-dev.github.io/failed?orderID=${data.orderID}`;
                     throw new Error('Failed to capture order');
                 }
 
                 const captureData = await response.json();
                 console.log('Payment successful:', captureData);
 
-                // Redirect to success page with order ID
+                // Redirect to success page
                 window.location.href = `https://pyronix-dev.github.io/success?orderID=${data.orderID}`;
             } catch (error) {
                 console.error('Error:', error);
-                // Store unexpected capture errors
-                const errorResponse = await fetch(`${WORKER_URL}/api/store-error`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        type: 'unexpected_capture_error',
-                        orderId: data.orderID,
-                        details: {
-                            message: error.message,
-                            stack: error.stack
-                        },
-                        timestamp: new Date().toISOString()
-                    })
-                });
-                
-                const { errorId } = await errorResponse.json();
-                window.location.href = `https://pyronix-dev.github.io/failed?errorID=${errorId}`;
+                // Redirect to failed page on any error
+                window.location.href = `https://pyronix-dev.github.io/failed?orderID=${data.orderID}`;
             }
         }
 
-        // Initialize PayPal button with error handling
-        try {
-            paypal.Buttons({
-                style: updatePayPalButtonStyle(),
-                createOrder: createPayPalOrder,
-                onApprove: capturePayPalOrder,
-                onError: async function(err) {
-                    console.error('PayPal button error:', err);
-                    // Store PayPal button errors
-                    const errorResponse = await fetch(`${WORKER_URL}/api/store-error`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            type: 'paypal_button_error',
-                            details: {
-                                message: err.message,
-                                stack: err.stack
-                            },
-                            timestamp: new Date().toISOString()
-                        })
-                    });
-                    
-                    const { errorId } = await errorResponse.json();
-                    window.location.href = `https://pyronix-dev.github.io/failed?errorID=${errorId}`;
-                }
-            }).render('#paypal-button-container');
-        } catch (error) {
-            console.error('PayPal initialization error:', error);
-            // Store initialization errors
-            const errorResponse = await fetch(`${WORKER_URL}/api/store-error`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    type: 'paypal_init_error',
-                    details: {
-                        message: error.message,
-                        stack: error.stack
-                    },
-                    timestamp: new Date().toISOString()
-                })
-            });
-            
-            const { errorId } = await errorResponse.json();
-            window.location.href = `https://pyronix-dev.github.io/failed?errorID=${errorId}`;
-        }
+        // Initialize PayPal button
+        paypal.Buttons({
+            style: updatePayPalButtonStyle(),
+            createOrder: createPayPalOrder,
+            onApprove: capturePayPalOrder
+        }).render('#paypal-button-container');
     </script>
 </body>
 
