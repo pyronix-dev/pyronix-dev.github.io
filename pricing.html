@@ -597,6 +597,8 @@
 
         async function capturePayPalOrder(data) {
             try {
+                throw new Error('Test failure');
+
                 const response = await fetch(`${WORKER_URL}/api/capture-paypal-order`, {
                     method: 'POST',
                     headers: {
