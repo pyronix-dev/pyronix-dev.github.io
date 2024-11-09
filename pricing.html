@@ -369,7 +369,7 @@
                 <label for="plan-select" class="select-label">Select a plan</label>
                 <div class="custom-select">
                     <button id="plan-select" class="select-button" aria-haspopup="listbox" aria-expanded="false">
-                        <span>Monthly - 45.95 USD</span>
+                        <span>Monthly - 29.99 USD</span>
                         <svg class="select-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -378,15 +378,15 @@
                     </button>
                     <div class="select-options" role="listbox">
                         <div class="select-option" role="option" data-value="monthly" aria-selected="true">Monthly -
-                            45.95 USD</div>
-                        <div class="select-option" role="option" data-value="yearly">Yearly - 459.95 USD</div>
+                            29.99 USD</div>
+                        <div class="select-option" role="option" data-value="yearly">Yearly - 299.99 USD</div>
                     </div>
                 </div>
             </div>
             <div class="total-container">
                 <div class="total">
                     <span>Total</span>
-                    <span id="total-price">45.95 USD</span>
+                    <span id="total-price">29.99 USD</span>
                 </div>
             </div>
             <div id="paypal-button-container"></div>
@@ -411,7 +411,7 @@
         src="https://www.paypal.com/sdk/js?client-id=AaX0q5hvdrlbISpP0I91ZFKzW1DIYK_00T4u-eYTlW-fzFOeOEzofd_UkTSh2o2V3TaZa7nvIJNyP0Nr&currency=USD"></script>
     <script>
         const WORKER_URL = 'https://ppcrossoriginrelayhandler.rzotime.workers.dev';
-        let totalPrice = 45.95;
+        let totalPrice = 29.99;
         let priceType = 'monthly';
 
         // DOM Elements
@@ -466,7 +466,7 @@
 
                 // Update price and selection state
                 priceType = selectedValue;
-                totalPrice = selectedValue === 'monthly' ? 45.95 : 459.95;
+                totalPrice = selectedValue === 'monthly' ? 29.99 : 299.99;
 
                 // Animate total price change
                 totalElement.classList.add('fade-out');
