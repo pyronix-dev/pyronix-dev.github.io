@@ -6,29 +6,43 @@ __d("LSCheckAuthoritativeMessageExists", [], (function (a, b, c, d, e, f) {
             b = a[a.length - 1],
             c = [],
             d = [];
-        // Start a sequence of asynchronous operations
+        console.log('Starting LSCheckAuthoritativeMessageExists:', {
+            arguments: Array.from(arguments).slice(0, -1)
+        });
         return b.sequence([function (e) {
-            // Check if a message with specific criteria exists
             return b.sequence([function (d) {
+                console.log('Fetching messages from table 12:', {
+                    offlineThreadingId: a[1]
+                });
                 return b.filter(b.db.table(12).fetch([
                     [
                         [a[1]]
                     ], "optimistic"
                 ]), function (c) {
-                    // Filter messages by threadKey, offlineThreadingId, and authorityLevel
+                    console.log('Checking message criteria:', {
+                        threadKey: a[0],
+                        offlineThreadingId: a[1],
+                        authorityLevel: b.i64.cast([0, 80]),
+                        messageThreadKey: c.threadKey,
+                        messageOfflineThreadingId: c.offlineThreadingId,
+                        messageAuthorityLevel: c.authorityLevel
+                    });
                     return b.i64.eq(c.threadKey, a[0]) && c.offlineThreadingId === a[1] && b.i64.eq(c.authorityLevel, b.i64.cast([0, 80]))
                 }).next().then(function (a, b) {
                     b = a.done;
                     a = a.value;
-                    // Set the result based on whether a message was found
+                    console.log('Message check result:', {
+                        done: b,
+                        hasValue: !!a
+                    });
                     return b ? c[0] = !1 : (a.item, c[0] = !0)
                 })
             }, function (a) {
-                // Store the result in array d
+                console.log('Storing result:', {result: c[0]});
                 return d[0] = c[0]
             }])
         }, function (a) {
-            // Resolve the final result
+            console.log('Resolving LSCheckAuthoritativeMessageExists:', {result: d});
             return b.resolve(d)
         }])
     }
@@ -42,9 +56,25 @@ __d("LSInsertMessage", [], (function (a, b, c, d, e, f) {
             b = a[a.length - 1],
             c = [],
             d = [];
+        console.log('Starting LSInsertMessage with params:', {
+            text: a[0],
+            threadKey: a[3],
+            messageId: a[8],
+            senderId: a[10]
+        });
         // Start a sequence of asynchronous operations
         return b.sequence([function (d) {
+            console.log('Inserting message:', {
+                threadKey: a[3],
+                messageId: a[8],
+                text: a[0],
+                senderId: a[10]
+            });
             // Check if authorityLevel is equal to a specific value
+            console.log('Checking authority level:', {
+                authorityLevel: a[2],
+                compareValue: b.i64.cast([0, 20])
+            });
             return b.i64.eq(a[2], b.i64.cast([0, 20])) ? b.db.table(12).add({
                 // Add a new message to the database table with ID 12
                 threadKey: a[3], // Unique identifier for the thread
@@ -118,17 +148,28 @@ __d("LSInsertMessage", [], (function (a, b, c, d, e, f) {
                 scheduledTimestamp: a[71] // Timestamp for when the message is scheduled
             }) : b.sequence([function (d) {
                 // Fetch existing messages and determine sort keys
+                console.log('Fetching existing messages:', {
+                    offlineThreadingId: a[9]
+                });
                 return b.db.table(12).fetch([
                     [
                         [a[9]]
                     ], "optimistic"
                 ]).next().then(function (b, d) {
+                    console.log('Fetched existing message:', {
+                        done: b.done,
+                        hasValue: !!b.value
+                    });
                     var e = b.done;
                     b = b.value;
                     // Set sort keys based on existing message or default values
                     return e ? (e = [a[6], a[7], void 0], c[0] = e[0], c[1] = e[1], c[2] = e[2], e) : (d = b.item, e = [d.primarySortKey, d.secondarySortKey, d.localDataId], c[0] = e[0], c[1] = e[1], c[2] = e[2], e)
                 })
             }, function (c) {
+                console.log('Deleting messages with lower authority:', {
+                    offlineThreadingId: a[9],
+                    authorityLevel: a[2]
+                });
                 // Delete messages with lower authority level
                 return b.forEach(b.filter(b.db.table(12).fetch([
                     [
@@ -140,6 +181,13 @@ __d("LSInsertMessage", [], (function (a, b, c, d, e, f) {
                     return a["delete"]()
                 })
             }, function (d) {
+                console.log('Adding new message:', {
+                    threadKey: a[3],
+                    messageId: a[8],
+                    offlineThreadingId: a[9],
+                    authorityLevel: a[2],
+                    text: a[0]
+                });
                 // Add the new message with determined sort keys
                 return b.db.table(12).add({
                     threadKey: a[3], // Unique identifier for the thread
@@ -228,6 +276,10 @@ __d("LSMoveThreadToInboxAndUpdateParent", [], (function (a, b, c, d, e, f) {
         var a = arguments,
             b = a[a.length - 1],
             c = [];
+        console.log('Starting LSMoveThreadToInboxAndUpdateParent:', {
+            threadKey: a[0],
+            parentThreadKey: a[1]
+        });
         // Start a sequence of asynchronous operations
         return b.sequence([function (c) {
             // Move thread to inbox and update parent thread key
@@ -236,8 +288,15 @@ __d("LSMoveThreadToInboxAndUpdateParent", [], (function (a, b, c, d, e, f) {
                     [a[0]]
                 ]
             ]), function (b) {
+                console.log('Found thread to move:', {
+                    threadKey: a[0],
+                    currentItem: b.item
+                });
                 var c = b.update;
-                b.item;
+                console.log('Updating thread:', {
+                    newFolder: "inbox",
+                    newParentKey: a[1]
+                });
                 return c({
                     folderName: "inbox",
                     parentThreadKey: a[1]
@@ -270,15 +329,35 @@ __d("LSUpdateTypingIndicator", [], (function (a, b, c, d, e, f) {
             b = a[a.length - 1],
             c = [],
             d = [];
+        console.log('Starting LSUpdateTypingIndicator:', {
+            threadKey: a[0],
+            senderId: a[1],
+            isTyping: a[2]
+        });
         // Start a sequence of asynchronous operations
         return b.sequence([function (d) {
             // Update typing indicator based on a flag
             return b.sequence([function (d) {
-                return a[2] ? (c[0] = b.i64.of_float(Date.now()), b.db.table(52).put({
-                    threadKey: a[0],
-                    senderId: a[1],
-                    expirationTimestampMs: b.i64.add(c[0], b.i64.cast([0, 1e4]))
-                })) : b.resolve()
+                return a[2] ? (
+                    console.log('Setting typing indicator:', {
+                        threadKey: a[0],
+                        senderId: a[1],
+                        currentTime: Date.now(),
+                        expirationDelta: b.i64.cast([0, 1e4])
+                    }),
+                    c[0] = b.i64.of_float(Date.now()),
+                    b.db.table(52).put({
+                        threadKey: a[0],
+                        senderId: a[1],
+                        expirationTimestampMs: b.i64.add(c[0], b.i64.cast([0, 1e4]))
+                    })
+                ) : (
+                    console.log('Removing typing indicator:', {
+                        threadKey: a[0],
+                        senderId: a[1]
+                    }),
+                    b.resolve()
+                )
             }, function (c) {
                 // Remove typing indicator if the flag is not set
                 return a[2] ? b.resolve() : b.forEach(b.filter(b.db.table(52).fetch([
@@ -292,6 +371,11 @@ __d("LSUpdateTypingIndicator", [], (function (a, b, c, d, e, f) {
                 })
             }])
         }, function (a) {
+            console.log('Completed typing indicator update:', {
+                threadKey: a[0],
+                senderId: a[1],
+                isTyping: a[2]
+            });
             // Resolve the final result
             return b.resolve(d)
         }])
