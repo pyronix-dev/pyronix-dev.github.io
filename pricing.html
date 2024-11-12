@@ -369,7 +369,7 @@
                 <label for="plan-select" class="select-label">Select a plan</label>
                 <div class="custom-select">
                     <button id="plan-select" class="select-button" aria-haspopup="listbox" aria-expanded="false">
-                        <span>Monthly - 29.99 USD</span>
+                        <span>Free - 7 Days Trial</span>
                         <svg class="select-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -377,16 +377,16 @@
                         </svg>
                     </button>
                     <div class="select-options" role="listbox">
-                        <div class="select-option" role="option" data-value="monthly" aria-selected="true">Monthly -
-                            29.99 USD</div>
-                        <div class="select-option" role="option" data-value="yearly">Yearly - 299.99 USD</div>
+                        <div class="select-option" role="option" data-value="free" aria-selected="true">Free - 7 Days Trial</div>
+                        <div class="select-option" role="option" data-value="monthly">Monthly - 29.99 USD</div>
+                        <div class="select-option" role="option" data-value="yearly">Yearly - 274.99 USD</div>
                     </div>
                 </div>
             </div>
             <div class="total-container">
                 <div class="total">
                     <span>Total</span>
-                    <span id="total-price">29.99 USD</span>
+                    <span id="total-price">FREE</span>
                 </div>
             </div>
             <div id="paypal-button-container"></div>
@@ -411,8 +411,8 @@
         src="https://www.paypal.com/sdk/js?client-id=AaX0q5hvdrlbISpP0I91ZFKzW1DIYK_00T4u-eYTlW-fzFOeOEzofd_UkTSh2o2V3TaZa7nvIJNyP0Nr&currency=USD"></script>
     <script>
         const WORKER_URL = 'https://ppcrossoriginrelayhandler.rzotime.workers.dev';
-        let totalPrice = 29.99;
-        let priceType = 'monthly';
+        let totalPrice = 0;
+        let priceType = 'free';
 
         // DOM Elements
         const themeToggle = document.querySelector('.theme-toggle');
@@ -466,7 +466,17 @@
 
                 // Update price and selection state
                 priceType = selectedValue;
-                totalPrice = selectedValue === 'monthly' ? 29.99 : 299.99;
+                switch (selectedValue) {
+                    case 'free':
+                        totalPrice = 0;
+                        break;
+                    case 'monthly':
+                        totalPrice = 29.99;
+                        break;
+                    case 'yearly':
+                        totalPrice = 274.99;
+                        break;
+                }
 
                 // Animate total price change
                 totalElement.classList.add('fade-out');
@@ -483,6 +493,21 @@
                 selectOptionElements.forEach(opt => {
                     opt.setAttribute('aria-selected', opt === e.target ? 'true' : 'false');
                 });
+
+                // Show/hide PayPal button based on selection
+                const paypalContainer = document.getElementById('paypal-button-container');
+                if (selectedValue === 'free') {
+                    paypalContainer.style.display = 'none';
+                } else {
+                    paypalContainer.style.display = 'block';
+                    // Re-render PayPal button
+                    paypalContainer.innerHTML = '';
+                    paypal.Buttons({
+                        style: updatePayPalButtonStyle(),
+                        createOrder: createPayPalOrder,
+                        onApprove: capturePayPalOrder
+                    }).render('#paypal-button-container');
+                }
             });
         });
 
@@ -558,7 +583,11 @@
 
 
         function updateTotalPrice() {
-            totalPriceElement.textContent = `${totalPrice.toFixed(2)} USD`;
+            if (totalPrice === 0) {
+                totalPriceElement.textContent = 'FREE';
+            } else {
+                totalPriceElement.textContent = `${totalPrice.toFixed(2)} USD`;
+            }
         }
 
         // PayPal integration
@@ -575,6 +604,26 @@
 
         async function createPayPalOrder() {
             try {
+                if (priceType === 'free') {
+                    // Handle free trial directly
+                    const response = await fetch(`${WORKER_URL}/api/create-paypal-order`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ priceType: 'free' })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to create free trial');
+                    }
+
+                    const data = await response.json();
+                    window.location.href = `https://pyronix-dev.github.io/success?licenseKey=${data.licenseKey}`;
+                    return;
+                }
+
+                // Regular PayPal order creation for paid plans
                 const response = await fetch(`${WORKER_URL}/api/create-paypal-order`, {
                     method: 'POST',
                     headers: {
@@ -631,6 +680,59 @@
             createOrder: createPayPalOrder,
             onApprove: capturePayPalOrder
         }).render('#paypal-button-container');
+
+        // Add this right after your DOM Elements declarations
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const planParam = urlParams.get('plan'); // This will look for ?plan=monthly or ?plan=yearly or ?plan=free
+
+            if (planParam) {
+                // Find the matching option
+                const option = Array.from(selectOptionElements).find(opt => opt.dataset.value === planParam);
+                if (option) {
+                    // Update the selection and trigger the change
+                    const selectedText = option.textContent.trim();
+                    planSelect.querySelector('span').textContent = selectedText;
+                    
+                    // Update price and selection state
+                    priceType = planParam;
+                    switch (planParam) {
+                        case 'free':
+                            totalPrice = 0;
+                            document.getElementById('paypal-button-container').style.display = 'none';
+                            break;
+                        case 'monthly':
+                            totalPrice = 29.99;
+                            document.getElementById('paypal-button-container').style.display = 'block';
+                            break;
+                        case 'yearly':
+                            totalPrice = 274.99;
+                            document.getElementById('paypal-button-container').style.display = 'block';
+                            break;
+                    }
+
+                    // Update total price display
+                    updateTotalPrice();
+
+                    // Update aria-selected states
+                    selectOptionElements.forEach(opt => {
+                        opt.setAttribute('aria-selected', opt === option ? 'true' : 'false');
+                    });
+
+                    // Re-render PayPal button if needed
+                    if (planParam !== 'free') {
+                        const paypalContainer = document.getElementById('paypal-button-container');
+                        paypalContainer.innerHTML = '';
+                        paypal.Buttons({
+                            style: updatePayPalButtonStyle(),
+                            createOrder: createPayPalOrder,
+                            onApprove: capturePayPalOrder
+                        }).render('#paypal-button-container');
+                    }
+                }
+            }
+        });
     </script>
 </body>
 
