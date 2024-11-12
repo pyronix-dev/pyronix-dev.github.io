@@ -5,20 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="HandheldFriendly" content="true">
-    <title>Ephemeral Media Viewer</title>
+    <title>Pyronix</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAAABmJLR0QA/wD/AP+gvaeTAAAF+klEQVR4nO3dv45kRxnG4a9O98wAi7U3QAKyZUNKhLgDAhNgXwEpkrV3wB3wJ7MlbmCNEJa4AQIyE6I1ZiJEgERmdi08O6eLYCUydqVTffZ09/s8gbM6VaOe+c0eS19NFQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAsJa29QFW9f7j66/N//pq62Nwrvrdf373s5utT7GmaesDANsRAAgmABBMACCYAEAwAYBgAgDBBACCCQAEEwAIJgAQTAAgmABAMAGAYPutD3DqpnbZE9OXrFev3rc+xWk77e/ujef5b/ZTPfnFu1ttz6Dnh15vf/DJhic4/fsEvAJAMAGAYAIAwQQAggkABBMACCYAEEwAIJgAQDABgGACAMEEAIIJAAQTAAh28fcB3OyXN+5qP9V8MFB+rub5UFe7gYn3/mKk+JKtex/AxvP8U2t1++sfL14/H3q9tek8OSP2u6k+/+Xy+xwS7hPwCgDBBACCCQAEEwAIJgAQTAAgmABAMAGAYAIAwQQAggkA62llIB8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIj1X7QmA+KVN3fRAAAAAElFTkSuQmCC">
+    <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAAABmJLR0QA/wD/AP+gvaeTAAAF+klEQVR4nO3dv45kRxnG4a9O98wAi7U3QAKyZUNKhLgDAhNgXwEpkrV3wB3wJ7MlbmCNEJa4AQIyE6I1ZiJEgERmdi08O6eLYCUydqVTffZ09/s8gbM6VaOe+c0eS19NFQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAsJa29QFW9f7j66/N//pq62Nwrvrdf373s5utT7GmaesDANsRAAgmABBMACCYAEAwAYBgAgDBBACCCQAEEwAIJgAQTAAgmABAMAGAYPutD3DqpnbZE9OXrFev3rc+xWk77e/ujef5b/ZTPfnFu1ttz6Dnh15vf/DJhic4/fsEvAJAMAGAYAIAwQQAggkABBMACCYAEEwAIJgAQDABgGACAMEEAIIJAAQTAAh28fcB3OyXN+5qP9V8MFB+rub5UFe7gYn3/mKk+JKtex/AxvP8U2t1++sfL14/H3q9tek8OSP2u6k+/+Xy+xwS7hPwCgDBBACCCQAEEwAIJgAQTAAgmABAMAGAYAIAwQQAggkA62llIB8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIj1X7QmA+KVN3fRAAAAAElFTkSuQmCC">
     <style>
         /* Base styles */
         :root {
             --background: #ffffff;
             --foreground: #000000;
-            --primary: #7c3aed;
+            --primary: #003B8E;         /* Deep blue from icon */
             --primary-foreground: #ffffff;
             --muted: #f4f4f5;
             --muted-foreground: #71717a;
-            --primary-blue: #0077BE;
-            --primary-green: #2ECC71;
-            --accent-orange: #F39C12;
-            --accent-yellow: #F1C40F;
+            --primary-blue: #003B8E;    /* Deep blue */
+            --accent-orange: #F77F00;   /* Orange from icon */
+            --secondary-orange: #FCBF49; /* Lighter orange from icon */
             --neutral-gray: #ECF0F1;
         }
 
@@ -130,10 +131,16 @@
         }
 
         .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            display: flex;
             gap: 1.5rem;
-            padding: 4rem 0;
+            padding: 0 1.5rem;
+            animation: slideFeatures 12s linear infinite;
+            width: fit-content;
+            transition: animation-duration 0.3s ease;
+        }
+
+        .features:hover {
+            animation-play-state: paused;
         }
 
         .pricing {
@@ -493,14 +500,13 @@
         :root {
             --background: #ffffff;
             --foreground: #000000;
-            --primary: #7c3aed;
+            --primary: #003B8E;         /* Deep blue from icon */
             --primary-foreground: #ffffff;
             --muted: #f4f4f5;
             --muted-foreground: #71717a;
-            --primary-blue: #0077BE;
-            --primary-green: #2ECC71;
-            --accent-orange: #F39C12;
-            --accent-yellow: #F1C40F;
+            --primary-blue: #003B8E;    /* Deep blue */
+            --accent-orange: #F77F00;   /* Orange from icon */
+            --secondary-orange: #FCBF49; /* Lighter orange from icon */
             --neutral-gray: #ECF0F1;
         }
 
@@ -509,14 +515,13 @@
             :root {
                 --background: #09090b;
                 --foreground: #ffffff;
-                --primary: #7c3aed;
+                --primary: #003B8E;     /* Keep consistent blue */
                 --primary-foreground: #ffffff;
                 --muted: #27272a;
                 --muted-foreground: #a1a1aa;
-                --primary-blue: #60a5fa;
-                --primary-green: #4ade80;
-                --accent-orange: #fb923c;
-                --accent-yellow: #fbbf24;
+                --primary-blue: #003B8E; /* Deep blue */
+                --accent-orange: #F77F00; /* Orange */
+                --secondary-orange: #FCBF49; /* Lighter orange */
                 --neutral-gray: #3f3f46;
             }
 
@@ -622,6 +627,276 @@
                 max-width: 350px;
             }
         }
+
+        /* Footer social icons hover effect */
+        .footer-social a {
+            background: var(--muted) !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .footer-social a:hover {
+            background: var(--primary) !important;
+            transform: scale(1.1);
+        }
+
+        .footer-social svg {
+            transition: all 0.2s ease;
+        }
+
+        .footer-social a:hover svg {
+            fill: var(--primary-foreground) !important;
+        }
+
+        /* Footer links hover effect */
+        nav a {
+            color: var(--muted-foreground) !important;
+            transition: all 0.2s ease !important;
+            text-decoration: none !important;
+        }
+
+        nav a:hover {
+            color: var(--primary) !important;
+            transform: translateY(-1px);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            line-height: 1.2;
+            margin: 0;
+        }
+
+        .feature-description {
+            color: var(--muted-foreground);
+            font-size: 1rem;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        .feature-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: auto;
+        }
+
+        .feature-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .feature-card {
+                border-color: rgba(255, 255, 255, 0.1);
+            }
+        }
+
+        .features-container {
+            width: 100%;
+            overflow: hidden;
+            padding: 1rem 0;
+        }
+
+        .features-container + .features-container {
+            margin-top: -1rem;
+        }
+
+        @media (max-width: 1400px) {
+            .features,
+            .features-reverse {
+                animation-duration: 8s;
+            }
+        }
+
+        /* Second container (moving left to right) */
+        .features-reverse {
+            display: flex;
+            gap: 1.5rem;
+            padding: 0 1.5rem;
+            animation: slideFeatures-reverse 12s linear infinite;
+            width: fit-content;
+            transition: animation-duration 0.3s ease;
+            justify-content: flex-end; /* Align to the right side */
+        }
+
+        @keyframes slideFeatures-reverse {
+            0% {
+                transform: translateX(-50%);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .features-reverse:hover {
+            animation-play-state: paused;
+        }
+
+        .feature-card {
+            background: var(--background);
+            border-radius: 24px;
+            padding: 1.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: relative;
+            overflow: hidden;
+            width: 400px;
+            flex-shrink: 0;
+            height: 200px;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            line-height: 1.2;
+            margin: 0;
+        }
+
+        .feature-description {
+            color: var(--muted-foreground);
+            font-size: 1rem;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        .feature-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: auto;
+        }
+
+        .feature-link:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes slideFeatures {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* Clone the features for seamless loop */
+        .features-wrapper {
+            display: flex;
+            gap: 2rem;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .feature-card {
+                border-color: rgba(255, 255, 255, 0.1);
+            }
+        }
+
+        @media (max-width: 1400px) {
+            .features-reverse {
+                animation: slideFeatures-reverse 8s linear infinite;
+            }
+        }
+
+        .features-container {
+            width: 100%;
+            overflow: hidden;
+            padding: 1rem 0;
+        }
+
+        .features-container + .features-container {
+            margin-top: -1rem;
+        }
+
+        @media (max-width: 1400px) {
+            .features,
+            .features-reverse {
+                animation-duration: 8s;
+            }
+        }
+
+        /* Add these new footer mobile styles */
+        @media screen and (max-width: 768px) {
+            footer nav {
+                flex-direction: column !important;
+                gap: 2rem !important;
+                padding: 0 1rem !important;
+            }
+
+            footer .container > div:last-child {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+                padding: 0 1rem;
+            }
+
+            footer .container > div:last-child > div {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            /* Adjust spacing for footer sections */
+            footer nav > div {
+                width: 100%;
+                text-align: center;
+            }
+
+            /* Center align the "Made with love" section */
+            footer nav > div:first-child {
+                justify-content: center;
+            }
+
+            /* Adjust heading margins */
+            footer h4 {
+                margin-bottom: 0.5rem !important;
+            }
+
+            /* Adjust link spacing */
+            footer nav > div > div {
+                gap: 0.5rem !important;
+            }
+
+            /* Bottom section adjustments */
+            footer .container > div:last-child span,
+            footer .container > div:last-child div {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        /* Add specific dark mode footer adjustments */
+        @media (prefers-color-scheme: dark) {
+            footer {
+                background-color: #09090b !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .fade-in {
+                text-align: center;
+                width: 100%;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
     </style>
 </head>
 
@@ -692,76 +967,315 @@
                 </div>
                 <div class="users-badge">
                     <span class="online-indicator"></span>
-                    10k+ Active Users
+                    <span id="counter">0</span>k+ Active Users
                 </div>
             </div>
         </section>
 
-        <section class="features">
-            <div class="card slide-in-left">
-                <div
-                    style="width: 3rem; height: 3rem; background-color: rgba(124, 58, 237, 0.1); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="lucide lucide-clock" style="color: var(--primary);">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
+        <section class="features-container">
+            <div class="features">
+                <div class="features-wrapper">
+                    <!-- Original set of cards -->
+                    <div class="feature-card">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                            <h3 class="feature-title">24-Hour Access Window</h3>
+                        </div>
+                        <p class="feature-description">Reopen 'Allow Reply' media within 24 hours of first viewing, even after closing Instagram.</p>
+                        <a href="#" class="feature-link">
+                            Learn more
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1rem; height: 1rem;">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="feature-card">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <h3 class="feature-title">Extended View Once</h3>
+                        </div>
+                        <p class="feature-description">Keep 'View Once' media accessible for 2 hours instead of disappearing instantly.</p>
+                        <a href="#" class="feature-link">
+                            Learn more
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1rem; height: 1rem;">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="feature-card">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-lightning-charge" viewBox="0 0 16 16">
+                                <path d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09zM4.157 8.5H7a.5.5 0 0 1 .478.647L6.11 13.59l5.732-6.09H9a.5.5 0 0 1-.478-.647L9.89 2.41z"/>
+                            </svg>
+                            <h3 class="feature-title">Simple & Fast</h3>
+                        </div>
+                        <p class="feature-description">Just one click to view any ephemeral media - works instantly with no setup needed.</p>
+                        <a href="#" class="feature-link">
+                            Learn more
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1rem; height: 1rem;">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="feature-card">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-cloud-arrow-up" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708z"/>
+                                <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383m.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z"/>
+                            </svg>
+                            <h3 class="feature-title">Future Storage</h3>
+                        </div>
+                        <p class="feature-description">Soon: Save media to secure storage if accessed within the time window.</p>
+                        <a href="#" class="feature-link">
+                            Learn more
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1rem; height: 1rem;">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
-                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Extended Reply Media Access</h3>
-                <p style="color: var(--muted-foreground);">
-                    View reply media for a full 24 hours, not just the standard two hours
-                </p>
-                <div style="margin-top: 1rem; color: var(--primary); font-size: 0.875rem;">24 Hours Access</div>
+
+                <!-- Duplicate set of cards for seamless loop -->
+                <div class="features-wrapper">
+                    <!-- Exact duplicate of the cards above -->
+                    <div class="feature-card">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                            <h3 class="feature-title">24-Hour Access Window</h3>
+                        </div>
+                        <p class="feature-description">Reopen 'Allow Reply' media within 24 hours of first viewing, even after closing Instagram.</p>
+                        <a href="#" class="feature-link">
+                            Learn more
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1rem; height: 1rem;">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="feature-card">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <h3 class="feature-title">Extended View Once</h3>
+                        </div>
+                        <p class="feature-description">Keep 'View Once' media accessible for 2 hours instead of disappearing instantly.</p>
+                        <a href="#" class="feature-link">
+                            Learn more
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1rem; height: 1rem;">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="feature-card">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-lightning-charge" viewBox="0 0 16 16">
+                                <path d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09zM4.157 8.5H7a.5.5 0 0 1 .478.647L6.11 13.59l5.732-6.09H9a.5.5 0 0 1-.478-.647L9.89 2.41z"/>
+                            </svg>
+                            <h3 class="feature-title">Simple & Fast</h3>
+                        </div>
+                        <p class="feature-description">Just one click to view any ephemeral media - works instantly with no setup needed.</p>
+                        <a href="#" class="feature-link">
+                            Learn more
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1rem; height: 1rem;">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="feature-card">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-cloud-arrow-up" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708z"/>
+                                <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383m.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z"/>
+                            </svg>
+                            <h3 class="feature-title">Future Storage</h3>
+                        </div>
+                        <p class="feature-description">Soon: Save media to secure storage if accessed within the time window.</p>
+                        <a href="#" class="feature-link">
+                            Learn more
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1rem; height: 1rem;">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div class="card slide-in-left" style="transition-delay: 0.2s">
-                <div
-                    style="width: 3rem; height: 3rem; background-color: rgba(124, 58, 237, 0.1); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="lucide lucide-eye" style="color: var(--primary);">
-                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
+        </section>
+
+        <section class="features-container">
+            <div class="features features-reverse">
+                <div class="features-wrapper">
+                    <!-- First set of cards -->
+                    <div class="feature-card">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <h3 class="feature-title">Customize your viewing experience</h3>
+                        </div>
+                        <p class="feature-description">Personalize settings and preferences to match your unique viewing style and needs.</p>
+                        <a href="#" class="feature-link">
+                            Learn more
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1rem; height: 1rem;">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="feature-card">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-shield" viewBox="0 0 16 16">
+                                <path d="M5.338 1.59a61 61 0 0 0-2.837.856.48.48 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.7 10.7 0 0 0 2.287 2.233c.346.244.652.42.893.533q.18.085.293.118a1 1 0 0 0 .101.025 1 1 0 0 0 .1-.025q.114-.034.294-.118c.24-.113.547-.29.893-.533a10.7 10.7 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.531 1.067 8 1.067c-.53 0-1.552.223-2.662.524zM5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.8 11.8 0 0 1-2.517 2.453 7 7 0 0 1-1.048.625c-.28.132-.581.24-.829.24s-.548-.108-.829-.24a7 7 0 0 1-1.048-.625 11.8 11.8 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 63 63 0 0 1 5.072.56"/>
+                            </svg>
+                            <h3 class="feature-title">Enhanced Privacy Controls</h3>
+                        </div>
+                        <p class="feature-description">Take control of your data with advanced privacy settings and secure viewing options.</p>
+                        <a href="#" class="feature-link">
+                            Learn more
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1rem; height: 1rem;">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="feature-card">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                            <h3 class="feature-title">Smart notifications</h3>
+                        </div>
+                        <p class="feature-description">Stay informed with intelligent alerts about important content and updates.</p>
+                        <a href="#" class="feature-link">
+                            Learn more
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1rem; height: 1rem;">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="feature-card">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                            <h3 class="feature-title">Cross-platform sync</h3>
+                        </div>
+                        <p class="feature-description">Seamlessly sync your preferences and content across all your devices.</p>
+                        <a href="#" class="feature-link">
+                            Learn more
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1rem; height: 1rem;">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
-                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">View Once Media Extended</h3>
-                <p style="color: var(--muted-foreground);">
-                    Keep "view once" media accessible for 7 hours after opening, perfect for important content
-                </p>
-                <div style="margin-top: 1rem; color: var(--primary); font-size: 0.875rem;">2 Hours Access</div>
-            </div>
-            <div class="card slide-in-right" style="transition-delay: 0.4s">
-                <div
-                    style="width: 3rem; height: 3rem; background-color: rgba(124, 58, 237, 0.1); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="lucide lucide-mouse-pointer-click" style="color: var(--primary);">
-                        <path d="m9 9 5 12 1.774-5.226L21 14 9 9z"></path>
-                        <path d="m16.071 16.071 4.243 4.243"></path>
-                        <path
-                            d="m7.188 2.239.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656-2.12 2.122">
-                        </path>
-                    </svg>
+
+                <!-- Duplicate set for seamless loop -->
+                <div class="features-wrapper">
+                    <!-- Duplicate the same cards here -->
+                    <div class="feature-card">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <h3 class="feature-title">Customize your viewing experience</h3>
+                        </div>
+                        <p class="feature-description">Personalize settings and preferences to match your unique viewing style and needs.</p>
+                        <a href="#" class="feature-link">
+                            Learn more
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1rem; height: 1rem;">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="feature-card">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                            <h3 class="feature-title">Enhanced privacy controls</h3>
+                        </div>
+                        <p class="feature-description">Take control of your data with advanced privacy settings and secure viewing options.</p>
+                        <a href="#" class="feature-link">
+                            Learn more
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1rem; height: 1rem;">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="feature-card">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                            <h3 class="feature-title">Smart notifications</h3>
+                        </div>
+                        <p class="feature-description">Stay informed with intelligent alerts about important content and updates.</p>
+                        <a href="#" class="feature-link">
+                            Learn more
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1rem; height: 1rem;">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="feature-card">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                            <h3 class="feature-title">Cross-platform sync</h3>
+                        </div>
+                        <p class="feature-description">Seamlessly sync your preferences and content across all your devices.</p>
+                        <a href="#" class="feature-link">
+                            Learn more
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1rem; height: 1rem;">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
-                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Smart Preview</h3>
-                <p style="color: var(--muted-foreground);">
-                    Preview media without triggering the view counter. Make informed decisions before opening content.
-                </p>
-                <div style="margin-top: 1rem; color: var(--primary); font-size: 0.875rem;">Preview Mode</div>
-            </div>
-            <div class="card slide-in-right" style="transition-delay: 0.6s">
-                <div
-                    style="width: 3rem; height: 3rem; background-color: rgba(124, 58, 237, 0.1); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="lucide lucide-zap" style="color: var(--primary);">
-                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                    </svg>
-                </div>
-                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Instant Access</h3>
-                <p style="color: var(--muted-foreground);">
-                    One-click operation directly in Firefox. No complicated setup required.
-                </p>
             </div>
         </section>
 
@@ -957,49 +1471,85 @@
             </div>
         </section>
 
-        <footer>
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 2.5rem; padding: 3rem 0;">
-                <!-- Social Icons -->
-                <div style="display: flex; gap: 1.5rem;">
-                    <!-- X (Twitter) -->
-                    <a href="#" style="background: #222; border-radius: 8px; padding: 8px; display: flex; align-items: center; justify-content: center;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 16 16">
-                            <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"></path>
-                        </svg>
-                    </a>
-                    <!-- TikTok -->
-                    <a href="#" style="background: #222; border-radius: 8px; padding: 8px; display: flex; align-items: center; justify-content: center;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 16 16">
-                            <path d="M9 0h1.98c.144.715.54 1.617 1.235 2.512C12.895 3.389 13.797 4 15 4v2c-1.753 0-3.07-.814-4-1.829V11a5 5 0 1 1-5-5v2a3 3 0 1 0 3 3z"></path>
-                        </svg>
-                    </a>
-                    <!-- Instagram -->
-                    <a href="#" style="background: #222; border-radius: 8px; padding: 8px; display: flex; align-items: center; justify-content: center;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 16 16">
-                            <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"></path>
-                        </svg>
-                    </a>
-                    <!-- GitHub -->
-                    <a href="#" style="background: #222; border-radius: 8px; padding: 8px; display: flex; align-items: center; justify-content: center;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 24 24">
-                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path>
-                        </svg>
-                    </a>
-                </div>
+        <footer style="background-color: #09090b; padding: 2rem 0;">
+            <div class="container">
+                <!-- Main footer content in one horizontal line -->
+                <nav style="
+                    display: flex; 
+                    justify-content: flex-start; 
+                    gap: 8rem; 
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    padding: 0 2rem;
+                ">
+                    <!-- Made with love - Now inline with other sections -->
+                    <div style="
+                        color: #71717a; 
+                        font-size: 1.1rem;
+                        display: flex;
+                        align-items: center;
+                    ">
+                        Made with 💜 on 🌍
+                    </div>
 
-                <!-- Navigation Links -->
-                <nav style="display: flex; gap: 2rem;">
-                    <a href="#" style="color: var(--muted-foreground); text-decoration: none;">Privacy Policy</a>
-                    <a href="#" style="color: var(--muted-foreground); text-decoration: none;">Terms of Service</a>
-                    <a href="#" style="color: var(--muted-foreground); text-decoration: none;">Support</a>
-                    <a href="#" style="color: var(--muted-foreground); text-decoration: none;">Legal</a>
-                    <a href="#" style="color: var(--muted-foreground); text-decoration: none;">FAQ</a>
+                    <!-- Company -->
+                    <div>
+                        <h4 style="color: #fff; margin-bottom: 1rem; font-size: 0.875rem; font-weight: 600;">COMPANY</h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <a href="/careers" style="color: #71717a; text-decoration: none; transition: color 0.2s;">Careers</a>
+                            <a href="/customers" style="color: #71717a; text-decoration: none; transition: color 0.2s;">Customers</a>
+                            <a href="/media-kit" style="color: #71717a; text-decoration: none; transition: color 0.2s;">Media kit</a>
+                            <a href="/newsroom" style="color: #71717a; text-decoration: none; transition: color 0.2s;">Newsroom</a>
+                        </div>
+                    </div>
 
+                    <!-- Product -->
+                    <div>
+                        <h4 style="color: #fff; margin-bottom: 1rem; font-size: 0.875rem; font-weight: 600;">PRODUCT</h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <a href="/notebooks" style="color: #71717a; text-decoration: none; transition: color 0.2s;">Notebooks</a>
+                            <a href="/explore" style="color: #71717a; text-decoration: none; transition: color 0.2s;">Explore</a>
+                            <a href="/hex-magic" style="color: #71717a; text-decoration: none; transition: color 0.2s;">Hex Magic</a>
+                            <a href="/enterprise" style="color: #71717a; text-decoration: none; transition: color 0.2s;">Enterprise</a>
+                            <a href="/pricing" style="color: #71717a; text-decoration: none; transition: color 0.2s;">Pricing</a>
+                        </div>
+                    </div>
+
+                    <!-- Resources -->
+                    <div>
+                        <h4 style="color: #fff; margin-bottom: 1rem; font-size: 0.875rem; font-weight: 600;">RESOURCES</h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <a href="/blog" style="color: #71717a; text-decoration: none; transition: color 0.2s;">Blog</a>
+                            <a href="/docs" style="color: #71717a; text-decoration: none; transition: color 0.2s;">Docs</a>
+                            <a href="/quickstart" style="color: #71717a; text-decoration: none; transition: color 0.2s;">Quickstart</a>
+                            <a href="/resources" style="color: #71717a; text-decoration: none; transition: color 0.2s;">Resources</a>
+                            <a href="/templates" style="color: #71717a; text-decoration: none; transition: color 0.2s;">Templates</a>
+                        </div>
+                    </div>
+
+                    <!-- Contact -->
+                    <div>
+                        <h4 style="color: #fff; margin-bottom: 1rem; font-size: 0.875rem; font-weight: 600;">CONTACT</h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <a href="/support" style="color: #71717a; text-decoration: none; transition: color 0.2s;">Support</a>
+                            <a href="/sales" style="color: #71717a; text-decoration: none; transition: color 0.2s;">Sales</a>
+                            <a href="https://twitter.com" style="color: #71717a; text-decoration: none; transition: color 0.2s;">Twitter</a>
+                            <a href="mailto:contact@example.com" style="color: #71717a; text-decoration: none; transition: color 0.2s;">Email us</a>
+                        </div>
+                    </div>
                 </nav>
 
-                <!-- Copyright -->
-                <div style="color: var(--muted-foreground); font-size: 0.875rem;">
-                    © 2024 All rights reserved.
+                <!-- Bottom links -->
+                <div style="border-top: 1px solid #27272a; padding-top: 2rem; margin-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: #71717a;">© 2024 Hex Technologies, Inc.</span>
+                        <div style="display: flex; gap: 2rem;">
+                            <a href="/privacy" style="color: #71717a; text-decoration: none; transition: color 0.2s;">Privacy Policy</a>
+                            <a href="/terms" style="color: #71717a; text-decoration: none; transition: color 0.2s;">Terms & Conditions</a>
+                            <a href="/modern-slavery" style="color: #71717a; text-decoration: none; transition: color 0.2s;">Modern Slavery Statement</a>
+                        </div>
+                        <div style="color: #71717a; font-family: monospace;">3132980</div>
+                    </div>
                 </div>
             </div>
         </footer>
@@ -1130,12 +1680,13 @@
             });
         });
 
-        function animateValue(element, start, end, duration) {
+        function animateValue(obj, start, end, duration) {
             let startTimestamp = null;
             const step = (timestamp) => {
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                element.textContent = Math.floor(progress * (end - start) + start);
+                const currentValue = Math.floor(progress * (end - start) + start);
+                obj.innerHTML = currentValue + "k+";
                 if (progress < 1) {
                     window.requestAnimationFrame(step);
                 }
@@ -1147,7 +1698,7 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     if (entry.target.classList.contains('users-count')) {
-                        animateValue(entry.target, 0, 10, 1500); // Animate to 10k
+                        animateValue(entry.target, 0, 7, 1500);
                     }
                     numberObserver.unobserve(entry.target);
                 }
@@ -1157,7 +1708,21 @@
         document.querySelectorAll('.users-count').forEach((element) => {
             numberObserver.observe(element);
         });
+
+        const counter = document.getElementById('counter');
+        let count = 0;
+
+        function updateCounter() {
+            if (count < 7) {
+                count++;
+                counter.textContent = count;
+                setTimeout(updateCounter, 100); // Adjust speed here (200ms = 0.2 seconds)
+            }
+        }
+
+        // Start the animation when the page loads
+        document.addEventListener('DOMContentLoaded', updateCounter);
     </script>
 </body>
 
-</html>
+</html></html>
