@@ -1306,7 +1306,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round">
-                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7-7Z" />
                                 <circle cx="12" cy="12" r="3" />
                             </svg>
                             <h3 class="feature-title">Extended View Once</h3>
@@ -1402,7 +1402,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round">
-                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7-7Z" />
                                 <circle cx="12" cy="12" r="3" />
                             </svg>
                             <h3 class="feature-title">Extended View Once</h3>
@@ -2008,7 +2008,8 @@
                                 Policy</a>
                         </div>
                         <div style="color: #71717a; font-family: monospace;" id="visit-count">
-                            <span id="visits">0</span> visitors
+                            <!-- Simple Analytics count element -->
+                            <div data-sa-graph="visitors" data-sa-page-views></div>
                         </div>
                     </div>
                 </div>
@@ -2195,17 +2196,35 @@
         // Function to fetch and update visit count
         async function updateVisitCount() {
             try {
-                const response = await fetch('https://api.countapi.xyz/hit/pyronix-dev.github.io/visits');
+                const response = await fetch('https://api.countapi.xyz/hit/pyronix-dev.github.io');
                 const data = await response.json();
-                document.getElementById('visits').textContent = formatNumber(data.value);
+                
+                if(data && data.value) {
+                    document.getElementById('visits').textContent = formatNumber(data.value);
+                }
             } catch (error) {
                 console.error('Error updating visit count:', error);
+                // Fallback display if API fails
+                document.getElementById('visits').textContent = "—";
             }
         }
 
         // Call the function when the page loads
-        updateVisitCount();
+        window.addEventListener('load', updateVisitCount);
     </script>
+
+    <script>
+    function cb(response) {
+        // Format the number with commas
+        const formattedNumber = response.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        document.getElementById('visits').innerText = formattedNumber;
+    }
+    </script>
+    <script async src="https://api.countapi.xyz/hit/pyronix-dev.github.io/visits?callback=cb"></script>
+
+    <!-- Add Simple Analytics scripts -->
+    <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+    <noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt="" referrerpolicy="no-referrer-when-downgrade" /></noscript>
 </body>
 
 </html>
