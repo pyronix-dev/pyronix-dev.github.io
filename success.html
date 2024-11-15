@@ -485,8 +485,7 @@
             }
 
             .footer-dot {
-                display: none;
-                /* Hide dots on mobile */
+                display: none;  /* Hide dots on mobile */
             }
         }
 
@@ -590,7 +589,7 @@
             .license-key {
                 position: relative;
             }
-
+            
             .license-key::after {
                 content: 'Long press to copy';
                 position: absolute;
@@ -605,7 +604,7 @@
                 opacity: 0;
                 transition: opacity 0.3s ease;
             }
-
+            
             .license-key:active::after {
                 opacity: 1;
             }
@@ -637,25 +636,10 @@
         }
 
         @keyframes fadeInOut {
-            0% {
-                opacity: 0;
-                transform: translate(-50%, 10px);
-            }
-
-            20% {
-                opacity: 1;
-                transform: translate(-50%, 0);
-            }
-
-            80% {
-                opacity: 1;
-                transform: translate(-50%, 0);
-            }
-
-            100% {
-                opacity: 0;
-                transform: translate(-50%, -10px);
-            }
+            0% { opacity: 0; transform: translate(-50%, 10px); }
+            20% { opacity: 1; transform: translate(-50%, 0); }
+            80% { opacity: 1; transform: translate(-50%, 0); }
+            100% { opacity: 0; transform: translate(-50%, -10px); }
         }
 
         /* Show outline only on click and maintain it until mouse leaves */
@@ -746,8 +730,7 @@
             </a>
             <a href="#instagram" class="social-link" aria-label="Instagram">
                 <svg viewBox="0 0 16 16">
-                    <path
-                        d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334" />
+                    <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"/>
                 </svg>
             </a>
             <a href="https://github.com/pyronix-dev" class="social-link" aria-label="GitHub">
@@ -813,7 +796,7 @@
         // Purchase data handling
         async function fetchOrderDetails(orderId) {
             console.log(`[fetchOrderDetails] Fetching details for orderId: ${orderId}`);
-
+            
             try {
                 const response = await fetch(`${WORKER_URL}/api/get-order`, {
                     method: 'POST',
@@ -828,6 +811,7 @@
                 }
 
                 const data = await response.json();
+                console.log(`[fetchOrderDetails] Raw JSON data for orderId ${orderId}:`, JSON.stringify(data, null, 2));
                 console.log(`[fetchOrderDetails] Received data for orderId ${orderId}:`, data);
                 return data;
             } catch (error) {
@@ -839,101 +823,94 @@
         function displayPurchaseData(purchaseData) {
             const purchaseDetails = document.getElementById('purchase-details');
 
-            if (purchaseData && purchaseData.length > 0) {
-                // Filter for the entry with status "captured"
-                const capturedData = purchaseData.find(data => data.status === 'captured');
+            if (purchaseData && purchaseData.captureData) {
+                // Trigger confetti animation when purchase data loads successfully
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#00dc82', '#0ea5e9', '#6b7280']
+                });
 
-                if (capturedData) {
-                    // Trigger confetti animation when purchase data loads successfully
-                    confetti({
-                        particleCount: 100,
-                        spread: 70,
-                        origin: { y: 0.6 },
-                        colors: ['#00dc82', '#0ea5e9', '#6b7280']
-                    });
+                const capture = purchaseData.captureData.purchase_units[0]?.payments?.captures[0];
 
-                    const capture = capturedData.captureData;
-
-                    purchaseDetails.innerHTML = `
-                <div class="purchase-row">
-                    <span class="purchase-label">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="16" y1="2" x2="16" y2="6"></line>
-                            <line x1="8" y1="2" x2="8" y2="6"></line>
-                            <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
-                        Order ID
-                    </span>
-                    <span class="purchase-value">${capturedData.orderId || 'Unavailable'}</span>
-                </div>
-                <div class="purchase-row">
-                    <span class="purchase-label">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
-                            <path d="M9 12l2 2 4-4"></path>
-                        </svg>
-                        Status
-                    </span>
-                    <span class="purchase-value">${capturedData.status || 'N/A'}</span>
-                </div>
-                <div class="purchase-row">
-                    <span class="purchase-label">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="1" x2="12" y2="23"></line>
-                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                        </svg>
-                        Amount
-                    </span>
-                    <span class="purchase-value">${capture.amount.value} ${capture.amount.currency_code}</span>
-                </div>
-                <div class="purchase-row">
-                    <span class="purchase-label">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                        </svg>
-                        License Key
-                    </span>
-                    <span class="purchase-value license-key" role="button" tabindex="0" title="Click or long press to copy">${capturedData.licenseKey || 'N/A'}</span>
-                </div>
-                <div class="purchase-row">
-                    <span class="purchase-label">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        Payment Date
-                    </span>
-                    <span class="purchase-value">${new Date(capture.create_time).toLocaleString()}</span>
-                </div>
-            `;
-                } else {
-                    purchaseDetails.innerHTML = `<p>No captured data found.</p>`;
-                }
+                purchaseDetails.innerHTML = `
+                    <div class="purchase-row">
+                        <span class="purchase-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            Order ID
+                        </span>
+                        <span class="purchase-value">${purchaseData.captureData.id || 'Unavailable'}</span>
+                    </div>
+                    <div class="purchase-row">
+                        <span class="purchase-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                                <path d="M9 12l2 2 4-4"></path>
+                            </svg>
+                            Status
+                        </span>
+                        <span class="purchase-value">${purchaseData.captureData.status || 'N/A'}</span>
+                    </div>
+                    <div class="purchase-row">
+                        <span class="purchase-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            </svg>
+                            Amount
+                        </span>
+                        <span class="purchase-value">${capture.amount.value} ${capture.amount.currency_code}</span>
+                    </div>
+                    <div class="purchase-row">
+                        <span class="purchase-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            License Key
+                        </span>
+                        <span class="purchase-value license-key" role="button" tabindex="0" title="Click or long press to copy">${purchaseData.licenseKey || 'N/A'}</span>
+                    </div>
+                    <div class="purchase-row">
+                        <span class="purchase-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            Payment Date
+                        </span>
+                        <span class="purchase-value">${new Date(capture.create_time).toLocaleString()}</span>
+                    </div>
+                `;
             } else {
                 purchaseDetails.innerHTML = `
-            <div class="skeleton-row">
-                <div class="skeleton label"></div>
-                <div class="skeleton value"></div>
-            </div>
-            <div class="skeleton-row">
-                <div class="skeleton label"></div>
-                <div class="skeleton value"></div>
-            </div>
-            <div class="skeleton-row">
-                <div class="skeleton label"></div>
-                <div class="skeleton value"></div>
-            </div>
-            <div class="skeleton-row">
-                <div class="skeleton label"></div>
-                <div class="skeleton value"></div>
-            </div>
-            <div class="skeleton-row">
-                <div class="skeleton label"></div>
-                <div class="skeleton value"></div>
-            </div>
-        `;
+                    <div class="skeleton-row">
+                        <div class="skeleton label"></div>
+                        <div class="skeleton value"></div>
+                    </div>
+                    <div class="skeleton-row">
+                        <div class="skeleton label"></div>
+                        <div class="skeleton value"></div>
+                    </div>
+                    <div class="skeleton-row">
+                        <div class="skeleton label"></div>
+                        <div class="skeleton value"></div>
+                    </div>
+                    <div class="skeleton-row">
+                        <div class="skeleton label"></div>
+                        <div class="skeleton value"></div>
+                    </div>
+                    <div class="skeleton-row">
+                        <div class="skeleton label"></div>
+                        <div class="skeleton value"></div>
+                    </div>
+                `;
             }
         }
 
@@ -941,7 +918,7 @@
         function setupLicenseKeyCopy() {
             let longPressTimer;
             const licenseKey = document.querySelector('.license-key');
-
+            
             if (!licenseKey) return;
 
             // Copy function
@@ -949,18 +926,18 @@
                 const text = licenseKey.textContent;
                 try {
                     await navigator.clipboard.writeText(text);
-
+                    
                     // Add copied class for visual feedback
                     licenseKey.classList.add('copied');
-
+                    
                     // Remove the copied class when mouse leaves the element
                     const removecopied = () => {
                         licenseKey.classList.remove('copied');
                         licenseKey.removeEventListener('mouseleave', removecopied);
                     };
-
+                    
                     licenseKey.addEventListener('mouseleave', removecopied);
-
+                    
                 } catch (err) {
                     console.error('Failed to copy:', err);
                 }
