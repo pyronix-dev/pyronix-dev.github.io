@@ -196,6 +196,7 @@
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -316,6 +317,7 @@
                 opacity: 0;
                 transform: translateY(10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -330,6 +332,7 @@
             0% {
                 transform: rotate(0deg);
             }
+
             100% {
                 transform: rotate(360deg);
             }
@@ -377,7 +380,8 @@
                         </svg>
                     </button>
                     <div class="select-options" role="listbox">
-                        <div class="select-option" role="option" data-value="free" aria-selected="true">Free - 7 Days Trial</div>
+                        <div class="select-option" role="option" data-value="free" aria-selected="true">Free - 7 Days
+                            Trial</div>
                         <div class="select-option" role="option" data-value="monthly">Monthly - 9.99 USD</div>
                         <div class="select-option" role="option" data-value="yearly">Yearly - 99.99 USD</div>
                     </div>
@@ -657,8 +661,8 @@
                 });
 
                 if (!response.ok) {
-                    // Redirect to failed page if the response is not OK
-                    window.location.href = `https://pyronix-dev.github.io/failed?orderID=${data.orderID}`;
+                    // Show an alert if the response is not OK
+                    alert('Failed to capture order. Please try again.');
                     throw new Error('Failed to capture order');
                 }
 
@@ -669,8 +673,8 @@
                 window.location.href = `https://pyronix-dev.github.io/success?orderID=${data.orderID}`;
             } catch (error) {
                 console.error('Error:', error);
-                // Redirect to failed page on any error
-                window.location.href = `https://pyronix-dev.github.io/failed?orderID=${data.orderID}`;
+                // Show an alert on any error
+                alert('An error occurred during the payment process. Please try again.');
             }
         }
 
@@ -694,7 +698,7 @@
                     // Update the selection and trigger the change
                     const selectedText = option.textContent.trim();
                     planSelect.querySelector('span').textContent = selectedText;
-                    
+
                     // Update price and selection state
                     priceType = planParam;
                     switch (planParam) {
