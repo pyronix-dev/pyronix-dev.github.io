@@ -658,7 +658,7 @@
 
                 if (!response.ok) {
                     // Redirect to failed page if the response is not OK
-                    //window.location.href = `https://pyronix-dev.github.io/failed?orderID=${data.orderID}`;
+                    window.location.href = `https://pyronix-dev.github.io/failed?orderID=${data.orderID}`;
                     throw new Error('Failed to capture order');
                 }
 
