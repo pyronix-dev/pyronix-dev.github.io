@@ -470,6 +470,8 @@
 
                 // Update price and selection state
                 priceType = selectedValue;
+                console.log('Selected priceType:', priceType);
+
                 switch (selectedValue) {
                     case 'free':
                         totalPrice = 0;
@@ -608,26 +610,8 @@
 
         async function createPayPalOrder() {
             try {
-                if (priceType === 'free') {
-                    // Handle free trial directly
-                    const response = await fetch(`${WORKER_URL}/api/create-paypal-order`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ priceType: 'free' })
-                    });
+                console.log('Creating PayPal order with priceType:', priceType);
 
-                    if (!response.ok) {
-                        throw new Error('Failed to create free trial');
-                    }
-
-                    const data = await response.json();
-                    window.location.href = `https://pyronix-dev.github.io/success?licenseKey=${data.licenseKey}`;
-                    return;
-                }
-
-                // Regular PayPal order creation for paid plans
                 const response = await fetch(`${WORKER_URL}/api/create-paypal-order`, {
                     method: 'POST',
                     headers: {
