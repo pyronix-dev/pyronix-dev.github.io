@@ -604,6 +604,26 @@
 
         async function createPayPalOrder() {
             try {
+                if (priceType === 'free') {
+                    // Handle free trial directly
+                    const response = await fetch(`${WORKER_URL}/api/create-paypal-order`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ priceType: 'free' })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to create free trial');
+                    }
+
+                    const data = await response.json();
+                    window.location.href = `https://pyronix-dev.github.io/success?licenseKey=${data.licenseKey}`;
+                    return;
+                }
+
+                // Regular PayPal order creation for paid plans
                 const response = await fetch(`${WORKER_URL}/api/create-paypal-order`, {
                     method: 'POST',
                     headers: {
@@ -637,8 +657,8 @@
                 });
 
                 if (!response.ok) {
-                    // Redirect to failed page if the response is not OK
-                    window.location.href = `https://pyronix-dev.github.io/failed?orderID=${data.orderID}`;
+                    // Alert the user if the response is not OK
+                    alert('Failed to capture order. Please try again.');
                     throw new Error('Failed to capture order');
                 }
 
@@ -649,8 +669,8 @@
                 window.location.href = `https://pyronix-dev.github.io/success?orderID=${data.orderID}`;
             } catch (error) {
                 console.error('Error:', error);
-                // Redirect to failed page on any error
-                window.location.href = `https://pyronix-dev.github.io/failed?orderID=${data.orderID}`;
+                // Alert the user on any error
+                alert('An error occurred during the payment process. Please try again.');
             }
         }
 
