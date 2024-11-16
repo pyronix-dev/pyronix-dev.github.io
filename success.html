@@ -816,6 +816,7 @@ async function fetchOrderDetails(orderId) {
 }
 
 async function fetchLicenseDetails(licenseKey) {
+    console.log('[fetchLicenseDetails] Fetching license details for:', licenseKey);
     try {
         const response = await fetch(`${WORKER_URL}/api/verify-license`, {
             method: 'POST',
@@ -825,36 +826,37 @@ async function fetchLicenseDetails(licenseKey) {
             body: JSON.stringify({ licenseKey })
         });
 
+        console.log('[fetchLicenseDetails] Response status:', response.status);
+        
         if (!response.ok) {
+            console.error('[fetchLicenseDetails] Error response:', response);
             throw new Error('Failed to verify license');
         }
 
-        return await response.json();
+        const data = await response.json();
+        console.log('[fetchLicenseDetails] License data received:', data);
+        return data;
     } catch (error) {
+        console.error('[fetchLicenseDetails] Error:', error);
         return null;
     }
 }
 
 function displayPurchaseData(data, isLicenseKey = false) {
+    console.log('[displayPurchaseData] Displaying data:', { data, isLicenseKey });
     const purchaseDetails = document.getElementById('purchase-details');
 
     if (!purchaseDetails) {
+        console.error('[displayPurchaseData] Purchase details element not found');
         return;
     }
 
     if (data) {
-        // Trigger confetti animation when data loads successfully
-        confetti({
-            particleCount: 100,
-            spread: 70,
-            origin: { y: 0.6 },
-            colors: ['#00dc82', '#0ea5e9', '#6b7280']
-        });
-
         if (isLicenseKey && data.valid) {
-            // Display license verification data
+            console.log('[displayPurchaseData] Displaying license data:', data);
             const expiryDate = new Date(data.licenseData.created_at);
             expiryDate.setDate(expiryDate.getDate() + data.remainingDays);
+            console.log('[displayPurchaseData] Calculated expiry date:', expiryDate);
 
             purchaseDetails.innerHTML = `
                 <div class="purchase-row">
@@ -901,10 +903,11 @@ function displayPurchaseData(data, isLicenseKey = false) {
                 </div>
             `;
         } else if (data.captureData) {
-            // Display PayPal purchase data
+            console.log('[displayPurchaseData] Displaying PayPal purchase data:', data.captureData);
             const capture = data.captureData.purchase_units[0]?.payments?.captures[0];
 
             if (!capture) {
+                console.error('[displayPurchaseData] Capture data not found in response');
                 return;
             }
 
@@ -964,6 +967,7 @@ function displayPurchaseData(data, isLicenseKey = false) {
             `;
         }
     } else {
+        console.log('[displayPurchaseData] No data available, showing skeleton loader');
         purchaseDetails.innerHTML = `
             <div class="skeleton-row">
                 <div class="skeleton label"></div>
@@ -991,30 +995,32 @@ function displayPurchaseData(data, isLicenseKey = false) {
 
 // License key copy functionality
 function setupLicenseKeyCopy() {
+    console.log('[setupLicenseKeyCopy] Setting up copy functionality');
     let longPressTimer;
     const licenseKey = document.querySelector('.license-key');
 
-    if (!licenseKey) return;
+    if (!licenseKey) {
+        console.error('[setupLicenseKeyCopy] License key element not found');
+        return;
+    }
 
-    // Copy function
     const copyLicenseKey = async () => {
         const text = licenseKey.textContent;
+        console.log('[copyLicenseKey] Attempting to copy:', text);
         try {
             await navigator.clipboard.writeText(text);
-
-            // Add copied class for visual feedback
+            console.log('[copyLicenseKey] Successfully copied to clipboard');
             licenseKey.classList.add('copied');
 
-            // Remove the copied class when mouse leaves the element
             const removecopied = () => {
+                console.log('[copyLicenseKey] Removing copied class');
                 licenseKey.classList.remove('copied');
                 licenseKey.removeEventListener('mouseleave', removecopied);
             };
 
             licenseKey.addEventListener('mouseleave', removecopied);
-
         } catch (err) {
-            console.error('Failed to copy:', err);
+            console.error('[copyLicenseKey] Failed to copy:', err);
         }
     };
 
@@ -1037,20 +1043,29 @@ function setupLicenseKeyCopy() {
 
 // Initialize
 window.addEventListener('DOMContentLoaded', async () => {
+    console.log('[DOMContentLoaded] Initializing...');
     const params = new URLSearchParams(window.location.search);
     const orderId = params.get('orderID');
     const licenseKey = params.get('licenseKey');
 
+    console.log('[DOMContentLoaded] URL Parameters:', { orderId, licenseKey });
+
     displayPurchaseData(null); // Show loading state
 
     if (licenseKey) {
+        console.log('[DOMContentLoaded] Processing license key:', licenseKey);
         const data = await fetchLicenseDetails(licenseKey);
+        console.log('[DOMContentLoaded] License verification response:', data);
         displayPurchaseData(data, true);
         setupLicenseKeyCopy();
     } else if (orderId) {
+        console.log('[DOMContentLoaded] Processing order ID:', orderId);
         const data = await fetchOrderDetails(orderId);
+        console.log('[DOMContentLoaded] Order details response:', data);
         displayPurchaseData(data, false);
         setupLicenseKeyCopy();
+    } else {
+        console.warn('[DOMContentLoaded] No order ID or license key found in URL');
     }
 });
     </script>
