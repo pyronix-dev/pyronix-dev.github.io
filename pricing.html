@@ -378,8 +378,8 @@
                     </button>
                     <div class="select-options" role="listbox">
                         <div class="select-option" role="option" data-value="free" aria-selected="true">Free - 7 Days Trial</div>
-                        <div class="select-option" role="option" data-value="monthly">Monthly - 9.99 USD</div>
-                        <div class="select-option" role="option" data-value="yearly">Yearly - 99.99 USD</div>
+                        <div class="select-option" role="option" data-value="monthly">Monthly - 29.99 USD</div>
+                        <div class="select-option" role="option" data-value="yearly">Yearly - 274.99 USD</div>
                     </div>
                 </div>
             </div>
@@ -471,10 +471,10 @@
                         totalPrice = 0;
                         break;
                     case 'monthly':
-                        totalPrice = 9.99;
+                        totalPrice = 29.99;
                         break;
                     case 'yearly':
-                        totalPrice = 99.99;
+                        totalPrice = 274.99;
                         break;
                 }
 
@@ -657,8 +657,8 @@
                 });
 
                 if (!response.ok) {
-                    // Alert the user if the response is not OK
-                    alert('Failed to capture order. Please try again.');
+                    // Redirect to failed page instead of showing alert
+                    window.location.href = 'https://pyronix-dev.github.io/failed';
                     throw new Error('Failed to capture order');
                 }
 
@@ -669,8 +669,8 @@
                 window.location.href = `https://pyronix-dev.github.io/success?orderID=${data.orderID}`;
             } catch (error) {
                 console.error('Error:', error);
-                // Alert the user on any error
-                alert('An error occurred during the payment process. Please try again.');
+                // Redirect to failed page instead of showing alert
+                window.location.href = 'https://pyronix-dev.github.io/failed';
             }
         }
 
@@ -703,11 +703,11 @@
                             document.getElementById('paypal-button-container').style.display = 'none';
                             break;
                         case 'monthly':
-                            totalPrice = 9.99;
+                            totalPrice = 29.99;
                             document.getElementById('paypal-button-container').style.display = 'block';
                             break;
                         case 'yearly':
-                            totalPrice = 99.99;
+                            totalPrice = 274.99;
                             document.getElementById('paypal-button-container').style.display = 'block';
                             break;
                     }
