@@ -755,227 +755,304 @@
     </footer>
 
     <script>
-        const WORKER_URL = 'https://ppcrossoriginrelayhandler.rzotime.workers.dev';
+const WORKER_URL = 'https://ppcrossoriginrelayhandler.rzotime.workers.dev';
 
-        // Theme toggle functionality
-        const themeToggle = document.getElementById('theme-toggle');
-        const sunIcon = document.querySelector('.sun-icon');
-        const moonIcon = document.querySelector('.moon-icon');
+// Theme toggle functionality
+const themeToggle = document.getElementById('theme-toggle');
+const sunIcon = document.querySelector('.sun-icon');
+const moonIcon = document.querySelector('.moon-icon');
 
-        function setTheme(isDark) {
-            document.body.classList.toggle('dark', isDark);
+function setTheme(isDark) {
+    document.body.classList.toggle('dark', isDark);
 
-            // Remove existing rotation classes
-            sunIcon.classList.remove('rotate');
-            moonIcon.classList.remove('rotate');
+    // Remove existing rotation classes
+    sunIcon.classList.remove('rotate');
+    moonIcon.classList.remove('rotate');
 
-            // Add rotation to the icon that's being hidden
-            if (isDark) {
-                sunIcon.classList.add('rotate');
-            } else {
-                moonIcon.classList.add('rotate');
-            }
+    // Add rotation to the icon that's being hidden
+    if (isDark) {
+        sunIcon.classList.add('rotate');
+    } else {
+        moonIcon.classList.add('rotate');
+    }
 
-            // Delay the display change to allow for animation
-            setTimeout(() => {
-                sunIcon.style.display = isDark ? 'none' : 'block';
-                moonIcon.style.display = isDark ? 'block' : 'none';
-            }, 250); // Half of the transition time
-        }
+    // Delay the display change to allow for animation
+    setTimeout(() => {
+        sunIcon.style.display = isDark ? 'none' : 'block';
+        moonIcon.style.display = isDark ? 'block' : 'none';
+    }, 250); // Half of the transition time
+}
 
-        // Check system preference
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            setTheme(true);
-        }
+// Check system preference
+if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    setTheme(true);
+}
 
-        themeToggle.addEventListener('click', () => {
-            const isDark = document.body.classList.toggle('dark');
-            setTheme(isDark);
+themeToggle.addEventListener('click', () => {
+    const isDark = document.body.classList.toggle('dark');
+    setTheme(isDark);
+});
+
+// Purchase data handling
+async function fetchOrderDetails(orderId) {
+    try {
+        const response = await fetch(`${WORKER_URL}/api/get-order`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ orderId })
         });
 
-        // Purchase data handling
-        async function fetchOrderDetails(orderId) {
-            try {
-                const response = await fetch(`${WORKER_URL}/api/get-order`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ orderId })
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Failed to fetch order details');
-                }
-
-                const data = await response.json();
-                return data[0]; // Access the first element of the array
-            } catch (error) {
-                return null;
-            }
+        if (!response.ok) {
+            throw new Error('Failed to fetch order details');
         }
 
-        function displayPurchaseData(purchaseData) {
-            const purchaseDetails = document.getElementById('purchase-details');
+        const data = await response.json();
+        return data[0]; // Access the first element of the array
+    } catch (error) {
+        return null;
+    }
+}
 
-            if (!purchaseDetails) {
+async function fetchLicenseDetails(licenseKey) {
+    try {
+        const response = await fetch(`${WORKER_URL}/api/verify-license`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ licenseKey })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to verify license');
+        }
+
+        return await response.json();
+    } catch (error) {
+        return null;
+    }
+}
+
+function displayPurchaseData(data, isLicenseKey = false) {
+    const purchaseDetails = document.getElementById('purchase-details');
+
+    if (!purchaseDetails) {
+        return;
+    }
+
+    if (data) {
+        // Trigger confetti animation when data loads successfully
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#00dc82', '#0ea5e9', '#6b7280']
+        });
+
+        if (isLicenseKey && data.valid) {
+            // Display license verification data
+            const expiryDate = new Date(data.licenseData.created_at);
+            expiryDate.setDate(expiryDate.getDate() + data.remainingDays);
+
+            purchaseDetails.innerHTML = `
+                <div class="purchase-row">
+                    <span class="purchase-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        License Key
+                    </span>
+                    <span class="purchase-value license-key" role="button" tabindex="0" title="Click or long press to copy">${data.licenseData.license_key}</span>
+                </div>
+                <div class="purchase-row">
+                    <span class="purchase-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                            <path d="M9 12l2 2 4-4"></path>
+                        </svg>
+                        License Type
+                    </span>
+                    <span class="purchase-value">${data.licenseType.charAt(0).toUpperCase() + data.licenseType.slice(1)}</span>
+                </div>
+                <div class="purchase-row">
+                    <span class="purchase-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Remaining Days
+                    </span>
+                    <span class="purchase-value">${data.remainingDays} days</span>
+                </div>
+                <div class="purchase-row">
+                    <span class="purchase-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        Expiry Date
+                    </span>
+                    <span class="purchase-value">${expiryDate.toLocaleDateString()}</span>
+                </div>
+            `;
+        } else if (data.captureData) {
+            // Display PayPal purchase data
+            const capture = data.captureData.purchase_units[0]?.payments?.captures[0];
+
+            if (!capture) {
                 return;
             }
 
-            if (purchaseData && purchaseData.captureData) {
-                // Trigger confetti animation when purchase data loads successfully
-                confetti({
-                    particleCount: 100,
-                    spread: 70,
-                    origin: { y: 0.6 },
-                    colors: ['#00dc82', '#0ea5e9', '#6b7280']
-                });
-
-                const capture = purchaseData.captureData.purchase_units[0]?.payments?.captures[0];
-
-                if (!capture) {
-                    return;
-                }
-
-                purchaseDetails.innerHTML = `
-                    <div class="purchase-row">
-                        <span class="purchase-label">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                            Order ID
-                        </span>
-                        <span class="purchase-value">${purchaseData.captureData.id || 'Unavailable'}</span>
-                    </div>
-                    <div class="purchase-row">
-                        <span class="purchase-label">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
-                                <path d="M9 12l2 2 4-4"></path>
-                            </svg>
-                            Status
-                        </span>
-                        <span class="purchase-value">${purchaseData.captureData.status || 'N/A'}</span>
-                    </div>
-                    <div class="purchase-row">
-                        <span class="purchase-label">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="12" y1="1" x2="12" y2="23"></line>
-                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                            </svg>
-                            Amount
-                        </span>
-                        <span class="purchase-value">${capture.amount.value} ${capture.amount.currency_code}</span>
-                    </div>
-                    <div class="purchase-row">
-                        <span class="purchase-label">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                            </svg>
-                            License Key
-                        </span>
-                        <span class="purchase-value license-key" role="button" tabindex="0" title="Click or long press to copy">${purchaseData.licenseKey || 'N/A'}</span>
-                    </div>
-                    <div class="purchase-row">
-                        <span class="purchase-label">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polyline points="12 6 12 12 16 14"></polyline>
-                            </svg>
-                            Payment Date
-                        </span>
-                        <span class="purchase-value">${new Date(capture.create_time).toLocaleString()}</span>
-                    </div>
-                `;
-            } else {
-                purchaseDetails.innerHTML = `
-                    <div class="skeleton-row">
-                        <div class="skeleton label"></div>
-                        <div class="skeleton value"></div>
-                    </div>
-                    <div class="skeleton-row">
-                        <div class="skeleton label"></div>
-                        <div class="skeleton value"></div>
-                    </div>
-                    <div class="skeleton-row">
-                        <div class="skeleton label"></div>
-                        <div class="skeleton value"></div>
-                    </div>
-                    <div class="skeleton-row">
-                        <div class="skeleton label"></div>
-                        <div class="skeleton value"></div>
-                    </div>
-                    <div class="skeleton-row">
-                        <div class="skeleton label"></div>
-                        <div class="skeleton value"></div>
-                    </div>
-                `;
-            }
+            purchaseDetails.innerHTML = `
+                <div class="purchase-row">
+                    <span class="purchase-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        Order ID
+                    </span>
+                    <span class="purchase-value">${data.captureData.id || 'Unavailable'}</span>
+                </div>
+                <div class="purchase-row">
+                    <span class="purchase-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                            <path d="M9 12l2 2 4-4"></path>
+                        </svg>
+                        Status
+                    </span>
+                    <span class="purchase-value">${data.captureData.status || 'N/A'}</span>
+                </div>
+                <div class="purchase-row">
+                    <span class="purchase-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        Amount
+                    </span>
+                    <span class="purchase-value">${capture.amount.value} ${capture.amount.currency_code}</span>
+                </div>
+                <div class="purchase-row">
+                    <span class="purchase-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        License Key
+                    </span>
+                    <span class="purchase-value license-key" role="button" tabindex="0" title="Click or long press to copy">${data.licenseKey || 'N/A'}</span>
+                </div>
+                <div class="purchase-row">
+                    <span class="purchase-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Payment Date
+                    </span>
+                    <span class="purchase-value">${new Date(capture.create_time).toLocaleString()}</span>
+                </div>
+            `;
         }
+    } else {
+        purchaseDetails.innerHTML = `
+            <div class="skeleton-row">
+                <div class="skeleton label"></div>
+                <div class="skeleton value"></div>
+            </div>
+            <div class="skeleton-row">
+                <div class="skeleton label"></div>
+                <div class="skeleton value"></div>
+            </div>
+            <div class="skeleton-row">
+                <div class="skeleton label"></div>
+                <div class="skeleton value"></div>
+            </div>
+            <div class="skeleton-row">
+                <div class="skeleton label"></div>
+                <div class="skeleton value"></div>
+            </div>
+            <div class="skeleton-row">
+                <div class="skeleton label"></div>
+                <div class="skeleton value"></div>
+            </div>
+        `;
+    }
+}
 
-        // License key copy functionality
-        function setupLicenseKeyCopy() {
-            let longPressTimer;
-            const licenseKey = document.querySelector('.license-key');
-            
-            if (!licenseKey) return;
+// License key copy functionality
+function setupLicenseKeyCopy() {
+    let longPressTimer;
+    const licenseKey = document.querySelector('.license-key');
 
-            // Copy function
-            const copyLicenseKey = async () => {
-                const text = licenseKey.textContent;
-                try {
-                    await navigator.clipboard.writeText(text);
-                    
-                    // Add copied class for visual feedback
-                    licenseKey.classList.add('copied');
-                    
-                    // Remove the copied class when mouse leaves the element
-                    const removecopied = () => {
-                        licenseKey.classList.remove('copied');
-                        licenseKey.removeEventListener('mouseleave', removecopied);
-                    };
-                    
-                    licenseKey.addEventListener('mouseleave', removecopied);
-                    
-                } catch (err) {
-                    console.error('Failed to copy:', err);
-                }
+    if (!licenseKey) return;
+
+    // Copy function
+    const copyLicenseKey = async () => {
+        const text = licenseKey.textContent;
+        try {
+            await navigator.clipboard.writeText(text);
+
+            // Add copied class for visual feedback
+            licenseKey.classList.add('copied');
+
+            // Remove the copied class when mouse leaves the element
+            const removecopied = () => {
+                licenseKey.classList.remove('copied');
+                licenseKey.removeEventListener('mouseleave', removecopied);
             };
 
-            // Click handler
-            licenseKey.addEventListener('click', copyLicenseKey);
+            licenseKey.addEventListener('mouseleave', removecopied);
 
-            // Long press handlers for mobile
-            licenseKey.addEventListener('touchstart', () => {
-                longPressTimer = setTimeout(copyLicenseKey, 500);
-            });
-
-            licenseKey.addEventListener('touchend', () => {
-                clearTimeout(longPressTimer);
-            });
-
-            licenseKey.addEventListener('touchmove', () => {
-                clearTimeout(longPressTimer);
-            });
+        } catch (err) {
+            console.error('Failed to copy:', err);
         }
+    };
 
-        // Initialize
-        window.addEventListener('DOMContentLoaded', async () => {
-            const params = new URLSearchParams(window.location.search);
-            const orderId = params.get('orderID');
+    // Click handler
+    licenseKey.addEventListener('click', copyLicenseKey);
 
-            displayPurchaseData(null); // Show loading state
+    // Long press handlers for mobile
+    licenseKey.addEventListener('touchstart', () => {
+        longPressTimer = setTimeout(copyLicenseKey, 500);
+    });
 
-            if (orderId) {
-                const data = await fetchOrderDetails(orderId);
-                displayPurchaseData(data);
-                setupLicenseKeyCopy(); // Setup copy functionality after data is loaded
-            }
-        });
+    licenseKey.addEventListener('touchend', () => {
+        clearTimeout(longPressTimer);
+    });
+
+    licenseKey.addEventListener('touchmove', () => {
+        clearTimeout(longPressTimer);
+    });
+}
+
+// Initialize
+window.addEventListener('DOMContentLoaded', async () => {
+    const params = new URLSearchParams(window.location.search);
+    const orderId = params.get('orderID');
+    const licenseKey = params.get('licenseKey');
+
+    displayPurchaseData(null); // Show loading state
+
+    if (licenseKey) {
+        const data = await fetchLicenseDetails(licenseKey);
+        displayPurchaseData(data, true);
+        setupLicenseKeyCopy();
+    } else if (orderId) {
+        const data = await fetchOrderDetails(orderId);
+        displayPurchaseData(data, false);
+        setupLicenseKeyCopy();
+    }
+});
     </script>
 </body>
 
