@@ -795,8 +795,6 @@
 
         // Purchase data handling
         async function fetchOrderDetails(orderId) {
-            console.log(`[fetchOrderDetails] Fetching details for orderId: ${orderId}`);
-            
             try {
                 const response = await fetch(`${WORKER_URL}/api/get-order`, {
                     method: 'POST',
@@ -811,9 +809,7 @@
                 }
 
                 const data = await response.json();
-                console.log(`[fetchOrderDetails] Raw JSON data for orderId ${orderId}:`, JSON.stringify(data, null, 2));
-                console.log(`[fetchOrderDetails] Received data for orderId ${orderId}:`, data);
-                return data;
+                return data[0]; // Access the first element of the array
             } catch (error) {
                 console.error(`[fetchOrderDetails] Error fetching order details for orderId ${orderId}:`, error);
                 return null;
@@ -822,6 +818,11 @@
 
         function displayPurchaseData(purchaseData) {
             const purchaseDetails = document.getElementById('purchase-details');
+
+            if (!purchaseDetails) {
+                console.error('Element with id "purchase-details" not found.');
+                return;
+            }
 
             if (purchaseData && purchaseData.captureData) {
                 // Trigger confetti animation when purchase data loads successfully
@@ -833,6 +834,11 @@
                 });
 
                 const capture = purchaseData.captureData.purchase_units[0]?.payments?.captures[0];
+
+                if (!capture) {
+                    console.error('Capture data not found in purchaseData.');
+                    return;
+                }
 
                 purchaseDetails.innerHTML = `
                     <div class="purchase-row">
