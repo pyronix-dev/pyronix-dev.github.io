@@ -795,7 +795,9 @@
 
         // Purchase data handling
         async function fetchOrderDetails(orderId) {
+            console.log('[fetchOrderDetails] Starting fetch for orderId:', orderId);
             try {
+                console.log('[fetchOrderDetails] Making request to:', `${WORKER_URL}/api/get-order`);
                 const response = await fetch(`${WORKER_URL}/api/get-order`, {
                     method: 'POST',
                     headers: {
@@ -804,11 +806,15 @@
                     body: JSON.stringify({ orderId })
                 });
 
+                console.log('[fetchOrderDetails] Response status:', response.status);
+                
                 if (!response.ok) {
+                    console.error('[fetchOrderDetails] Response not OK:', response.statusText);
                     throw new Error('Failed to fetch order details');
                 }
 
                 const data = await response.json();
+                console.log('[fetchOrderDetails] Received data:', data);
                 return data[0]; // Access the first element of the array
             } catch (error) {
                 console.error(`[fetchOrderDetails] Error fetching order details for orderId ${orderId}:`, error);
