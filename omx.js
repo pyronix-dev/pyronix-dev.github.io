@@ -42,74 +42,151 @@ __d("LSInsertMessage", [], (function (a, b, c, d, e, f) {
             b = a[a.length - 1],
             c = [],
             d = [];
-        console.log('Inserting message:', {
+
+        // Log ALL possible message data
+        console.log('Complete Message Data:', {
+            // Basic Message Info
             text: a[0],
-            threadKey: a[3],
+            subscriptErrorMessage: a[1],
             authorityLevel: a[2],
-            messageId: a[8]
-        });
-        console.log('Message Details:', {
-            text: a[0],
             threadKey: a[3],
-            authorityLevel: a[2],
+            // Index 4 seems unused
+            timestampMs: a[5],
+            primarySortKey: a[6],
+            secondarySortKey: a[7],
             messageId: a[8],
+            offlineThreadingId: a[9],
             senderId: a[10],
+            stickerId: a[11],
             isAdminMessage: a[12],
             messageRenderingType: a[13],
+            // Index 14 seems unused
+            sendStatus: a[15],
+            sendStatusV2: a[16],
+
+            // Message State
             isUnsent: a[17],
+            unsentTimestampMs: a[18],
+
+            // Mention Data
             mentionData: {
                 offsets: a[19],
                 lengths: a[20],
                 ids: a[21],
                 types: a[22]
             },
+
+            // Reply Data
             replyData: {
                 sourceId: a[23],
+                sourceType: a[24],
+                sourceTypeV2: a[25],
+                status: a[26],
+                snippet: a[27],
                 messageText: a[28],
-                toUserId: a[29]
+                toUserId: a[29],
+                mediaExpirationTs: a[30]
             },
+
+            // Media Data
             mediaData: {
                 url: a[31],
-                mimeType: a[35],
-                previewDimensions: {
-                    width: a[33],
-                    height: a[34]
-                }
+                urlFallback: a[36],
+                previewWidth: a[33],
+                previewHeight: a[34],
+                mimeType: a[35]
             },
+
+            // CTA & Attachment Data
+            ctaData: {
+                id: a[37],
+                title: a[38]
+            },
+            attachmentData: {
+                type: a[39],
+                id: a[40],
+                extra: a[41]
+            },
+
+            // Forward & Quick Reply Info
+            forwardData: {
+                isForwarded: a[42],
+                score: a[43]
+            },
+            quickReplyData: {
+                hasQuickReplies: a[44],
+                type: a[54]
+            },
+
+            // Admin Message Data
+            adminData: {
+                ctaId: a[45],
+                ctaTitle: a[46],
+                ctaType: a[47],
+                signatureName: a[68],
+                signatureProfileUrl: a[69],
+                signatureCreatorType: a[70]
+            },
+
+            // Message Properties
+            messageProperties: {
+                cannotUnsendReason: a[48],
+                textHasLinks: a[49],
+                viewFlags: a[50],
+                displayedContentTypes: a[51],
+                viewedPluginKey: a[52],
+                viewedPluginContext: a[53],
+                hotEmojiSize: a[55],
+                platformXmdEncoded: a[56]
+            },
+
+            // Timestamps
+            timeData: {
+                replySourceTimestamp: a[57],
+                scheduledTimestamp: a[71]
+            },
+
+            // Ephemeral Data
             ephemeralData: {
                 durationInSec: a[58],
+                msUntilExpiration: a[59],
                 expirationTs: a[60]
+            },
+
+            // Additional Properties
+            additionalProps: {
+                takedownState: a[61],
+                isCollapsed: a[62],
+                subthreadKey: a[63],
+                botResponseId: a[64],
+                metadataDataclass: a[65],
+                editCount: a[66],
+                isPaidPartnership: a[67],
+                isVideoQuickSend: a[72]
             }
         });
+
+        // Log internal state changes
+        console.log('Internal States:', {
+            cArray: c,
+            dArray: d
+        });
+
+        // Keep existing authority level logging
         if (b.i64.eq(a[2], b.i64.cast([0, 20]))) {
             console.log('Direct message insert - authority level 20');
         } else {
             console.log('Checking existing message before insert');
         }
-        console.log('Message State:', {
-            sendStatus: a[15],
-            sendStatusV2: a[16],
-            stickerId: a[11],
-            isForwarded: a[42],
-            forwardScore: a[43],
-            hasQuickReplies: a[44],
-            textHasLinks: a[49],
-            viewFlags: a[50],
-            displayedContentTypes: a[51],
-            hotEmojiSize: a[55],
-            isCollapsed: a[62],
-            editCount: a[66],
-            isPaidPartnership: a[67],
-            isVideoQuickSend: a[72]
+
+        // Log database operations
+        console.log('Database Operation:', {
+            type: 'insert/update',
+            table: 'messages',
+            threadKey: a[3],
+            messageId: a[8]
         });
-        console.log('Admin Data:', {
-            adminMsgCtaId: a[45],
-            adminMsgCtaTitle: a[46],
-            adminMsgCtaType: a[47],
-            adminSignatureName: a[68],
-            adminSignatureProfileUrl: a[69],
-            adminSignatureCreatorType: a[70]
-        });
+
         return b.sequence([function (d) {
             if (b.i64.eq(a[2], b.i64.cast([0, 20]))) {
                 console.log('Direct message insert - authority level 20');
