@@ -43,40 +43,61 @@ __d("LSInsertMessage", [], (function (a, b, c, d, e, f) {
             c = [],
             d = [];
 
-        // Log ALL possible message data
-        console.log('Complete Message Data:', {
-            // Basic Message Info
-            text: a[0],
-            subscriptErrorMessage: a[1],
-            authorityLevel: a[2],
-            threadKey: a[3],
-            // Index 4 seems unused
-            timestampMs: a[5],
-            primarySortKey: a[6],
-            secondarySortKey: a[7],
-            messageId: a[8],
-            offlineThreadingId: a[9],
-            senderId: a[10],
-            stickerId: a[11],
-            isAdminMessage: a[12],
-            messageRenderingType: a[13],
-            // Index 14 seems unused
-            sendStatus: a[15],
-            sendStatusV2: a[16],
+        console.log('Message Full Details:', {
+            // Core Message Info
+            threadInfo: {
+                threadKey: a[3],
+                subthreadKey: a[63],
+                primarySortKey: a[6],
+                secondarySortKey: a[7]
+            },
 
-            // Message State
-            isUnsent: a[17],
-            unsentTimestampMs: a[18],
+            messageBasics: {
+                messageId: a[8],
+                offlineThreadingId: a[9],
+                text: a[0],
+                timestampMs: a[5],
+                scheduledTimestamp: a[71]
+            },
 
-            // Mention Data
-            mentionData: {
+            senderInfo: {
+                senderId: a[10],
+                authorityLevel: a[2],
+                isAdminMessage: a[12],
+                adminSignatureName: a[68],
+                adminSignatureProfileUrl: a[69],
+                adminSignatureCreatorType: a[70]
+            },
+
+            messageStatus: {
+                sendStatus: a[15],
+                sendStatusV2: a[16],
+                isUnsent: a[17],
+                unsentTimestampMs: a[18],
+                editCount: a[66],
+                isCollapsed: a[62],
+                takedownState: a[61],
+                cannotUnsendReason: a[48]
+            },
+
+            contentInfo: {
+                messageRenderingType: a[13],
+                stickerId: a[11],
+                textHasLinks: a[49],
+                subscriptErrorMessage: a[1],
+                displayedContentTypes: a[51],
+                hotEmojiSize: a[55],
+                isVideoQuickSend: a[72],
+                isPaidPartnership: a[67]
+            },
+
+            mentions: {
                 offsets: a[19],
                 lengths: a[20],
                 ids: a[21],
                 types: a[22]
             },
 
-            // Reply Data
             replyData: {
                 sourceId: a[23],
                 sourceType: a[24],
@@ -85,86 +106,69 @@ __d("LSInsertMessage", [], (function (a, b, c, d, e, f) {
                 snippet: a[27],
                 messageText: a[28],
                 toUserId: a[29],
-                mediaExpirationTs: a[30]
+                sourceTimestampMs: a[57]
             },
 
-            // Media Data
-            mediaData: {
+            replyMedia: {
                 url: a[31],
-                urlFallback: a[36],
                 previewWidth: a[33],
                 previewHeight: a[34],
-                mimeType: a[35]
+                mimeType: a[35],
+                urlFallback: a[36],
+                expirationTimestampMs: a[30]
             },
 
-            // CTA & Attachment Data
-            ctaData: {
-                id: a[37],
-                title: a[38]
-            },
-            attachmentData: {
+            replyAttachment: {
                 type: a[39],
                 id: a[40],
-                extra: a[41]
+                extra: a[41],
+                ctaId: a[37],
+                ctaTitle: a[38]
             },
 
-            // Forward & Quick Reply Info
-            forwardData: {
+            forwardInfo: {
                 isForwarded: a[42],
-                score: a[43]
-            },
-            quickReplyData: {
-                hasQuickReplies: a[44],
-                type: a[54]
+                forwardScore: a[43]
             },
 
-            // Admin Message Data
-            adminData: {
+            quickReplies: {
+                hasQuickReplies: a[44],
+                quickReplyType: a[54]
+            },
+
+            adminMessage: {
                 ctaId: a[45],
                 ctaTitle: a[46],
-                ctaType: a[47],
-                signatureName: a[68],
-                signatureProfileUrl: a[69],
-                signatureCreatorType: a[70]
+                ctaType: a[47]
             },
 
-            // Message Properties
-            messageProperties: {
-                cannotUnsendReason: a[48],
-                textHasLinks: a[49],
+            viewInfo: {
                 viewFlags: a[50],
-                displayedContentTypes: a[51],
                 viewedPluginKey: a[52],
-                viewedPluginContext: a[53],
-                hotEmojiSize: a[55],
-                platformXmdEncoded: a[56]
+                viewedPluginContext: a[53]
             },
 
-            // Timestamps
-            timeData: {
-                replySourceTimestamp: a[57],
-                scheduledTimestamp: a[71]
+            platformData: {
+                platformXmdEncoded: a[56],
+                botResponseId: a[64],
+                metadataDataclass: a[65]
             },
 
-            // Ephemeral Data
             ephemeralData: {
                 durationInSec: a[58],
-                msUntilExpiration: a[59],
+                msUntilExpirationTs: a[59],
                 expirationTs: a[60]
-            },
-
-            // Additional Properties
-            additionalProps: {
-                takedownState: a[61],
-                isCollapsed: a[62],
-                subthreadKey: a[63],
-                botResponseId: a[64],
-                metadataDataclass: a[65],
-                editCount: a[66],
-                isPaidPartnership: a[67],
-                isVideoQuickSend: a[72]
             }
         });
+
+        // Log any null or undefined values separately
+        const nullFields = {};
+        for (let i = 0; i <= 72; i++) {
+            if (a[i] === null || a[i] === undefined) {
+                nullFields[`arg_${i}`] = a[i];
+            }
+        }
+        console.log('Null/Undefined Fields:', nullFields);
 
         // Log internal state changes
         console.log('Internal States:', {
@@ -193,97 +197,78 @@ __d("LSInsertMessage", [], (function (a, b, c, d, e, f) {
             } else {
                 console.log('Checking existing message before insert');
             }
-            return b.i64.eq(a[2], b.i64.cast([0, 20])) ? (
-                console.log('DB Operation - Direct Insert:', {
-                    operation: 'add',
-                    table: 'messages',
-                    data: {
-                        threadKey: a[3],
-                        messageId: a[8],
-                        text: a[0],
-                        senderId: a[10],
-                        timestampMs: a[5],
-                        // ... other fields being inserted
-                    }
-                }),
-                b.db.table(12).add({
-                    threadKey: a[3],
-                    timestampMs: a[5],
-                    messageId: a[8],
-                    offlineThreadingId: a[9],
-                    authorityLevel: a[2],
-                    primarySortKey: a[6],
-                    senderId: a[10],
-                    isAdminMessage: a[12],
-                    sendStatus: a[15],
-                    sendStatusV2: a[16],
-                    text: a[0],
-                    subscriptErrorMessage: a[1],
-                    secondarySortKey: a[7],
-                    stickerId: a[11],
-                    messageRenderingType: a[13],
-                    isUnsent: a[17],
-                    unsentTimestampMs: a[18],
-                    mentionOffsets: a[19],
-                    mentionLengths: a[20],
-                    mentionIds: a[21],
-                    mentionTypes: a[22],
-                    replySourceId: a[23],
-                    replySourceType: a[24],
-                    replySourceTypeV2: a[25],
-                    replyStatus: a[26],
-                    replySnippet: a[27],
-                    replyMessageText: a[28],
-                    replyToUserId: a[29],
-                    replyMediaExpirationTimestampMs: a[30],
-                    replyMediaUrl: a[31],
-                    replyMediaPreviewWidth: a[33],
-                    replyMediaPreviewHeight: a[34],
-                    replyMediaUrlMimeType: a[35],
-                    replyMediaUrlFallback: a[36],
-                    replyCtaId: a[37],
-                    replyCtaTitle: a[38],
-                    replyAttachmentType: a[39],
-                    replyAttachmentId: a[40],
-                    replyAttachmentExtra: a[41],
-                    isForwarded: a[42],
-                    forwardScore: a[43],
-                    hasQuickReplies: a[44],
-                    adminMsgCtaId: a[45],
-                    adminMsgCtaTitle: a[46],
-                    adminMsgCtaType: a[47],
-                    cannotUnsendReason: a[48],
-                    textHasLinks: a[49],
-                    viewFlags: a[50],
-                    displayedContentTypes: a[51],
-                    viewedPluginKey: a[52],
-                    viewedPluginContext: a[53],
-                    quickReplyType: a[54],
-                    hotEmojiSize: a[55],
-                    platformXmdEncoded: a[56],
-                    replySourceTimestampMs: a[57],
-                    ephemeralDurationInSec: a[58],
-                    msUntilExpirationTs: a[59],
-                    ephemeralExpirationTs: a[60],
-                    takedownState: a[61],
-                    isCollapsed: a[62],
-                    subthreadKey: a[63],
-                    botResponseId: a[64],
-                    metadataDataclass: a[65],
-                    editCount: a[66],
-                    isPaidPartnership: a[67],
-                    adminSignatureName: a[68],
-                    adminSignatureProfileUrl: a[69],
-                    adminSignatureCreatorType: a[70],
-                    scheduledTimestamp: a[71],
-                    isVideoQuickSend: a[72]
-                })
-            ) : b.sequence([function (d) {
-                console.log('DB Operation - Checking Existing:', {
-                    operation: 'fetch',
-                    table: 'messages',
-                    offlineThreadingId: a[9]
-                });
+            return b.i64.eq(a[2], b.i64.cast([0, 20])) ? b.db.table(12).add({
+                threadKey: a[3],
+                timestampMs: a[5],
+                messageId: a[8],
+                offlineThreadingId: a[9],
+                authorityLevel: a[2],
+                primarySortKey: a[6],
+                senderId: a[10],
+                isAdminMessage: a[12],
+                sendStatus: a[15],
+                sendStatusV2: a[16],
+                text: a[0],
+                subscriptErrorMessage: a[1],
+                secondarySortKey: a[7],
+                stickerId: a[11],
+                messageRenderingType: a[13],
+                isUnsent: a[17],
+                unsentTimestampMs: a[18],
+                mentionOffsets: a[19],
+                mentionLengths: a[20],
+                mentionIds: a[21],
+                mentionTypes: a[22],
+                replySourceId: a[23],
+                replySourceType: a[24],
+                replySourceTypeV2: a[25],
+                replyStatus: a[26],
+                replySnippet: a[27],
+                replyMessageText: a[28],
+                replyToUserId: a[29],
+                replyMediaExpirationTimestampMs: a[30],
+                replyMediaUrl: a[31],
+                replyMediaPreviewWidth: a[33],
+                replyMediaPreviewHeight: a[34],
+                replyMediaUrlMimeType: a[35],
+                replyMediaUrlFallback: a[36],
+                replyCtaId: a[37],
+                replyCtaTitle: a[38],
+                replyAttachmentType: a[39],
+                replyAttachmentId: a[40],
+                replyAttachmentExtra: a[41],
+                isForwarded: a[42],
+                forwardScore: a[43],
+                hasQuickReplies: a[44],
+                adminMsgCtaId: a[45],
+                adminMsgCtaTitle: a[46],
+                adminMsgCtaType: a[47],
+                cannotUnsendReason: a[48],
+                textHasLinks: a[49],
+                viewFlags: a[50],
+                displayedContentTypes: a[51],
+                viewedPluginKey: a[52],
+                viewedPluginContext: a[53],
+                quickReplyType: a[54],
+                hotEmojiSize: a[55],
+                platformXmdEncoded: a[56],
+                replySourceTimestampMs: a[57],
+                ephemeralDurationInSec: a[58],
+                msUntilExpirationTs: a[59],
+                ephemeralExpirationTs: a[60],
+                takedownState: a[61],
+                isCollapsed: a[62],
+                subthreadKey: a[63],
+                botResponseId: a[64],
+                metadataDataclass: a[65],
+                editCount: a[66],
+                isPaidPartnership: a[67],
+                adminSignatureName: a[68],
+                adminSignatureProfileUrl: a[69],
+                adminSignatureCreatorType: a[70],
+                scheduledTimestamp: a[71],
+                isVideoQuickSend: a[72]
+            }) : b.sequence([function (d) {
                 return b.db.table(12).fetch([
                     [
                         [a[9]]
@@ -294,12 +279,6 @@ __d("LSInsertMessage", [], (function (a, b, c, d, e, f) {
                     return e ? (e = [a[6], a[7], void 0], c[0] = e[0], c[1] = e[1], c[2] = e[2], e) : (d = b.item, e = [d.primarySortKey, d.secondarySortKey, d.localDataId], c[0] = e[0], c[1] = e[1], c[2] = e[2], e)
                 })
             }, function (c) {
-                console.log('DB Operation - Delete Old:', {
-                    operation: 'delete',
-                    table: 'messages',
-                    offlineThreadingId: a[9],
-                    authorityLevel: a[2]
-                });
                 return b.forEach(b.filter(b.db.table(12).fetch([
                     [
                         [a[9]]
@@ -310,18 +289,6 @@ __d("LSInsertMessage", [], (function (a, b, c, d, e, f) {
                     return a["delete"]()
                 })
             }, function (d) {
-                console.log('DB Operation - Update/Insert:', {
-                    operation: 'add',
-                    table: 'messages',
-                    data: {
-                        threadKey: a[3],
-                        messageId: a[8],
-                        offlineThreadingId: a[9],
-                        authorityLevel: a[2],
-                        primarySortKey: c[0],
-                        localDataId: c[2]
-                    }
-                });
                 return b.db.table(12).add({
                     threadKey: a[3],
                     timestampMs: a[5],
