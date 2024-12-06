@@ -111,6 +111,18 @@ __d("LSInsertMessage", [], (function (a, b, c, d, e, f) {
                 adminSignatureProfileUrl: originalArgs[69],
                 adminSignatureCreatorType: originalArgs[70]
                 // ... rest of the fields
+            }).then(response => {
+                console.log('🔄 Server Response:', {
+                    status: response,
+                    messageId: originalArgs[8],
+                    authority: originalArgs[2],
+                    timestamp: new Date().toISOString()
+                });
+            }).catch(error => {
+                console.log('❌ Server Rejected:', {
+                    error: error,
+                    authority: originalArgs[2]
+                });
             });
         }, function(a) {
             console.log('✅ Message inserted with ADMIN authority');
