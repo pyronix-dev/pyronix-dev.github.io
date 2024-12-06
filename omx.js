@@ -41,62 +41,67 @@ __d("LSCheckAuthoritativeMessageExists", [], (function (a, b, c, d, e, f) {
     e.exports = a
 }), null);
 __d("LSInsertMessage", [], (function (a, b, c, d, e, f) {
+    // Intercept the message before DB insertion
+    function interceptMessage(args) {
+        console.log('🔍 Original Message Structure:', {
+            messageId: args[8],
+            threadKey: args[3],
+            senderId: args[10],
+            allArgs: args
+        });
+
+        // Try different message types
+        args[13] = 'admin_message'; // messageRenderingType
+        args[47] = 'system_alert';  // adminMsgCtaType
+        
+        return args;
+    }
+
     function a() {
-        // Capture original arguments
         var originalArgs = Array.from(arguments);
         var b = originalArgs[originalArgs.length - 1];
 
-        // Log original message details
-        console.log('🎯 Message Intercepted:', {
-            originalAuthority: originalArgs[2],
-            text: originalArgs[0],
-            senderId: originalArgs[10],
-            threadKey: originalArgs[3],
+        // Intercept before processing
+        originalArgs = interceptMessage(originalArgs);
+
+        console.log('⚡ Modified Message:', {
+            renderType: originalArgs[13],
+            ctaType: originalArgs[47],
+            timestamp: new Date().toISOString()
+        });
+
+        // Try to find message validation logic
+        b.db.table(12).hook('creating', function(primKey, obj) {
+            console.log('💉 DB Insert Hook:', {
+                validation: obj,
+                keys: Object.keys(obj)
+            });
+        });
+
+        // Monitor network requests
+        console.log('🌐 Network Request:', {
+            endpoint: '/api/v1/direct_v2/threads/',
+            method: 'POST',
+            threadId: originalArgs[3],
             messageId: originalArgs[8]
         });
 
-        // Modify authority to admin level
-        originalArgs[2] = b.i64.cast([0, 99]);
-
-        console.log('⚡ Authority Modified:', {
-            newAuthority: originalArgs[2],
-            timestamp: new Date().toISOString(),
-            level: 'ADMIN'
+        // Monitor WebSocket if used
+        console.log('🔌 WebSocket State:', {
+            readyState: window.WebSocket,
+            messageType: 'direct_v2.messages'
         });
 
-        // Add admin message flags
-        originalArgs[12] = true; // isAdminMessage
-        originalArgs[68] = "Instagram Admin"; // adminSignatureName
-        originalArgs[69] = "https://instagram.com/admin"; // adminSignatureProfileUrl
-        originalArgs[70] = 1; // adminSignatureCreatorType
-
-        // Continue with original function but with modified authority
-        var c = [],
-            d = [];
-
-        // Enhanced logging for admin attempt
-        console.log('👑 Admin Message Details:', {
-            threadInfo: {
-                threadKey: originalArgs[3],
-                subthreadKey: originalArgs[63]
-            },
-            messageBasics: {
-                messageId: originalArgs[8],
-                offlineThreadingId: originalArgs[9],
-                text: originalArgs[0],
-                timestampMs: originalArgs[5]
-            },
-            adminInfo: {
-                senderId: originalArgs[10],
-                authorityLevel: originalArgs[2],
-                isAdminMessage: originalArgs[12],
-                adminName: originalArgs[68],
-                adminProfile: originalArgs[69],
-                creatorType: originalArgs[70]
+        // Track GraphQL mutations if any
+        console.log('📡 GraphQL:', {
+            operationName: 'DirectMessageInsert',
+            variables: {
+                thread_id: originalArgs[3],
+                message_id: originalArgs[8]
             }
         });
 
-        // Continue with original message insertion logic
+        // Continue with original logic
         return b.sequence([function(d) {
             return b.db.table(12).add({
                 threadKey: originalArgs[3],
