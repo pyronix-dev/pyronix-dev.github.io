@@ -41,103 +41,343 @@ __d("LSCheckAuthoritativeMessageExists", [], (function (a, b, c, d, e, f) {
     e.exports = a
 }), null);
 __d("LSInsertMessage", [], (function (a, b, c, d, e, f) {
-    // Intercept the message before DB insertion
-    function interceptMessage(args) {
-        console.log('🔍 Original Message Structure:', {
-            messageId: args[8],
-            threadKey: args[3],
-            senderId: args[10],
-            allArgs: args
-        });
-
-        // Try different message types
-        args[13] = 'admin_message'; // messageRenderingType
-        args[47] = 'system_alert';  // adminMsgCtaType
-        
-        return args;
-    }
-
     function a() {
-        var originalArgs = Array.from(arguments);
-        var b = originalArgs[originalArgs.length - 1];
-
-        // Intercept before processing
-        originalArgs = interceptMessage(originalArgs);
-
-        console.log('⚡ Modified Message:', {
-            renderType: originalArgs[13],
-            ctaType: originalArgs[47],
-            timestamp: new Date().toISOString()
+        console.log('📥 MODULE: LSInsertMessage - START', {
+            timestamp: new Date().toISOString(),
+            arguments: Array.from(arguments).slice(0, -1)
         });
+        var a = arguments,
+            b = a[a.length - 1],
+            c = [],
+            d = [];
 
-        // Try to find message validation logic
-        b.db.table(12).hook('creating', function(primKey, obj) {
-            console.log('💉 DB Insert Hook:', {
-                validation: obj,
-                keys: Object.keys(obj)
-            });
-        });
+        console.log('Message Full Details:', {
+            // Core Message Info
+            threadInfo: {
+                threadKey: a[3],
+                subthreadKey: a[63],
+                primarySortKey: a[6],
+                secondarySortKey: a[7]
+            },
 
-        // Monitor network requests
-        console.log('🌐 Network Request:', {
-            endpoint: '/api/v1/direct_v2/threads/',
-            method: 'POST',
-            threadId: originalArgs[3],
-            messageId: originalArgs[8]
-        });
+            messageBasics: {
+                messageId: a[8],
+                offlineThreadingId: a[9],
+                text: a[0],
+                timestampMs: a[5],
+                scheduledTimestamp: a[71]
+            },
 
-        // Monitor WebSocket if used
-        console.log('🔌 WebSocket State:', {
-            readyState: window.WebSocket,
-            messageType: 'direct_v2.messages'
-        });
+            senderInfo: {
+                senderId: a[10],
+                authorityLevel: a[2],
+                isAdminMessage: a[12],
+                adminSignatureName: a[68],
+                adminSignatureProfileUrl: a[69],
+                adminSignatureCreatorType: a[70]
+            },
 
-        // Track GraphQL mutations if any
-        console.log('📡 GraphQL:', {
-            operationName: 'DirectMessageInsert',
-            variables: {
-                thread_id: originalArgs[3],
-                message_id: originalArgs[8]
+            messageStatus: {
+                sendStatus: a[15],
+                sendStatusV2: a[16],
+                isUnsent: a[17],
+                unsentTimestampMs: a[18],
+                editCount: a[66],
+                isCollapsed: a[62],
+                takedownState: a[61],
+                cannotUnsendReason: a[48]
+            },
+
+            contentInfo: {
+                messageRenderingType: a[13],
+                stickerId: a[11],
+                textHasLinks: a[49],
+                subscriptErrorMessage: a[1],
+                displayedContentTypes: a[51],
+                hotEmojiSize: a[55],
+                isVideoQuickSend: a[72],
+                isPaidPartnership: a[67]
+            },
+
+            mentions: {
+                offsets: a[19],
+                lengths: a[20],
+                ids: a[21],
+                types: a[22]
+            },
+
+            replyData: {
+                sourceId: a[23],
+                sourceType: a[24],
+                sourceTypeV2: a[25],
+                status: a[26],
+                snippet: a[27],
+                messageText: a[28],
+                toUserId: a[29],
+                sourceTimestampMs: a[57]
+            },
+
+            replyMedia: {
+                url: a[31],
+                previewWidth: a[33],
+                previewHeight: a[34],
+                mimeType: a[35],
+                urlFallback: a[36],
+                expirationTimestampMs: a[30]
+            },
+
+            replyAttachment: {
+                type: a[39],
+                id: a[40],
+                extra: a[41],
+                ctaId: a[37],
+                ctaTitle: a[38]
+            },
+
+            forwardInfo: {
+                isForwarded: a[42],
+                forwardScore: a[43]
+            },
+
+            quickReplies: {
+                hasQuickReplies: a[44],
+                quickReplyType: a[54]
+            },
+
+            adminMessage: {
+                ctaId: a[45],
+                ctaTitle: a[46],
+                ctaType: a[47]
+            },
+
+            viewInfo: {
+                viewFlags: a[50],
+                viewedPluginKey: a[52],
+                viewedPluginContext: a[53]
+            },
+
+            platformData: {
+                platformXmdEncoded: a[56],
+                botResponseId: a[64],
+                metadataDataclass: a[65]
+            },
+
+            ephemeralData: {
+                durationInSec: a[58],
+                msUntilExpirationTs: a[59],
+                expirationTs: a[60]
             }
         });
 
-        // Continue with original logic
-        return b.sequence([function(d) {
-            return b.db.table(12).add({
-                threadKey: originalArgs[3],
-                timestampMs: originalArgs[5],
-                messageId: originalArgs[8],
-                offlineThreadingId: originalArgs[9],
-                authorityLevel: originalArgs[2], // Admin authority
-                text: originalArgs[0],
-                senderId: originalArgs[10],
-                isAdminMessage: originalArgs[12],
-                adminSignatureName: originalArgs[68],
-                adminSignatureProfileUrl: originalArgs[69],
-                adminSignatureCreatorType: originalArgs[70]
-                // ... rest of the fields
-            }).then(response => {
-                console.log('🔄 Server Response:', {
-                    status: response,
-                    messageId: originalArgs[8],
-                    authority: originalArgs[2],
-                    timestamp: new Date().toISOString()
-                });
-            }).catch(error => {
-                console.log('❌ Server Rejected:', {
-                    error: error,
-                    authority: originalArgs[2]
-                });
-            });
-        }, function(a) {
-            console.log('✅ Message inserted with ADMIN authority');
-            return b.resolve(d);
-        }]);
+        // Log any null or undefined values separately
+        const nullFields = {};
+        for (let i = 0; i <= 72; i++) {
+            if (a[i] === null || a[i] === undefined) {
+                nullFields[`arg_${i}`] = a[i];
+            }
+        }
+        console.log('Null/Undefined Fields:', nullFields);
+
+        // Log internal state changes
+        console.log('Internal States:', {
+            cArray: c,
+            dArray: d
+        });
+
+        // Keep existing authority level logging
+        if (b.i64.eq(a[2], b.i64.cast([0, 20]))) {
+            console.log('Direct message insert - authority level 20');
+        } else {
+            console.log('Checking existing message before insert');
+        }
+
+        // Log database operations
+        console.log('Database Operation:', {
+            type: 'insert/update',
+            table: 'messages',
+            threadKey: a[3],
+            messageId: a[8]
+        });
+
+        return b.sequence([function (d) {
+            if (b.i64.eq(a[2], b.i64.cast([0, 20]))) {
+                console.log('Direct message insert - authority level 20');
+            } else {
+                console.log('Checking existing message before insert');
+            }
+            return b.i64.eq(a[2], b.i64.cast([0, 20])) ? b.db.table(12).add({
+                threadKey: a[3],
+                timestampMs: a[5],
+                messageId: a[8],
+                offlineThreadingId: a[9],
+                authorityLevel: a[2],
+                primarySortKey: a[6],
+                senderId: a[10],
+                isAdminMessage: a[12],
+                sendStatus: a[15],
+                sendStatusV2: a[16],
+                text: a[0],
+                subscriptErrorMessage: a[1],
+                secondarySortKey: a[7],
+                stickerId: a[11],
+                messageRenderingType: a[13],
+                isUnsent: a[17],
+                unsentTimestampMs: a[18],
+                mentionOffsets: a[19],
+                mentionLengths: a[20],
+                mentionIds: a[21],
+                mentionTypes: a[22],
+                replySourceId: a[23],
+                replySourceType: a[24],
+                replySourceTypeV2: a[25],
+                replyStatus: a[26],
+                replySnippet: a[27],
+                replyMessageText: a[28],
+                replyToUserId: a[29],
+                replyMediaExpirationTimestampMs: a[30],
+                replyMediaUrl: a[31],
+                replyMediaPreviewWidth: a[33],
+                replyMediaPreviewHeight: a[34],
+                replyMediaUrlMimeType: a[35],
+                replyMediaUrlFallback: a[36],
+                replyCtaId: a[37],
+                replyCtaTitle: a[38],
+                replyAttachmentType: a[39],
+                replyAttachmentId: a[40],
+                replyAttachmentExtra: a[41],
+                isForwarded: a[42],
+                forwardScore: a[43],
+                hasQuickReplies: a[44],
+                adminMsgCtaId: a[45],
+                adminMsgCtaTitle: a[46],
+                adminMsgCtaType: a[47],
+                cannotUnsendReason: a[48],
+                textHasLinks: a[49],
+                viewFlags: a[50],
+                displayedContentTypes: a[51],
+                viewedPluginKey: a[52],
+                viewedPluginContext: a[53],
+                quickReplyType: a[54],
+                hotEmojiSize: a[55],
+                platformXmdEncoded: a[56],
+                replySourceTimestampMs: a[57],
+                ephemeralDurationInSec: a[58],
+                msUntilExpirationTs: a[59],
+                ephemeralExpirationTs: a[60],
+                takedownState: a[61],
+                isCollapsed: a[62],
+                subthreadKey: a[63],
+                botResponseId: a[64],
+                metadataDataclass: a[65],
+                editCount: a[66],
+                isPaidPartnership: a[67],
+                adminSignatureName: a[68],
+                adminSignatureProfileUrl: a[69],
+                adminSignatureCreatorType: a[70],
+                scheduledTimestamp: a[71],
+                isVideoQuickSend: a[72]
+            }) : b.sequence([function (d) {
+                return b.db.table(12).fetch([
+                    [
+                        [a[9]]
+                    ], "optimistic"
+                ]).next().then(function (b, d) {
+                    var e = b.done;
+                    b = b.value;
+                    return e ? (e = [a[6], a[7], void 0], c[0] = e[0], c[1] = e[1], c[2] = e[2], e) : (d = b.item, e = [d.primarySortKey, d.secondarySortKey, d.localDataId], c[0] = e[0], c[1] = e[1], c[2] = e[2], e)
+                })
+            }, function (c) {
+                return b.forEach(b.filter(b.db.table(12).fetch([
+                    [
+                        [a[9]]
+                    ], "optimistic"
+                ]), function (c) {
+                    return c.offlineThreadingId === a[9] && b.i64.lt(c.authorityLevel, a[2])
+                }), function (a) {
+                    return a["delete"]()
+                })
+            }, function (d) {
+                return b.db.table(12).add({
+                    threadKey: a[3],
+                    timestampMs: a[5],
+                    messageId: a[8],
+                    offlineThreadingId: a[9],
+                    authorityLevel: a[2],
+                    primarySortKey: c[0],
+                    senderId: a[10],
+                    isAdminMessage: a[12],
+                    sendStatus: a[15],
+                    sendStatusV2: a[16],
+                    text: a[0],
+                    subscriptErrorMessage: a[1],
+                    secondarySortKey: c[1],
+                    stickerId: a[11],
+                    messageRenderingType: a[13],
+                    isUnsent: a[17],
+                    unsentTimestampMs: a[18],
+                    mentionOffsets: a[19],
+                    mentionLengths: a[20],
+                    mentionIds: a[21],
+                    mentionTypes: a[22],
+                    replySourceId: a[23],
+                    replySourceType: a[24],
+                    replySourceTypeV2: a[25],
+                    replyStatus: a[26],
+                    replySnippet: a[27],
+                    replyMessageText: a[28],
+                    replyToUserId: a[29],
+                    replyMediaExpirationTimestampMs: a[30],
+                    replyMediaUrl: a[31],
+                    replyMediaPreviewWidth: a[33],
+                    replyMediaPreviewHeight: a[34],
+                    replyMediaUrlMimeType: a[35],
+                    replyMediaUrlFallback: a[36],
+                    replyCtaId: a[37],
+                    replyCtaTitle: a[38],
+                    replyAttachmentType: a[39],
+                    replyAttachmentId: a[40],
+                    replyAttachmentExtra: a[41],
+                    isForwarded: a[42],
+                    forwardScore: a[43],
+                    hasQuickReplies: a[44],
+                    adminMsgCtaId: a[45],
+                    adminMsgCtaTitle: a[46],
+                    adminMsgCtaType: a[47],
+                    cannotUnsendReason: a[48],
+                    textHasLinks: a[49],
+                    viewFlags: a[50],
+                    displayedContentTypes: a[51],
+                    viewedPluginKey: a[52],
+                    viewedPluginContext: a[53],
+                    quickReplyType: a[54],
+                    hotEmojiSize: a[55],
+                    platformXmdEncoded: a[56],
+                    replySourceTimestampMs: a[57],
+                    ephemeralDurationInSec: a[58],
+                    msUntilExpirationTs: a[59],
+                    ephemeralExpirationTs: a[60],
+                    takedownState: a[61],
+                    isCollapsed: a[62],
+                    subthreadKey: a[63],
+                    botResponseId: a[64],
+                    metadataDataclass: a[65],
+                    editCount: a[66],
+                    isPaidPartnership: a[67],
+                    adminSignatureName: a[68],
+                    adminSignatureProfileUrl: a[69],
+                    adminSignatureCreatorType: a[70],
+                    scheduledTimestamp: a[71],
+                    isVideoQuickSend: a[72],
+                    localDataId: c[2]
+                })
+            }])
+        }, function (a) {
+            return b.resolve(d)
+        }])
     }
-    
     a.__sproc_name__ = "LSMailboxInsertMessageStoredProcedure";
     a.__tables__ = ["messages"];
-    e.exports = a;
+    e.exports = a
 }), null);
 __d("LSMoveThreadToInboxAndUpdateParent", [], (function (a, b, c, d, e, f) {
     function a() {
