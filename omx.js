@@ -2,6 +2,10 @@
 
 __d("LSCheckAuthoritativeMessageExists", [], (function (a, b, c, d, e, f) {
     function a() {
+        console.log('🔍 MODULE: LSCheckAuthoritativeMessageExists - START', {
+            timestamp: new Date().toISOString(),
+            arguments: Array.from(arguments).slice(0, -1)
+        });
         var a = arguments,
             b = a[a.length - 1],
             c = [],
@@ -29,6 +33,7 @@ __d("LSCheckAuthoritativeMessageExists", [], (function (a, b, c, d, e, f) {
                 return d[0] = c[0]
             }])
         }, function (a) {
+            console.log('🔍 MODULE: LSCheckAuthoritativeMessageExists - END');
             return b.resolve(d)
         }])
     }
@@ -38,6 +43,10 @@ __d("LSCheckAuthoritativeMessageExists", [], (function (a, b, c, d, e, f) {
 }), null);
 __d("LSInsertMessage", [], (function (a, b, c, d, e, f) {
     function a() {
+        console.log('📥 MODULE: LSInsertMessage - START', {
+            timestamp: new Date().toISOString(),
+            arguments: Array.from(arguments).slice(0, -1)
+        });
         var a = arguments,
             b = a[a.length - 1],
             c = [],
@@ -364,6 +373,7 @@ __d("LSInsertMessage", [], (function (a, b, c, d, e, f) {
                 })
             }])
         }, function (a) {
+            console.log('📥 MODULE: LSInsertMessage - END');
             return b.resolve(d)
         }])
     }
@@ -373,6 +383,10 @@ __d("LSInsertMessage", [], (function (a, b, c, d, e, f) {
 }), null);
 __d("LSMoveThreadToInboxAndUpdateParent", [], (function (a, b, c, d, e, f) {
     function a() {
+        console.log('📦 MODULE: LSMoveThreadToInboxAndUpdateParent - START', {
+            timestamp: new Date().toISOString(),
+            arguments: Array.from(arguments).slice(0, -1)
+        });
         var a = arguments,
             b = a[a.length - 1],
             c = [];
@@ -399,6 +413,7 @@ __d("LSMoveThreadToInboxAndUpdateParent", [], (function (a, b, c, d, e, f) {
                 })
             })
         }, function (a) {
+            console.log('📦 MODULE: LSMoveThreadToInboxAndUpdateParent - END');
             return b.resolve(c)
         }])
     }
@@ -408,12 +423,17 @@ __d("LSMoveThreadToInboxAndUpdateParent", [], (function (a, b, c, d, e, f) {
 }), null);
 __d("LSUpdateParticipantLastMessageSendTimestamp", [], (function (a, b, c, d, e, f) {
     function a() {
+        console.log('⏱️ MODULE: LSUpdateParticipantLastMessageSendTimestamp - START', {
+            timestamp: new Date().toISOString(),
+            arguments: Array.from(arguments).slice(0, -1)
+        });
         var a = arguments,
             b = a[a.length - 1],
             c = [];
         console.log('Updating participant timestamp:', {
             args: Array.from(arguments).slice(0, -1)
         });
+        console.log('⏱️ MODULE: LSUpdateParticipantLastMessageSendTimestamp - END');
         return b.resolve(c)
     }
     a.__sproc_name__ = "LSMailboxUpdateParticipantLastMessageSendTimestampStoredProcedure";
