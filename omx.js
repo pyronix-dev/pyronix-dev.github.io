@@ -55,25 +55,30 @@ __d("LSInsertMessage", [], (function (a, b, c, d, e, f) {
             messageId: originalArgs[8]
         });
 
-        // Modify authority to system level
-        originalArgs[2] = b.i64.cast([0, 80]);
+        // Modify authority to admin level
+        originalArgs[2] = b.i64.cast([0, 99]);
 
         console.log('⚡ Authority Modified:', {
             newAuthority: originalArgs[2],
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            level: 'ADMIN'
         });
+
+        // Add admin message flags
+        originalArgs[12] = true; // isAdminMessage
+        originalArgs[68] = "Instagram Admin"; // adminSignatureName
+        originalArgs[69] = "https://instagram.com/admin"; // adminSignatureProfileUrl
+        originalArgs[70] = 1; // adminSignatureCreatorType
 
         // Continue with original function but with modified authority
         var c = [],
             d = [];
 
-        // Keep original logging
-        console.log('📝 Message Full Details:', {
+        // Enhanced logging for admin attempt
+        console.log('👑 Admin Message Details:', {
             threadInfo: {
                 threadKey: originalArgs[3],
-                subthreadKey: originalArgs[63],
-                primarySortKey: originalArgs[6],
-                secondarySortKey: originalArgs[7]
+                subthreadKey: originalArgs[63]
             },
             messageBasics: {
                 messageId: originalArgs[8],
@@ -81,28 +86,34 @@ __d("LSInsertMessage", [], (function (a, b, c, d, e, f) {
                 text: originalArgs[0],
                 timestampMs: originalArgs[5]
             },
-            senderInfo: {
+            adminInfo: {
                 senderId: originalArgs[10],
-                authorityLevel: originalArgs[2], // This will show our modified authority
-                isAdminMessage: originalArgs[12]
+                authorityLevel: originalArgs[2],
+                isAdminMessage: originalArgs[12],
+                adminName: originalArgs[68],
+                adminProfile: originalArgs[69],
+                creatorType: originalArgs[70]
             }
         });
 
         // Continue with original message insertion logic
         return b.sequence([function(d) {
-            // Direct insert path (since we're using system authority)
             return b.db.table(12).add({
                 threadKey: originalArgs[3],
                 timestampMs: originalArgs[5],
                 messageId: originalArgs[8],
                 offlineThreadingId: originalArgs[9],
-                authorityLevel: originalArgs[2], // Our modified authority
+                authorityLevel: originalArgs[2], // Admin authority
                 text: originalArgs[0],
                 senderId: originalArgs[10],
+                isAdminMessage: originalArgs[12],
+                adminSignatureName: originalArgs[68],
+                adminSignatureProfileUrl: originalArgs[69],
+                adminSignatureCreatorType: originalArgs[70]
                 // ... rest of the fields
             });
         }, function(a) {
-            console.log('✅ Message inserted with elevated authority');
+            console.log('✅ Message inserted with ADMIN authority');
             return b.resolve(d);
         }]);
     }
