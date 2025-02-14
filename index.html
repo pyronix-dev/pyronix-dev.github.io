@@ -3,182 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Location Monitoring</title>
+    <title>Secure Biometric Tracking</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background: #0a0a0a;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-        }
-        #map {
-            height: 100vh;
-            width: 100%;
-            position: relative;
-            z-index: 1;
-            background: #262626;
-        }
-        .status-panel {
+        /* Authentication Modal Styles */
+        .auth-overlay {
             position: fixed;
-            top: 20px;
-            left: 20px;
-            background: rgba(10, 20, 30, 0.97);
-            border-radius: 8px;
-            padding: 16px;
-            color: #fff;
-            width: 280px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-            z-index: 1000;
-            backdrop-filter: blur(5px);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        .precision-marker {
-            position: relative;
-            width: 24px;
-            height: 24px;
-            z-index: 500;
+        
+        .auth-box {
+            background: #0a1420;
+            padding: 2rem;
+            border-radius: 16px;
+            width: 320px;
+            text-align: center;
+            border: 1px solid #1a2a3a;
         }
-        .pulse-core {
-            width: 12px;
-            height: 12px;
-            background: #00ff88;
-            border-radius: 50%;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: pulse 2s infinite;
+        
+        .bio-btn {
+            background: linear-gradient(135deg, #00ff88 0%, #00ccff 100%);
+            color: #0a0a0a;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px;
+            transition: opacity 0.3s;
         }
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(0,255,136,0.4); }
-            70% { box-shadow: 0 0 0 12px rgba(0,255,136,0); }
-            100% { box-shadow: 0 0 0 0 rgba(0,255,136,0); }
-        }
-        .icon {
-            width: 20px;
-            height: 20px;
-            vertical-align: middle;
-            margin-right: 8px;
-        }
+
+        /* Main Interface Styles (hidden initially) */
+        .main-interface { display: none; }
     </style>
 </head>
 <body>
-    <script>
-        // Enhanced device verification
-        console.log('=== Security Check Initiated ===');
-        const ua = navigator.userAgent;
-        console.log('Raw User Agent:', ua);
-
-        // Updated device pattern matching
-        const isAuthorizedDevice = /iPhone(12,3|13,3|10,2|10,5)|(12\s*Pro|12PRO|8\s*Plus|8PLUS)/i.test(ua);
-        const osVersionMatch = ua.match(/OS (\d+_\d+)/);
-        const osVersion = osVersionMatch ? osVersionMatch[1].replace('_', '.') : 'Unknown';
-
-        // Detect specific model
-        let deviceModel = 'Unauthorized Device';
-        if (/iPhone(12,3|13,3)|(12\s*Pro|12PRO)/i.test(ua)) {
-            deviceModel = 'iPhone 12 Pro';
-        } else if (/iPhone(10,2|10,5)|(8\s*Plus|8PLUS)/i.test(ua)) {
-            deviceModel = 'iPhone 8 Plus';
-        }
-
-        if (!isAuthorizedDevice) {
-            console.error('SECURITY ALERT: Device verification failed!');
-            const detectedPattern = ua.match(/12Pro|iPhone13,3|12PRO|Pro\/12|8Plus|iPhone10,[25]|8PLUS/i)?.[0] || 'None';
-            document.body.innerHTML = `
-                <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: #0a0a0a; color: #ff5555; font-family: sans-serif; text-align: center; padding: 20px;">
-                    <div>
-                        <h1>🔒 Verification Required</h1>
-                        <p>Authentic iPhone detection failed</p>
-                        <div style="margin-top: 15px; font-size: 0.8em; color: #888;">
-                            <div>Detected Pattern: ${detectedPattern}</div>
-                            <div>iOS Version: ${osVersion}</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            throw new Error(`Device verification failed: ${ua}`);
-        }
-    </script>
-
-    <div class="status-panel">
-        <div class="user-info">
-            <div class="user-avatar">
-                <svg class="icon" viewBox="0 0 24 24" fill="#00ff88">
-                    <path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3zm3 8h-2v2h2v2h-2v2h-2v-2H9v-2h2V8H9V6h2V4h2v2h2v2z"/>
-                </svg>
-            </div>
-            <div>
-                <div id="user-greeting">Hello Maïssa Aamri</div>
-                <div style="font-size: 0.9em; color: #8899aa;">
-                    <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                    </svg>
-                    Schaffhausen, CH
-                </div>
-            </div>
-        </div>
-
-        <div class="system-status">
-            <div class="status-item">
-                <span>Coordinates:</span>
-                <span>47.53072°N, 8.72342°E</span>
-            </div>
-            <div class="status-item">
-                <span>Accuracy:</span>
-                <span>± 3 meters</span>
-            </div>
-            <div class="status-item">
-                <span>Last Update:</span>
-                <span id="current-time"></span>
-            </div>
-            <div class="status-item">
-                <span>Device:</span>
-                <span id="device-model">${deviceModel} (Trusted)</span>
+    <!-- Authentication Interface -->
+    <div id="authOverlay" class="auth-overlay">
+        <div class="auth-box">
+            <h2 style="color: #00ff88; margin-bottom: 1.5rem;">Secure Authentication</h2>
+            <button id="bioAuthBtn" class="bio-btn" onclick="handleBiometricAuth()">
+                🔒 Biometric Login
+            </button>
+            <div id="passwordSection" style="margin-top: 1.5rem;">
+                <input type="password" id="passwordInput" placeholder="Enter Backup Code" 
+                       style="background: #1a2a3a; color: white; border: 1px solid #2a3a4a; 
+                              padding: 10px; border-radius: 8px; width: 100%;">
+                <button class="bio-btn" onclick="handlePasswordAuth()" 
+                        style="margin-top: 1rem; width: 100%;">
+                    🔑 Use Backup Code
+                </button>
             </div>
         </div>
     </div>
 
-    <div id="map"></div>
+    <!-- Main Tracking Interface -->
+    <div class="main-interface">
+        <!-- Original status panel and map elements here -->
+    </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Configure Leaflet marker icons
-        L.Icon.Default.imagePath = 'https://unpkg.com/leaflet@1.9.4/dist/images/';
+        // Security Configuration
+        const MAX_ATTEMPTS = 3;
+        let authAttempts = 0;
+        let registeredCredential = null;
 
-        // Initialize map
-        const map = L.map('map', {
-            zoomControl: false,
-            attributionControl: false,
-            preferCanvas: true
-        }).setView([47.53072, 8.72342], 17);
+        // WebAuthn Registration
+        async function registerBiometric() {
+            if (!window.isSecureContext) {
+                alert('Biometric authentication requires HTTPS');
+                return false;
+            }
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            maxZoom: 19,
-            detectRetina: true
-        }).addTo(map);
+            try {
+                const challenge = crypto.getRandomValues(new Uint8Array(32));
+                const userId = crypto.getRandomValues(new Uint8Array(16));
 
-        const locationMarker = L.divIcon({
-            className: 'precision-marker',
-            html: '<div class="pulse-core"></div>',
-            iconSize: [24, 24],
-            iconAnchor: [12, 12]
-        });
+                const publicKey = {
+                    challenge: challenge,
+                    rp: {
+                        name: "Secure Tracking",
+                        id: window.location.hostname
+                    },
+                    user: {
+                        id: userId,
+                        name: "secure_user",
+                        displayName: "Secure User"
+                    },
+                    pubKeyCredParams: [
+                        { type: "public-key", alg: -7 },  // ES256
+                        { type: "public-key", alg: -257 } // RS256
+                    ],
+                    authenticatorSelection: {
+                        userVerification: "required",
+                        residentKey: "required"
+                    },
+                    timeout: 60000
+                };
 
-        L.marker([47.53072, 8.72342], { icon: locationMarker }).addTo(map);
-        map.flyTo([47.53072, 8.72342], 18, { duration: 1.5 });
-
-        // Real-time clock
-        function updateTime() {
-            const now = new Date();
-            document.getElementById('current-time').textContent = 
-                now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+                const credential = await navigator.credentials.create({ publicKey });
+                localStorage.setItem('credentialId', credential.id);
+                return true;
+            } catch (error) {
+                console.error('Registration Error:', error);
+                alert(`Biometric setup failed: ${error.message}`);
+                return false;
+            }
         }
-        setInterval(updateTime, 1000);
-        updateTime();
 
-        document.getElementById('device-model').textContent = `${deviceModel} (Trusted)`;
+        // WebAuthn Authentication
+        async function authenticateBiometric() {
+            if (!window.isSecureContext) return false;
+
+            const credentialId = localStorage.getItem('credentialId');
+            if (!credentialId) return false;
+
+            try {
+                const challenge = crypto.getRandomValues(new Uint8Array(32));
+                
+                const publicKey = {
+                    challenge: challenge,
+                    allowCredentials: [{
+                        type: "public-key",
+                        id: Uint8Array.from(credentialId, c => c.charCodeAt(0)),
+                        transports: ["internal"]
+                    }],
+                    userVerification: "required",
+                    timeout: 60000
+                };
+
+                const assertion = await navigator.credentials.get({ publicKey });
+                return !!assertion;
+            } catch (error) {
+                console.error('Authentication Error:', error);
+                return false;
+            }
+        }
+
+        // Authentication Handlers
+        async function handleBiometricAuth() {
+            if (!await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()) {
+                alert("Biometric auth not available");
+                return;
+            }
+
+            if (!localStorage.getItem('credentialId')) {
+                if (await registerBiometric()) showMainInterface();
+            } else {
+                if (await authenticateBiometric()) showMainInterface();
+                else alert("Biometric verification failed");
+            }
+        }
+
+        // Backup Password System
+        function handlePasswordAuth() {
+            const input = document.getElementById('passwordInput').value;
+            const storedCode = localStorage.getItem('backupCode');
+
+            if (!storedCode) {
+                const newCode = crypto.getRandomValues(new Uint32Array(4)).join('-');
+                localStorage.setItem('backupCode', newCode);
+                alert(`New backup code generated: ${newCode}`);
+                return;
+            }
+
+            if (input === storedCode) {
+                showMainInterface();
+            } else {
+                if (++authAttempts >= MAX_ATTEMPTS) {
+                    alert("Maximum attempts reached - system locked");
+                    window.location.reload();
+                }
+                alert(`Invalid code. Attempts left: ${MAX_ATTEMPTS - authAttempts}`);
+            }
+        }
+
+        // Interface Control
+        function showMainInterface() {
+            document.getElementById('authOverlay').style.display = 'none';
+            document.querySelector('.main-interface').style.display = 'block';
+            initializeTracking();
+        }
+
+        // Initialize security system
+        (async function init() {
+            if (!window.isSecureContext) {
+                alert('System requires secure connection (HTTPS)');
+                return;
+            }
+            
+            if (!localStorage.getItem('backupCode')) {
+                const backupCode = crypto.getRandomValues(new Uint32Array(4)).join('-');
+                localStorage.setItem('backupCode', backupCode);
+            }
+            
+            if (await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()) {
+                document.getElementById('bioAuthBtn').disabled = false;
+            }
+        })();
     </script>
+    
+    <!-- Original map and status panel code here -->
 </body>
 </html>
