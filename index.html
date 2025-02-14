@@ -6,35 +6,53 @@
     <title>Biometric Secure Monitoring</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <style>
-        /* Biometric Overlay */
-        .bio-overlay {
+        /* Original Design Preserved */
+        .auth-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #0a0a0a;
+            background: rgba(0,0,0,0.95);
+            z-index: 10000;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 10000;
-            color: #00ff88;
+        }
+
+        .auth-box {
+            background: #0a1420;
+            padding: 2rem;
+            border-radius: 16px;
+            width: 320px;
+            text-align: center;
+            border: 1px solid #1a2a3a;
+        }
+
+        .bio-btn {
+            background: linear-gradient(135deg, #00ff88 0%, #00ccff 100%);
+            color: #0a0a0a;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px;
+            transition: opacity 0.3s;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #0a0a0a;
             font-family: 'Segoe UI', system-ui, sans-serif;
         }
-
-        .bio-content {
-            text-align: center;
-            padding: 2rem;
-            border: 2px solid #00ff88;
-            border-radius: 16px;
-            background: rgba(10, 20, 30, 0.97);
-            max-width: 320px;
-        }
-
-        /* Original Map Styles */
+        
         #map {
             height: 100vh;
             width: 100%;
+            position: relative;
+            z-index: 1;
             background: #262626;
             display: none;
         }
@@ -70,39 +88,53 @@
     </style>
 </head>
 <body>
-    <!-- Biometric Authentication Interface -->
-    <div class="bio-overlay" id="bioOverlay">
-        <div class="bio-content">
-            <h2>Biometric Verification</h2>
-            <p id="bioMessage">Initializing security system...</p>
-            <div class="pulse-core" style="margin: 20px auto"></div>
+    <!-- Biometric Auth Interface -->
+    <div id="authOverlay" class="auth-overlay">
+        <div class="auth-box">
+            <h2 style="color: #00ff88; margin-bottom: 1.5rem;">Biometric Verification</h2>
+            <button id="bioAuthBtn" class="bio-btn" onclick="handleBiometricAuth()">
+                🔒 Verify Identity
+            </button>
+            <div id="bioStatus" style="margin-top: 1rem; color: #ff5555; display: none;"></div>
         </div>
     </div>
 
-    <!-- Monitoring Interface (Hidden Initially) -->
+    <!-- Original Monitoring Interface -->
     <div class="status-panel">
         <div class="user-info">
-            <div style="display: flex; align-items: center; gap: 12px">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="#00ff88">
+            <div class="user-avatar">
+                <svg class="icon" viewBox="0 0 24 24" fill="#00ff88">
                     <path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3zm3 8h-2v2h2v2h-2v2h-2v-2H9v-2h2V8H9V6h2V4h2v2h2v2z"/>
                 </svg>
-                <div>
-                    <div>Hello Maïssa Aamri</div>
-                    <div style="font-size: 0.9em; color: #8899aa">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                        </svg>
-                        Schaffhausen, CH
-                    </div>
+            </div>
+            <div>
+                <div id="user-greeting">Hello Maïssa Aamri</div>
+                <div style="font-size: 0.9em; color: #8899aa;">
+                    <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                    Schaffhausen, CH
                 </div>
             </div>
         </div>
 
-        <div class="system-status" style="margin-top: 1rem">
-            <div>Coordinates: <span>47.53072°N, 8.72342°E</span></div>
-            <div>Accuracy: <span>± 3 meters</span></div>
-            <div>Last Update: <span id="currentTime"></span></div>
-            <div>Device: <span id="deviceStatus"></span></div>
+        <div class="system-status">
+            <div class="status-item">
+                <span>Coordinates:</span>
+                <span>47.53072°N, 8.72342°E</span>
+            </div>
+            <div class="status-item">
+                <span>Accuracy:</span>
+                <span>± 3 meters</span>
+            </div>
+            <div class="status-item">
+                <span>Last Update:</span>
+                <span id="current-time"></span>
+            </div>
+            <div class="status-item">
+                <span>Device:</span>
+                <span id="device-model"></span>
+            </div>
         </div>
     </div>
 
@@ -110,26 +142,35 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Biometric Configuration
-        const BIOMETRIC_CONFIG = {
-            rpId: window.location.hostname,
-            timeout: 45000,
-            challengeSize: 32
-        };
-
-        // Device Verification
-        const userAgent = navigator.userAgent;
-        const isAuthorizedDevice = /iPhone(12|13|8).*(Pro|Plus)/i.test(userAgent);
-        let deviceModel = 'Unknown Device';
-
-        // Main Initialization
-        (async () => {
-            if (!isAuthorizedDevice) showDeviceError();
-            document.getElementById('deviceStatus').textContent = deviceModel;
+        // Biometric-Only Configuration
+        let deviceModel = 'Unauthorized Device';
+        
+        (async function initSecurity() {
+            // Device Verification
+            const ua = navigator.userAgent;
+            const isAuthorizedDevice = /iPhone(12,3|13,3|10,2|10,5)|(12\s*Pro|12PRO|8\s*Plus|8PLUS)/i.test(ua);
             
+            if (!isAuthorizedDevice) {
+                showDeviceError();
+                return;
+            }
+
+            // Set device model
+            deviceModel = /iPhone(12,3|13,3)/i.test(ua) ? 'iPhone 12 Pro' : 'iPhone 8 Plus';
+            document.getElementById('device-model').textContent = `${deviceModel} (Trusted)`;
+
+            // Security Checks
+            if (!window.isSecureContext) {
+                showBioError('HTTPS connection required');
+                return;
+            }
+
+            // Initialize Biometrics
             try {
-                if (!window.isSecureContext) throw new Error('HTTPS required');
-                if (!await checkBiometricSupport()) throw new Error('Biometrics unavailable');
+                if (!await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()) {
+                    showBioError('Biometrics unavailable');
+                    return;
+                }
                 
                 if (!localStorage.getItem('bioCredential')) {
                     await registerBiometric();
@@ -137,19 +178,18 @@
                 await authenticateBiometric();
                 showMonitoringInterface();
             } catch (error) {
-                document.getElementById('bioMessage').textContent = error.message;
+                showBioError('Authentication failed');
             }
         })();
 
         // Biometric Functions
         async function registerBiometric() {
-            const challenge = crypto.getRandomValues(new Uint8Array(BIOMETRIC_CONFIG.challengeSize));
-            const userId = crypto.getRandomValues(new Uint8Array(16));
-
+            const challenge = crypto.getRandomValues(new Uint8Array(32));
+            
             const publicKey = {
-                rp: { name: "Secure Monitoring", id: BIOMETRIC_CONFIG.rpId },
+                rp: { name: "Secure Monitoring", id: window.location.hostname },
                 user: {
-                    id: userId,
+                    id: crypto.getRandomValues(new Uint8Array(16)),
                     name: "secure_user",
                     displayName: "Maïssa Aamri"
                 },
@@ -160,7 +200,7 @@
                     userVerification: "required",
                     residentKey: "required"
                 },
-                timeout: BIOMETRIC_CONFIG.timeout
+                timeout: 60000
             };
 
             const credential = await navigator.credentials.create({ publicKey });
@@ -169,37 +209,39 @@
 
         async function authenticateBiometric() {
             const storedCredential = JSON.parse(localStorage.getItem('bioCredential'));
-            const challenge = crypto.getRandomValues(new Uint8Array(BIOMETRIC_CONFIG.challengeSize));
+            const challenge = crypto.getRandomValues(new Uint8Array(32));
 
             const publicKey = {
                 challenge: challenge,
-                rpId: BIOMETRIC_CONFIG.rpId,
+                rpId: window.location.hostname,
                 allowCredentials: [{
                     type: "public-key",
                     id: new Uint8Array(Object.values(storedCredential.rawId)),
                     transports: ["internal"]
                 }],
                 userVerification: "required",
-                timeout: BIOMETRIC_CONFIG.timeout
+                timeout: 60000
             };
 
             const assertion = await navigator.credentials.get({ publicKey });
-            return assertion;
+            if (!assertion) throw new Error('Authentication failed');
         }
 
-        async function checkBiometricSupport() {
-            return PublicKeyCredential &&
-                   await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-        }
-
-        // Monitoring Interface
+        // Interface Control
         function showMonitoringInterface() {
-            document.getElementById('bioOverlay').style.display = 'none';
+            document.getElementById('authOverlay').style.display = 'none';
             document.querySelector('.status-panel').style.display = 'block';
             document.getElementById('map').style.display = 'block';
             initializeMap();
         }
 
+        function showBioError(message) {
+            const statusDiv = document.getElementById('bioStatus');
+            statusDiv.style.display = 'block';
+            statusDiv.textContent = message;
+        }
+
+        // Map Initialization (Original)
         function initializeMap() {
             const map = L.map('map', {
                 zoomControl: false,
@@ -223,7 +265,7 @@
             
             // Update clock
             setInterval(() => {
-                document.getElementById('currentTime').textContent = 
+                document.getElementById('current-time').textContent = 
                     new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
             }, 1000);
         }
