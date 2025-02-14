@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biometric Secure Monitoring</title>
+    <title>Secure Biometric Monitoring</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <style>
         /* Original Design Preserved */
@@ -27,18 +27,6 @@
             width: 320px;
             text-align: center;
             border: 1px solid #1a2a3a;
-        }
-
-        .bio-btn {
-            background: linear-gradient(135deg, #00ff88 0%, #00ccff 100%);
-            color: #0a0a0a;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 25px;
-            font-weight: 600;
-            cursor: pointer;
-            margin: 10px;
-            transition: opacity 0.3s;
         }
 
         body {
@@ -85,6 +73,13 @@
             70% { box-shadow: 0 0 0 12px rgba(0,255,136,0); }
             100% { box-shadow: 0 0 0 0 rgba(0,255,136,0); }
         }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
     </style>
 </head>
 <body>
@@ -92,14 +87,12 @@
     <div id="authOverlay" class="auth-overlay">
         <div class="auth-box">
             <h2 style="color: #00ff88; margin-bottom: 1.5rem;">Biometric Verification</h2>
-            <button id="bioAuthBtn" class="bio-btn" onclick="handleBiometricAuth()">
-                🔒 Verify Identity
-            </button>
-            <div id="bioStatus" style="margin-top: 1rem; color: #ff5555; display: none;"></div>
+            <div id="bioStatus" style="color: #ff5555; margin: 1rem 0;"></div>
+            <div class="pulse-core" style="margin: 0 auto"></div>
         </div>
     </div>
 
-    <!-- Original Monitoring Interface -->
+    <!-- Monitoring Interface -->
     <div class="status-panel">
         <div class="user-info">
             <div class="user-avatar">
@@ -142,9 +135,10 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Biometric-Only Configuration
+        // Biometric Configuration
         let deviceModel = 'Unauthorized Device';
         
+        // Main Initialization
         (async function initSecurity() {
             // Device Verification
             const ua = navigator.userAgent;
@@ -159,26 +153,27 @@
             deviceModel = /iPhone(12,3|13,3)/i.test(ua) ? 'iPhone 12 Pro' : 'iPhone 8 Plus';
             document.getElementById('device-model').textContent = `${deviceModel} (Trusted)`;
 
-            // Security Checks
+            // Security checks
             if (!window.isSecureContext) {
-                showBioError('HTTPS connection required');
+                showBioError('Secure connection required (HTTPS)');
                 return;
             }
 
-            // Initialize Biometrics
             try {
                 if (!await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()) {
-                    showBioError('Biometrics unavailable');
+                    showBioError('Biometric authentication unavailable');
                     return;
                 }
                 
+                // Start biometric flow
                 if (!localStorage.getItem('bioCredential')) {
                     await registerBiometric();
                 }
                 await authenticateBiometric();
                 showMonitoringInterface();
             } catch (error) {
-                showBioError('Authentication failed');
+                showBioError('Biometric verification failed');
+                console.error('Auth Error:', error);
             }
         })();
 
@@ -187,14 +182,20 @@
             const challenge = crypto.getRandomValues(new Uint8Array(32));
             
             const publicKey = {
-                rp: { name: "Secure Monitoring", id: window.location.hostname },
+                rp: { 
+                    name: "Secure Monitoring",
+                    id: window.location.hostname 
+                },
                 user: {
                     id: crypto.getRandomValues(new Uint8Array(16)),
                     name: "secure_user",
                     displayName: "Maïssa Aamri"
                 },
                 challenge: challenge,
-                pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+                pubKeyCredParams: [{ 
+                    type: "public-key", 
+                    alg: -7 
+                }],
                 authenticatorSelection: {
                     authenticatorAttachment: "platform",
                     userVerification: "required",
@@ -236,12 +237,10 @@
         }
 
         function showBioError(message) {
-            const statusDiv = document.getElementById('bioStatus');
-            statusDiv.style.display = 'block';
-            statusDiv.textContent = message;
+            document.getElementById('bioStatus').textContent = message;
         }
 
-        // Map Initialization (Original)
+        // Map Initialization
         function initializeMap() {
             const map = L.map('map', {
                 zoomControl: false,
@@ -273,7 +272,7 @@
         function showDeviceError() {
             document.body.innerHTML = `
                 <div style="padding: 2rem; text-align: center; color: #ff5555">
-                    <h2>Device Not Authorized</h2>
+                    <h2>⚠️ Device Not Authorized</h2>
                     <p>This system requires an authenticated iPhone</p>
                 </div>
             `;
