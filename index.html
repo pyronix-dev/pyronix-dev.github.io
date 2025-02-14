@@ -23,7 +23,7 @@
         .auth-box {
             background: #0a1420;
             padding: 2rem;
-            border-radius: 16px;
+            border-radius: 16.7.1016px;
             width: 320px;
             text-align: center;
             border: 1px solid #1a2a3a;
@@ -135,25 +135,31 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Biometric Configuration
+        // Updated Device Verification
+        const ua = navigator.userAgent;
+        const isAuthorizedDevice = 
+            /iPhone(12,3|13,3)|(12\s*Pro|12PRO)/i.test(ua) || 
+            /CPU iPhone OS 16_7_10/.test(ua);
+
+        const osVersionMatch = ua.match(/OS (\d+_\d+_\d+)/);
+        const osVersion = osVersionMatch ? osVersionMatch[1].replace(/_/g, '.') : 'Unknown';
+
         let deviceModel = 'Unauthorized Device';
-        
+        if (/iPhone(12,3|13,3)|(12\s*Pro|12PRO)/i.test(ua)) {
+            deviceModel = 'iPhone 12 Pro';
+        } else if (/CPU iPhone OS 16_7_10/.test(ua)) {
+            deviceModel = 'iPhone (iOS 16.7.10)';
+        }
+
         // Main Initialization
         (async function initSecurity() {
-            // Device Verification
-            const ua = navigator.userAgent;
-            const isAuthorizedDevice = /iPhone(12,3|13,3|10,2|10,5)|(12\s*Pro|12PRO|8\s*Plus|8PLUS)/i.test(ua);
-            
             if (!isAuthorizedDevice) {
                 showDeviceError();
                 return;
             }
 
-            // Set device model
-            deviceModel = /iPhone(12,3|13,3)/i.test(ua) ? 'iPhone 12 Pro' : 'iPhone 8 Plus';
             document.getElementById('device-model').textContent = `${deviceModel} (Trusted)`;
 
-            // Security checks
             if (!window.isSecureContext) {
                 showBioError('Secure connection required (HTTPS)');
                 return;
@@ -165,7 +171,6 @@
                     return;
                 }
                 
-                // Start biometric flow
                 if (!localStorage.getItem('bioCredential')) {
                     await registerBiometric();
                 }
@@ -205,10 +210,13 @@
             };
 
             const credential = await navigator.credentials.create({ publicKey });
-            localStorage.setItem('bioCredential', JSON.stringify(credential));
+            localStorage.setItem('bioCredential', JSON.stringify({
+                id: credential.id,
+                rawId: Array.from(new Uint8Array(credential.rawId)),
+                transports: ["internal"]
+            }));
         }
 
-        // In authenticateBiometric function
         async function authenticateBiometric() {
             const storedCredential = JSON.parse(localStorage.getItem('bioCredential'));
             const challenge = crypto.getRandomValues(new Uint8Array(32));
@@ -219,11 +227,8 @@
                 allowCredentials: [{
                     type: "public-key",
                     id: new Uint8Array(storedCredential.rawId),
-                    transports: ["internal"] // Explicitly restrict to device
+                    transports: ["internal"]
                 }],
-                authenticatorSelection: {
-                    authenticatorAttachment: "platform" // Enforce biometric
-                },
                 userVerification: "required",
                 timeout: 60000
             };
@@ -242,6 +247,17 @@
 
         function showBioError(message) {
             document.getElementById('bioStatus').textContent = message;
+        }
+
+        function showDeviceError() {
+            const detectedPattern = ua.match(/(iPhone|CPU OS)/i)?.[0] || 'None';
+            document.body.innerHTML = `
+                <div style="padding: 2rem; text-align: center; color: #ff5555">
+                    <h2>⚠️ Device Not Authorized</h2>
+                    <p>Detected: ${detectedPattern}</p>
+                    <p>iOS Version: ${osVersion}</p>
+                </div>
+            `;
         }
 
         // Map Initialization
@@ -271,15 +287,6 @@
                 document.getElementById('current-time').textContent = 
                     new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
             }, 1000);
-        }
-
-        function showDeviceError() {
-            document.body.innerHTML = `
-                <div style="padding: 2rem; text-align: center; color: #ff5555">
-                    <h2>⚠️ Device Not Authorized</h2>
-                    <p>This system requires an authenticated iPhone</p>
-                </div>
-            `;
         }
     </script>
 </body>
