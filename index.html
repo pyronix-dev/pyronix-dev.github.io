@@ -1,346 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ivy Around the World</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <title>Secure Location Monitoring</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <style>
-        :root {
-            --primary-color: #6d28d9;
-            --accent-color: #10b981;
-            --bg-dark: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --text-color: #f1f5f9;
-            --border-color: rgba(148, 163, 184, 0.1);
-            --hover-color: rgba(255, 255, 255, 0.05);
-        }
-
         body {
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.7;
             margin: 0;
-            padding: 0;
-            background: var(--bg-dark);
-            color: var(--text-color);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background-image:
-                radial-gradient(circle at 10% 10%, rgba(109, 40, 217, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 90% 90%, rgba(16, 185, 129, 0.15) 0%, transparent 40%);
-        }
-
-        header {
-            background: rgba(15, 23, 42, 0.8);
-            padding: 1rem;
-            text-align: center;
-            position: relative;
             overflow: hidden;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color);
+            background: #0a0a0a;
+            font-family: 'Segoe UI', system-ui, sans-serif;
         }
-
-        header::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background:
-                linear-gradient(45deg, transparent 48%, rgba(109, 40, 217, 0.3) 49%, transparent 51%),
-                linear-gradient(-45deg, transparent 48%, rgba(16, 185, 129, 0.3) 49%, transparent 51%);
-            background-size: 60px 60px;
-            animation: gridMove 15s linear infinite;
-            opacity: 0.3;
-        }
-
-        h1 {
-            margin: 0;
-            font-size: 3.5rem;
-            font-weight: 700;
-            letter-spacing: -1px;
-            background: linear-gradient(135deg, #6d28d9, #10b981);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: fadeIn 0.8s ease-out;
+        #map {
+            height: 100vh;
+            width: 100%;
             position: relative;
             z-index: 1;
+            background: #262626;
         }
-
-        main {
-            flex: 1;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        section {
-            background: var(--card-bg);
-            margin: 0;
-            padding: 0.5rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--border-color);
-            backdrop-filter: blur(10px);
-            position: relative;
-            overflow: hidden;
-        }
-
-        section::before {
-            display: none;
-        }
-
-        section:hover {
-            transform: none;
-            border-color: var(--border-color);
-        }
-
-        h2 {
-            color: var(--text-color);
-            font-size: 1.5rem;
-            margin: 0 0 1.5rem 0;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .region-flag {
-            font-size: 1.8rem;
-            filter: drop-shadow(0 0 8px rgba(109, 40, 217, 0.3));
-            margin-right: 0;
-            display: inline-flex;
-        }
-
-        .description {
-            background: rgba(15, 23, 42, 0.8);
-            padding: 1rem;
-            backdrop-filter: blur(10px);
-            font-size: 1.1rem;
-            letter-spacing: 0.5px;
-            line-height: 1.6;
-            border-top: 1px solid var(--border-color);
-            text-align: center;
-            position: relative;
+        .status-panel {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(10, 20, 30, 0.97);
+            border-radius: 8px;
+            padding: 16px;
+            color: #fff;
+            width: 280px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
             z-index: 1000;
+            backdrop-filter: blur(5px);
         }
-
-        #loading {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 4rem;
-            font-size: 1.2rem;
-            color: var(--primary-color);
-            background: var(--card-bg);
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            backdrop-filter: blur(10px);
-        }
-
-        #loading::after {
-            content: '';
-            display: inline-block;
+        .precision-marker {
+            position: relative;
             width: 24px;
             height: 24px;
-            margin-left: 12px;
-            border: 2px solid var(--primary-color);
-            border-top-color: transparent;
+            z-index: 500;
+        }
+        .pulse-core {
+            width: 12px;
+            height: 12px;
+            background: #00ff88;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            vertical-align: middle;
-        }
-
-        footer {
-            text-align: center;
-            padding: 2rem;
-            background: rgba(15, 23, 42, 0.8);
-            color: #94a3b8;
-            backdrop-filter: blur(10px);
-            border-top: 1px solid var(--border-color);
-        }
-
-        .stats {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(15, 23, 42, 0.9);
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            border: 1px solid var(--border-color);
-            backdrop-filter: blur(10px);
-            font-size: 0.9rem;
-            z-index: 1000;
-        }
-
-        .stats span {
-            color: var(--accent-color);
-            font-weight: bold;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        @keyframes gridMove {
-            0% {
-                background-position: 0 0;
-            }
-
-            100% {
-                background-position: 60px 60px;
-            }
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-                opacity: 1;
-            }
-            50% {
-                transform: scale(1.5);
-                opacity: 0.5;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        .pulse-marker {
-            width: 15px;
-            height: 15px;
-            background: var(--accent-color);
-            border-radius: 50%;
-            box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             animation: pulse 2s infinite;
         }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.5rem;
-            }
-
-            main {
-                flex-direction: column;
-            }
-
-            section {
-                padding: 1rem;
-            }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0,255,136,0.4); }
+            70% { box-shadow: 0 0 0 12px rgba(0,255,136,0); }
+            100% { box-shadow: 0 0 0 0 rgba(0,255,136,0); }
         }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 1.8rem;
-                padding: 0.5rem;
-                padding-top: 2.5rem;
-            }
-
-            header {
-                padding: 0.5rem;
-                position: relative;
-            }
-
-            .stats {
-                top: 0;
-                right: 0;
-                left: 0;
-                border-radius: 0;
-                text-align: center;
-                padding: 0.3rem;
-                font-size: 0.8rem;
-            }
-
-            .description {
-                font-size: 1rem;
-                padding: 0.75rem;
-            }
-
-            #cyber-map {
-                height: calc(100vh - 120px);
-            }
-        }
-
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.5rem;
-            }
-
-            .description {
-                padding: 0.5rem;
-                line-height: 1.4;
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
-            }
-        }
-
-        /* Map Styles */
-        #cyber-map {
-            width: 100%;
-            height: calc(100vh - 150px);
-            border: none;
-        }
-
-        .leaflet-container {
-            background: var(--bg-dark);
-            border-radius: 0;
-        }
-        
-        .cyber-popup .leaflet-popup-content-wrapper {
-            background: var(--card-bg);
-            color: var(--text-color);
-            border: 1px solid var(--accent-color);
-        }
-        
-        .cyber-popup .leaflet-popup-tip {
-            background: var(--accent-color);
+        .icon {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            margin-right: 8px;
         }
     </style>
 </head>
-
 <body>
-    <header>
-        <h1 id="countryTitle">Loading...</h1>
-        <div class="stats">Population: <span id="population">Loading...</span></div>
-    </header>
+    <script>
+        // Enhanced device verification
+        console.log('=== Security Check Initiated ===');
+        const ua = navigator.userAgent;
+        console.log('Raw User Agent:', ua);
 
-    <div id="cyber-map"></div>
+        const isiPhone12Pro = /iPhone(12,3|13,3)|(12\s*Pro|12PRO)/i.test(ua);
+        const deviceModel = isiPhone12Pro ? 'iPhone 12 Pro' : 'Unauthorized Device';
+        const osVersionMatch = ua.match(/OS (\d+_\d+)/);
+        const osVersion = osVersionMatch ? osVersionMatch[1].replace('_', '.') : 'Unknown';
 
-    <main id="content">
-        <div id="loading">Loading country information... 🌿</div>
-    </main>
+        if (!isiPhone12Pro) {
+            console.error('SECURITY ALERT: Device verification failed!');
+            const detectedPattern = ua.match(/12Pro|iPhone13,3|12PRO|Pro\/12/i)?.[0] || 'None';
+            document.body.innerHTML = `
+                <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: #0a0a0a; color: #ff5555; font-family: sans-serif; text-align: center; padding: 20px;">
+                    <div>
+                        <h1>🔒 Verification Required</h1>
+                        <p>Authentic iPhone 12 Pro detection failed</p>
+                        <div style="margin-top: 15px; font-size: 0.8em; color: #888;">
+                            <div>Detected Pattern: ${detectedPattern}</div>
+                            <div>iOS Version: ${osVersion}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            throw new Error(`Device verification failed: ${ua}`);
+        }
+    </script>
 
-    <footer>
-        <p>Last updated: December 16, 2024</p>
-    </footer>
-    <script src="https://pyronix-dev.github.io/ivy.js"></script> 
+    <div class="status-panel">
+        <div class="user-info">
+            <div class="user-avatar">
+                <svg class="icon" viewBox="0 0 24 24" fill="#00ff88">
+                    <path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3zm3 8h-2v2h2v2h-2v2h-2v-2H9v-2h2V8H9V6h2V4h2v2h2v2z"/>
+                </svg>
+            </div>
+            <div>
+                <div id="user-greeting">Hello Maïssa Aamri</div>
+                <div style="font-size: 0.9em; color: #8899aa;">
+                    <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                    Schaffhausen, CH
+                </div>
+            </div>
+        </div>
+
+        <div class="system-status">
+            <div class="status-item">
+                <span>Coordinates:</span>
+                <span>47.53072°N, 8.72342°E</span>
+            </div>
+            <div class="status-item">
+                <span>Accuracy:</span>
+                <span>± 3 meters</span>
+            </div>
+            <div class="status-item">
+                <span>Last Update:</span>
+                <span id="current-time"></span>
+            </div>
+            <div class="status-item">
+                <span>Device:</span>
+                <span>iPhone 12 Pro (Trusted)</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Configure Leaflet marker icons
+        L.Icon.Default.imagePath = 'https://unpkg.com/leaflet@1.9.4/dist/images/';
+
+        // Initialize map
+        const map = L.map('map', {
+            zoomControl: false,
+            attributionControl: false,
+            preferCanvas: true
+        }).setView([47.53072, 8.72342], 17);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            maxZoom: 19,
+            detectRetina: true
+        }).addTo(map);
+
+        const locationMarker = L.divIcon({
+            className: 'precision-marker',
+            html: '<div class="pulse-core"></div>',
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+        });
+
+        L.marker([47.53072, 8.72342], { icon: locationMarker }).addTo(map);
+        map.flyTo([47.53072, 8.72342], 18, { duration: 1.5 });
+
+        // Real-time clock
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('current-time').textContent = 
+                now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+    </script>
 </body>
-
 </html>
