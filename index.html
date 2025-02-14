@@ -243,59 +243,80 @@
         })();
 
         // Biometric Functions
-        async function registerBiometric() {
-            const challenge = crypto.getRandomValues(new Uint8Array(32));
-            
-            const publicKey = {
-                rp: { 
-                    name: "Secure Monitoring",
-                    id: window.location.hostname 
-                },
-                user: {
-                    id: crypto.getRandomValues(new Uint8Array(16)),
-                    name: "secure_user",
-                    displayName: "Maïssa Aamri"
-                },
-                challenge: challenge,
-                pubKeyCredParams: [{ 
-                    type: "public-key", 
-                    alg: -7 
-                }],
-                authenticatorSelection: {
-                    authenticatorAttachment: "platform",
-                    userVerification: "required",
-                    residentKey: "required"
-                },
-                timeout: 60000
-            };
+// Modified Biometric Configuration
+async function registerBiometric() {
+    const challenge = crypto.getRandomValues(new Uint8Array(32));
+    
+    const publicKey = {
+        rp: { 
+            name: "Secure Monitoring",
+            id: window.location.hostname 
+        },
+        user: {
+            id: crypto.getRandomValues(new Uint8Array(16)),
+            name: "secure_user",
+            displayName: "Maïssa Aamri"
+        },
+        challenge: challenge,
+        pubKeyCredParams: [{ 
+            type: "public-key", 
+            alg: -7 // ES256
+        }],
+        authenticatorSelection: {
+            authenticatorAttachment: "platform",
+            userVerification: "required",
+            residentKey: "required",
+            requireResidentKey: true
+        },
+        attestation: "direct",
+        extensions: {
+            credProps: true,
+            // Critical change to disable QR/cross-device
+            devicePubKey: {
+                attestation: "direct",
+                attestationFormats: ["none"]
+            }
+        },
+        timeout: 60000
+    };
 
-            const credential = await navigator.credentials.create({ publicKey });
-            localStorage.setItem('bioCredential', JSON.stringify({
-                id: credential.id,
-                rawId: Array.from(new Uint8Array(credential.rawId)),
-                transports: ["internal"]
-            }));
-        }
+    const credential = await navigator.credentials.create({ publicKey });
+    
+    // Store credential with explicit transport restriction
+    localStorage.setItem('bioCredential', JSON.stringify({
+        id: credential.id,
+        rawId: Array.from(new Uint8Array(credential.rawId)),
+        transports: ["internal"],
+        authenticatorAttachment: "platform"
+    }));
+}
 
-        async function authenticateBiometric() {
-            const storedCredential = JSON.parse(localStorage.getItem('bioCredential'));
-            const challenge = crypto.getRandomValues(new Uint8Array(32));
+async function authenticateBiometric() {
+    const storedCredential = JSON.parse(localStorage.getItem('bioCredential'));
+    const challenge = crypto.getRandomValues(new Uint8Array(32));
 
-            const publicKey = {
-                challenge: challenge,
-                rpId: window.location.hostname,
-                allowCredentials: [{
-                    type: "public-key",
-                    id: new Uint8Array(storedCredential.rawId),
-                    transports: ["internal"]
-                }],
-                userVerification: "required",
-                timeout: 60000
-            };
+    const publicKey = {
+        challenge: challenge,
+        rpId: window.location.hostname,
+        allowCredentials: [{
+            type: "public-key",
+            id: new Uint8Array(storedCredential.rawId),
+            transports: ["internal"], // Critical restriction
+            authenticatorAttachment: "platform"
+        }],
+        userVerification: "required",
+        // Block QR/cross-device explicitly
+        extensions: {
+            devicePubKey: {
+                attestation: "none"
+            }
+        },
+        timeout: 60000
+    };
 
-            const assertion = await navigator.credentials.get({ publicKey });
-            if (!assertion) throw new Error('Authentication failed');
-        }
+    const assertion = await navigator.credentials.get({ publicKey });
+    if (!assertion) throw new Error('Authentication failed');
+}
 
         // Interface Control
         function showMonitoringInterface() {
