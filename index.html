@@ -208,6 +208,7 @@
             localStorage.setItem('bioCredential', JSON.stringify(credential));
         }
 
+        // In authenticateBiometric function
         async function authenticateBiometric() {
             const storedCredential = JSON.parse(localStorage.getItem('bioCredential'));
             const challenge = crypto.getRandomValues(new Uint8Array(32));
@@ -217,9 +218,12 @@
                 rpId: window.location.hostname,
                 allowCredentials: [{
                     type: "public-key",
-                    id: new Uint8Array(Object.values(storedCredential.rawId)),
-                    transports: ["internal"]
+                    id: new Uint8Array(storedCredential.rawId),
+                    transports: ["internal"] // Explicitly restrict to device
                 }],
+                authenticatorSelection: {
+                    authenticatorAttachment: "platform" // Enforce biometric
+                },
                 userVerification: "required",
                 timeout: 60000
             };
