@@ -93,6 +93,11 @@
         }
 
         #map {
+            height: 100vh;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            background: #262626;
             opacity: 0;
             transition: opacity 0.5s ease-out 0.4s;
         }
@@ -243,80 +248,70 @@
         })();
 
         // Biometric Functions
-// Modified Biometric Configuration
-async function registerBiometric() {
-    const challenge = crypto.getRandomValues(new Uint8Array(32));
-    
-    const publicKey = {
-        rp: { 
-            name: "Secure Monitoring",
-            id: window.location.hostname 
-        },
-        user: {
-            id: crypto.getRandomValues(new Uint8Array(16)),
-            name: "secure_user",
-            displayName: "Maïssa Aamri"
-        },
-        challenge: challenge,
-        pubKeyCredParams: [{ 
-            type: "public-key", 
-            alg: -7 // ES256
-        }],
-        authenticatorSelection: {
-            authenticatorAttachment: "platform",
-            userVerification: "required",
-            residentKey: "required",
-            requireResidentKey: true
-        },
-        attestation: "direct",
-        extensions: {
-            credProps: true,
-            // Critical change to disable QR/cross-device
-            devicePubKey: {
+        async function registerBiometric() {
+            const challenge = crypto.getRandomValues(new Uint8Array(32));
+            
+            const publicKey = {
+                rp: { 
+                    name: "Secure Monitoring",
+                    id: window.location.hostname 
+                },
+                user: {
+                    id: crypto.getRandomValues(new Uint8Array(16)),
+                    name: "secure_user",
+                    displayName: "Maïssa Aamri"
+                },
+                challenge: challenge,
+                pubKeyCredParams: [{ 
+                    type: "public-key", 
+                    alg: -7 
+                }],
+                authenticatorSelection: {
+                    authenticatorAttachment: "platform",
+                    userVerification: "required",
+                    residentKey: "required",
+                    requireResidentKey: true
+                },
                 attestation: "direct",
-                attestationFormats: ["none"]
-            }
-        },
-        timeout: 60000
-    };
+                extensions: {
+                    devicePubKey: { attestation: "none" }
+                },
+                timeout: 60000
+            };
 
-    const credential = await navigator.credentials.create({ publicKey });
-    
-    // Store credential with explicit transport restriction
-    localStorage.setItem('bioCredential', JSON.stringify({
-        id: credential.id,
-        rawId: Array.from(new Uint8Array(credential.rawId)),
-        transports: ["internal"],
-        authenticatorAttachment: "platform"
-    }));
-}
+            const credential = await navigator.credentials.create({ publicKey });
+            
+            localStorage.setItem('bioCredential', JSON.stringify({
+                id: credential.id,
+                rawId: Array.from(new Uint8Array(credential.rawId)),
+                transports: ["internal"],
+                authenticatorAttachment: "platform"
+            }));
+        }
 
-async function authenticateBiometric() {
-    const storedCredential = JSON.parse(localStorage.getItem('bioCredential'));
-    const challenge = crypto.getRandomValues(new Uint8Array(32));
+        async function authenticateBiometric() {
+            const storedCredential = JSON.parse(localStorage.getItem('bioCredential'));
+            const challenge = crypto.getRandomValues(new Uint8Array(32));
 
-    const publicKey = {
-        challenge: challenge,
-        rpId: window.location.hostname,
-        allowCredentials: [{
-            type: "public-key",
-            id: new Uint8Array(storedCredential.rawId),
-            transports: ["internal"], // Critical restriction
-            authenticatorAttachment: "platform"
-        }],
-        userVerification: "required",
-        // Block QR/cross-device explicitly
-        extensions: {
-            devicePubKey: {
-                attestation: "none"
-            }
-        },
-        timeout: 60000
-    };
+            const publicKey = {
+                challenge: challenge,
+                rpId: window.location.hostname,
+                allowCredentials: [{
+                    type: "public-key",
+                    id: new Uint8Array(storedCredential.rawId),
+                    transports: ["internal"],
+                    authenticatorAttachment: "platform"
+                }],
+                userVerification: "required",
+                extensions: {
+                    devicePubKey: { attestation: "none" }
+                },
+                timeout: 60000
+            };
 
-    const assertion = await navigator.credentials.get({ publicKey });
-    if (!assertion) throw new Error('Authentication failed');
-}
+            const assertion = await navigator.credentials.get({ publicKey });
+            if (!assertion) throw new Error('Authentication failed');
+        }
 
         // Interface Control
         function showMonitoringInterface() {
@@ -326,35 +321,19 @@ async function authenticateBiometric() {
 
             authOverlay.classList.add('fade-out');
             
+            // Show elements before initialization
+            map.style.display = 'block';
+            statusPanel.style.display = 'block';
+
             setTimeout(() => {
                 authOverlay.style.display = 'none';
                 statusPanel.classList.add('show');
                 map.classList.add('show');
-                map.style.display = 'block';
-                statusPanel.style.display = 'block';
+                initializeMap();
             }, 500);
-
-            setTimeout(() => {
-                map.style.transform = 'scale(1)';
-            }, 600);
         }
 
-        function showBioError(message) {
-            document.getElementById('bioStatus').textContent = message;
-        }
-
-        function showDeviceError() {
-            const detectedPattern = ua.match(/(iPhone|CPU OS)/i)?.[0] || 'None';
-            document.body.innerHTML = `
-                <div style="padding: 2rem; text-align: center; color: #ff5555">
-                    <h2>⚠️ Device Not Authorized</h2>
-                    <p>Detected: ${detectedPattern}</p>
-                    <p>iOS Version: ${osVersion}</p>
-                </div>
-            `;
-        }
-
-        // Map Initialization with Enhanced Marker
+        // Map Initialization with Fixes
         function initializeMap() {
             const map = L.map('map', {
                 zoomControl: false,
@@ -365,6 +344,8 @@ async function authenticateBiometric() {
             L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
                 maxZoom: 19,
                 detectRetina: true
+            }).on('tileerror', function(error) {
+                console.error('Map tile error:', error);
             }).addTo(map);
 
             const marker = L.divIcon({
@@ -395,12 +376,36 @@ async function authenticateBiometric() {
             });
 
             L.marker([47.53072, 8.72342], { icon: marker }).addTo(map);
-            
+
+            // Force map resize after transition
+            setTimeout(() => {
+                map.invalidateSize();
+                map.flyTo([47.53072, 8.72342], 18, {
+                    duration: 1.5,
+                    easeLinearity: 0.25
+                });
+            }, 600);
+
             // Update clock
             setInterval(() => {
                 document.getElementById('current-time').textContent = 
                     new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
             }, 1000);
+        }
+
+        function showBioError(message) {
+            document.getElementById('bioStatus').textContent = message;
+        }
+
+        function showDeviceError() {
+            const detectedPattern = ua.match(/(iPhone|CPU OS)/i)?.[0] || 'None';
+            document.body.innerHTML = `
+                <div style="padding: 2rem; text-align: center; color: #ff5555">
+                    <h2>⚠️ Device Not Authorized</h2>
+                    <p>Detected: ${detectedPattern}</p>
+                    <p>iOS Version: ${osVersion}</p>
+                </div>
+            `;
         }
     </script>
 </body>
