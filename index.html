@@ -89,26 +89,37 @@
         }
 
         /* Enhanced Transitions */
-        .status-panel {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.5s ease-out 0.2s;
-        }
+    /* Modified Status Panel */
+    .status-panel {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: rgba(10, 20, 30, 0.97);
+        border-radius: 8px;
+        padding: 16px;
+        color: #fff;
+        width: 280px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        border: 1px solid rgba(255,255,255,0.1);
+        z-index: 2000; /* Increased z-index */
+        backdrop-filter: blur(5px);
+        display: none;
+    }
 
         .status-panel.show {
             opacity: 1;
             transform: translateY(0);
         }
 
-        #map {
-            height: 100vh;
-            width: 100%;
-            position: relative;
-            z-index: 1;
-            background: #262626;
-            opacity: 0;
-            transition: opacity 0.5s ease-out 0.4s;
-        }
+    #map {
+        height: 100vh;
+        width: 100%;
+        position: relative;
+        z-index: 1; /* Lower than status panel */
+        background: #262626;
+        opacity: 0;
+        transition: opacity 0.5s ease-out 0.4s;
+    }
 
         #map.show {
             opacity: 1;
@@ -328,6 +339,9 @@
             const map = document.getElementById('map');
 
             authOverlay.classList.add('fade-out');
+
+            statusPanel.style.display = 'block';
+            map.style.display = 'block';
             
             setTimeout(() => {
                 authOverlay.style.display = 'none';
