@@ -3,17 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OMX</title>
+    <title>OMX Security Interface</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <style>
-        /* Enhanced Auth Overlay */
+        /* Base Styles */
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #000;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        /* Cyberpunk Auth Overlay */
         .auth-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #0a0a2a 0%, #001015 100%);
+            background: linear-gradient(135deg, #000000 0%, #0a0a0a 100%);
+            background-image: 
+                linear-gradient(rgba(0, 255, 136, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 136, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
             z-index: 10000;
             display: flex;
             justify-content: center;
@@ -28,33 +40,98 @@
         }
 
         .auth-box {
-            background: rgba(10, 20, 30, 0.95);
+            background: rgba(0, 0, 0, 0.95);
             padding: 2.5rem;
-            border-radius: 20px;
-            width: 320px;
+            border-radius: 15px;
+            width: 380px;
             text-align: center;
-            border: 1px solid rgba(0, 255, 136, 0.2);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            transform: translateY(0);
-            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 255, 136, 0.1);
+            box-shadow: 0 0 40px rgba(0, 255, 136, 0.05),
+                        inset 0 0 20px rgba(0, 255, 136, 0.02);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Enhanced Biometric Interface */
+        .auth-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 48%,
+                rgba(0, 255, 136, 0.05) 50%,
+                transparent 52%
+            );
+            animation: scan 6s linear infinite;
+            z-index: 1;
+        }
+
+        /* Biometric Interface */
         .bio-prompt {
             position: relative;
+            z-index: 2;
             padding: 2rem;
+            background: rgba(0, 0, 0, 0.8);
         }
 
         .bio-icon {
-            width: 80px;
-            height: 80px;
-            background: rgba(0, 255, 136, 0.1);
-            border-radius: 50%;
-            margin: 0 auto 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 120px;
+            height: 120px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00ff88;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.2),
+                        inset 0 0 20px rgba(0, 255, 136, 0.1);
+            margin: 2rem auto;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
             animation: float 3s ease-in-out infinite;
+        }
+
+        .pulse-core {
+            width: 20px;
+            height: 20px;
+            background: #00ff88;
+            box-shadow: 0 0 30px #00ff88;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse 2s infinite, rotate 8s linear infinite;
+            border-radius: 50%;
+        }
+
+        /* Typography */
+        h2 {
+            color: #00ff88 !important;
+            font-size: 1.8rem !important;
+            text-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+            letter-spacing: 1px;
+            margin-bottom: 1.5rem !important;
+        }
+
+        p {
+            color: #cccccc !important;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2.5rem !important;
+        }
+
+        #bioStatus {
+            color: #ff0066 !important;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 0, 102, 0.3);
+            font-size: 0.95rem;
+            min-height: 24px;
+            animation: glitch 1s infinite;
+        }
+
+        /* Animations */
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
         }
 
         @keyframes float {
@@ -62,77 +139,27 @@
             50% { transform: translateY(-10px); }
         }
 
-        /* Pinpoint Styles */
-        .precision-marker {
-            position: relative;
-            width: 24px;
-            height: 24px;
-            z-index: 500;
-        }
-
-        .pulse-core {
-            width: 12px;
-            height: 12px;
-            background: #00ff88;
-            border-radius: 50%;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: pulse 2s infinite;
-        }
-
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(0,255,136,0.4); }
-            70% { box-shadow: 0 0 0 12px rgba(0,255,136,0); }
+            70% { box-shadow: 0 0 0 20px rgba(0,255,136,0); }
             100% { box-shadow: 0 0 0 0 rgba(0,255,136,0); }
         }
 
-        /* Enhanced Transitions */
-    /* Modified Status Panel */
-    .status-panel {
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        background: rgba(10, 20, 30, 0.97);
-        border-radius: 8px;
-        padding: 16px;
-        color: #fff;
-        width: 280px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        border: 1px solid rgba(255,255,255,0.1);
-        z-index: 2000; /* Increased z-index */
-        backdrop-filter: blur(5px);
-        display: none;
-    }
-
-        .status-panel.show {
-            opacity: 1;
-            transform: translateY(0);
+        @keyframes rotate {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
-    #map {
-        height: 100vh;
-        width: 100%;
-        position: relative;
-        z-index: 1; /* Lower than status panel */
-        background: #262626;
-        opacity: 0;
-        transition: opacity 0.5s ease-out 0.4s;
-    }
-
-        #map.show {
-            opacity: 1;
+        @keyframes glitch {
+            0% { text-shadow: 2px 0 rgba(255,0,102,0.5); }
+            95% { text-shadow: none; }
+            96% { text-shadow: -2px 0 rgba(0,255,136,0.5); }
+            97% { text-shadow: 2px 0 rgba(255,0,102,0.5); }
+            98% { text-shadow: -2px 0 rgba(0,255,136,0.5); }
+            100% { text-shadow: none; }
         }
 
-        /* Original Styles */
-        body {
-            margin: 0;
-            overflow: hidden;
-            background: #0a0a0a;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-        }
-
+        /* Status Panel (Keep existing styles) */
         .status-panel {
             position: fixed;
             top: 20px;
@@ -165,13 +192,9 @@
                 <div class="bio-icon">
                     <div class="pulse-core"></div>
                 </div>
-                <h2 style="color: #00ff88; margin-bottom: 1rem; font-size: 1.5rem;">
-                    Biometric Verification
-                </h2>
-                <p style="color: #88aabb; margin-bottom: 2rem;">
-                    Please authenticate to access the security system
-                </p>
-                <div id="bioStatus" style="color: #ff5555; margin: 1rem 0; min-height: 20px;"></div>
+                <h2>CYBER VERIFICATION</h2>
+                <p>Biometric authentication required<br>for system access</p>
+                <div id="bioStatus"></div>
             </div>
         </div>
     </div>
@@ -261,7 +284,7 @@
                 await authenticateBiometric();
                 showMonitoringInterface();
             } catch (error) {
-                showBioError('Biometric verification failed');
+                showBioError('Verification Failed • Access Denied');
                 console.error('Auth Error:', error);
             }
         })();
@@ -272,7 +295,7 @@
             
             const publicKey = {
                 rp: { 
-                    name: "Secure Monitoring",
+                    name: "Cyber Security",
                     id: window.location.hostname 
                 },
                 user: {
@@ -393,10 +416,10 @@
         }
 
         function showDeviceError() {
-            const detectedPattern = ua.match(/(iPhone|CPU OS)/i)?.[0] || 'None';
             document.body.innerHTML = `
-                <div style="padding: 2rem; text-align: center; color: #ff5555">
-                    <h2>Device Not Authorized</h2>
+                <div style="padding: 2rem; text-align: center; color: #ff0066">
+                    <h2 style="text-shadow: 0 0 15px rgba(255,0,102,0.3)">DEVICE NOT AUTHORIZED</h2>
+                    <p style="color: #cccccc">This device does not meet security requirements</p>
                 </div>
             `;
         }
