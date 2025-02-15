@@ -6,7 +6,7 @@
     <title>Secure Biometric Monitoring</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <style>
-        /* Auth Overlay */
+        /* Enhanced Auth Overlay */
         .auth-overlay {
             position: fixed;
             top: 0;
@@ -18,6 +18,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            opacity: 1;
             transition: all 0.5s ease-in-out;
         }
 
@@ -34,9 +35,16 @@
             text-align: center;
             border: 1px solid rgba(0, 255, 136, 0.2);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transform: translateY(0);
+            transition: all 0.3s ease;
         }
 
-        /* Biometric Elements */
+        /* Enhanced Biometric Interface */
+        .bio-prompt {
+            position: relative;
+            padding: 2rem;
+        }
+
         .bio-icon {
             width: 80px;
             height: 80px;
@@ -54,7 +62,7 @@
             50% { transform: translateY(-10px); }
         }
 
-        /* Map Markers */
+        /* Pinpoint Styles */
         .precision-marker {
             position: relative;
             width: 24px;
@@ -80,7 +88,51 @@
             100% { box-shadow: 0 0 0 0 rgba(0,255,136,0); }
         }
 
-        /* Status Panel */
+        /* Enhanced Transitions */
+    /* Modified Status Panel */
+    .status-panel {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: rgba(10, 20, 30, 0.97);
+        border-radius: 8px;
+        padding: 16px;
+        color: #fff;
+        width: 280px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        border: 1px solid rgba(255,255,255,0.1);
+        z-index: 2000; /* Increased z-index */
+        backdrop-filter: blur(5px);
+        display: none;
+    }
+
+        .status-panel.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    #map {
+        height: 100vh;
+        width: 100%;
+        position: relative;
+        z-index: 1; /* Lower than status panel */
+        background: #262626;
+        opacity: 0;
+        transition: opacity 0.5s ease-out 0.4s;
+    }
+
+        #map.show {
+            opacity: 1;
+        }
+
+        /* Original Styles */
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #0a0a0a;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
         .status-panel {
             position: fixed;
             top: 20px;
@@ -92,77 +144,21 @@
             width: 280px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             border: 1px solid rgba(255,255,255,0.1);
-            z-index: 2000;
+            z-index: 1000;
             backdrop-filter: blur(5px);
             display: none;
         }
 
-        /* Security Error Panel */
-        .security-error {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 20, 30, 0.98);
-            backdrop-filter: blur(8px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            color: #ff5555;
-            z-index: 100000;
-            font-family: 'Segoe UI', system-ui;
-        }
-
-        .error-container {
-            text-align: center;
-            padding: 2rem;
-            max-width: 600px;
-        }
-
-        .security-icon {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 1.5rem;
-            animation: pulse-icon 2s infinite;
-        }
-
-        @keyframes pulse-icon {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .tech-specs {
-            background: rgba(255, 85, 85, 0.15);
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin: 1.5rem 0;
-            text-align: left;
-            font-family: 'Courier New', monospace;
-        }
-
-        .spec-grid {
-            display: grid;
-            grid-template-columns: max-content 1fr;
-            gap: 0.8rem;
-        }
-
-        /* Map Container */
-        #map {
-            height: 100vh;
-            width: 100%;
-            background: #262626;
-            opacity: 0;
-            transition: opacity 0.5s ease-out 0.4s;
-        }
-
-        #map.show {
-            opacity: 1;
+        .icon {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            margin-right: 8px;
         }
     </style>
 </head>
 <body>
-    <!-- Biometric Authentication -->
+    <!-- Biometric Interface -->
     <div id="authOverlay" class="auth-overlay">
         <div class="auth-box">
             <div class="bio-prompt">
@@ -177,34 +173,6 @@
                 </p>
                 <div id="bioStatus" style="color: #ff5555; margin: 1rem 0; min-height: 20px;"></div>
             </div>
-        </div>
-    </div>
-
-    <!-- Security Error Interface -->
-    <div id="securityError" class="security-error">
-        <div class="error-container">
-            <svg class="security-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-            </svg>
-            <h2 style="font-size: 1.8rem; margin: 0 0 1rem 0;">
-                Device Authorization Required
-            </h2>
-            <div class="tech-specs">
-                <div class="spec-grid">
-                    <span style="opacity: 0.7;">Detected Patterns:</span>
-                    <span id="detectedPattern">Unknown signature</span>
-                    <span style="opacity: 0.7;">OS Version:</span>
-                    <span id="osVersion">Unknown</span>
-                    <span style="opacity: 0.7;">Security ID:</span>
-                    <span id="securityId">ERR-0000-DEV</span>
-                    <span style="opacity: 0.7;">Timestamp:</span>
-                    <span id="errorTimestamp">0000-00-00T00:00:00Z</span>
-                </div>
-            </div>
-            <p style="color: #88aabb; margin: 1rem auto;">
-                This device does not match authorized security profiles.<br>
-                Please use approved hardware with valid biometric credentials.
-            </p>
         </div>
     </div>
 
@@ -226,6 +194,7 @@
                 </div>
             </div>
         </div>
+
         <div class="system-status">
             <div class="status-item">
                 <span>Coordinates:</span>
@@ -246,7 +215,6 @@
         </div>
     </div>
 
-    <!-- Map Container -->
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -259,50 +227,84 @@
 
         const osVersionMatch = ua.match(/OS (\d+_\d+_\d+)/);
         const osVersion = osVersionMatch ? osVersionMatch[1].replace(/_/g, '.') : 'Unknown';
-        const detectedPattern = ua.match(/(iPhone|CPU OS|Android)/i)?.[0] || 'None';
 
-        // Error Handling
-        function showDeviceError() {
-            document.getElementById('authOverlay').style.display = 'none';
-            const errorPanel = document.getElementById('securityError');
-            
-            document.getElementById('detectedPattern').textContent = detectedPattern;
-            document.getElementById('osVersion').textContent = `${osVersion} (Unauthorized)`;
-            document.getElementById('securityId').textContent = `ERR-${Math.floor(Math.random() * 9000 + 1000)}-DEV`;
-            document.getElementById('errorTimestamp').textContent = new Date().toISOString();
-            
-            errorPanel.style.display = 'flex';
-
-            if(navigator.vibrate) {
-                navigator.vibrate([100, 50, 100, 50, 100]);
-            }
+        let deviceModel = 'Unauthorized Device';
+        if (/iPhone(12,3|13,3)|(12\s*Pro|12PRO)/i.test(ua)) {
+            deviceModel = 'iPhone 12 Pro';
+        } else if (/CPU iPhone OS 16_7_10/.test(ua)) {
+            deviceModel = 'iPhone (iOS 16.7.10)';
         }
+
+        // Main Initialization
+        (async function initSecurity() {
+            if (!isAuthorizedDevice) {
+                showDeviceError();
+                return;
+            }
+
+            document.getElementById('device-model').textContent = `${deviceModel} (Trusted)`;
+
+            if (!window.isSecureContext) {
+                showBioError('Secure connection required (HTTPS)');
+                return;
+            }
+
+            try {
+                if (!await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()) {
+                    showBioError('Biometric authentication unavailable');
+                    return;
+                }
+                
+                if (!localStorage.getItem('bioCredential')) {
+                    await registerBiometric();
+                }
+                await authenticateBiometric();
+                showMonitoringInterface();
+            } catch (error) {
+                showBioError('Biometric verification failed');
+                console.error('Auth Error:', error);
+            }
+        })();
 
         // Biometric Functions
         async function registerBiometric() {
             const challenge = crypto.getRandomValues(new Uint8Array(32));
+            
             const publicKey = {
-                rp: { name: "Secure Monitoring", id: window.location.hostname },
+                rp: { 
+                    name: "Secure Monitoring",
+                    id: window.location.hostname 
+                },
                 user: {
                     id: crypto.getRandomValues(new Uint8Array(16)),
                     name: "secure_user",
                     displayName: "Maïssa Aamri"
                 },
                 challenge: challenge,
-                pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+                pubKeyCredParams: [{ 
+                    type: "public-key", 
+                    alg: -7 
+                }],
                 authenticatorSelection: {
                     authenticatorAttachment: "platform",
                     userVerification: "required",
-                    residentKey: "required"
+                    residentKey: "required",
+                    requireResidentKey: true
+                },
+                attestation: "direct",
+                extensions: {
+                    devicePubKey: { attestation: "none" }
                 },
                 timeout: 60000
             };
 
             const credential = await navigator.credentials.create({ publicKey });
+            
             localStorage.setItem('bioCredential', JSON.stringify({
                 id: credential.id,
                 rawId: Array.from(new Uint8Array(credential.rawId)),
-                transports: ["internal"]
+                transports: ["internal"],
+                authenticatorAttachment: "platform"
             }));
         }
 
@@ -316,9 +318,13 @@
                 allowCredentials: [{
                     type: "public-key",
                     id: new Uint8Array(storedCredential.rawId),
-                    transports: ["internal"]
+                    transports: ["internal"],
+                    authenticatorAttachment: "platform"
                 }],
                 userVerification: "required",
+                extensions: {
+                    devicePubKey: { attestation: "none" }
+                },
                 timeout: 60000
             };
 
@@ -333,6 +339,7 @@
             const map = document.getElementById('map');
 
             authOverlay.classList.add('fade-out');
+
             statusPanel.style.display = 'block';
             map.style.display = 'block';
             
@@ -374,42 +381,27 @@
                 });
             }, 600);
 
+            // Update clock
             setInterval(() => {
                 document.getElementById('current-time').textContent = 
                     new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
             }, 1000);
         }
 
-        // Main Initialization
-        (async function initSecurity() {
-            if (!isAuthorizedDevice) {
-                showDeviceError();
-                return;
-            }
+        function showBioError(message) {
+            document.getElementById('bioStatus').textContent = message;
+        }
 
-            document.getElementById('device-model').textContent = `${deviceModel} (Trusted)`;
-
-            if (!window.isSecureContext) {
-                showBioError('Secure connection required (HTTPS)');
-                return;
-            }
-
-            try {
-                if (!await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()) {
-                    showBioError('Biometric authentication unavailable');
-                    return;
-                }
-                
-                if (!localStorage.getItem('bioCredential')) {
-                    await registerBiometric();
-                }
-                await authenticateBiometric();
-                showMonitoringInterface();
-            } catch (error) {
-                showBioError('Biometric verification failed');
-                console.error('Auth Error:', error);
-            }
-        })();
+        function showDeviceError() {
+            const detectedPattern = ua.match(/(iPhone|CPU OS)/i)?.[0] || 'None';
+            document.body.innerHTML = `
+                <div style="padding: 2rem; text-align: center; color: #ff5555">
+                    <h2>⚠️ Device Not Authorized</h2>
+                    <p>Detected: ${detectedPattern}</p>
+                    <p>iOS Version: ${osVersion}</p>
+                </div>
+            `;
+        }
     </script>
 </body>
 </html>
