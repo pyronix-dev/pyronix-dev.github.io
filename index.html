@@ -39,10 +39,6 @@
             transition: all 0.3s ease;
         }
 
-        .auth-box:hover {
-            transform: translateY(-5px);
-        }
-
         /* Enhanced Biometric Interface */
         .bio-prompt {
             position: relative;
@@ -61,23 +57,35 @@
             animation: float 3s ease-in-out infinite;
         }
 
-        .pulse-core {
-            width: 24px;
-            height: 24px;
-            background: #00ff88;
-            border-radius: 50%;
-            position: relative;
-            animation: pulse 2s infinite, glow 2s ease-in-out infinite;
-        }
-
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
         }
 
-        @keyframes glow {
-            0%, 100% { filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.4)); }
-            50% { filter: drop-shadow(0 0 12px rgba(0, 255, 136, 0.6)); }
+        /* Pinpoint Styles */
+        .precision-marker {
+            position: relative;
+            width: 24px;
+            height: 24px;
+            z-index: 500;
+        }
+
+        .pulse-core {
+            width: 12px;
+            height: 12px;
+            background: #00ff88;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0,255,136,0.4); }
+            70% { box-shadow: 0 0 0 12px rgba(0,255,136,0); }
+            100% { box-shadow: 0 0 0 0 rgba(0,255,136,0); }
         }
 
         /* Enhanced Transitions */
@@ -321,10 +329,6 @@
 
             authOverlay.classList.add('fade-out');
             
-            // Show elements before initialization
-            map.style.display = 'block';
-            statusPanel.style.display = 'block';
-
             setTimeout(() => {
                 authOverlay.style.display = 'none';
                 statusPanel.classList.add('show');
@@ -333,7 +337,7 @@
             }, 500);
         }
 
-        // Map Initialization with Fixes
+        // Map Initialization
         function initializeMap() {
             const map = L.map('map', {
                 zoomControl: false,
@@ -344,40 +348,17 @@
             L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
                 maxZoom: 19,
                 detectRetina: true
-            }).on('tileerror', function(error) {
-                console.error('Map tile error:', error);
             }).addTo(map);
 
             const marker = L.divIcon({
                 className: 'precision-marker',
-                html: `
-                    <div style="position: relative">
-                        <div class="pulse-core" style="
-                            width: 24px;
-                            height: 24px;
-                            border: 2px solid #00ff88;
-                            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
-                            border-radius: 50%;
-                        "></div>
-                        <div style="
-                            position: absolute;
-                            width: 8px;
-                            height: 8px;
-                            background: #fff;
-                            border-radius: 50%;
-                            top: 50%;
-                            left: 50%;
-                            transform: translate(-50%, -50%);
-                        "></div>
-                    </div>
-                `,
-                iconSize: [32, 32],
-                iconAnchor: [16, 16]
+                html: '<div class="pulse-core"></div>',
+                iconSize: [24, 24],
+                iconAnchor: [12, 12]
             });
 
             L.marker([47.53072, 8.72342], { icon: marker }).addTo(map);
 
-            // Force map resize after transition
             setTimeout(() => {
                 map.invalidateSize();
                 map.flyTo([47.53072, 8.72342], 18, {
