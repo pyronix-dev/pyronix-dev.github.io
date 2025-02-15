@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Biometric Monitoring</title>
+    <title>OMX</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <style>
         /* Enhanced Auth Overlay */
@@ -396,9 +396,7 @@
             const detectedPattern = ua.match(/(iPhone|CPU OS)/i)?.[0] || 'None';
             document.body.innerHTML = `
                 <div style="padding: 2rem; text-align: center; color: #ff5555">
-                    <h2>⚠️ Device Not Authorized</h2>
-                    <p>Detected: ${detectedPattern}</p>
-                    <p>iOS Version: ${osVersion}</p>
+                    <h2>Device Not Authorized</h2>
                 </div>
             `;
         }
