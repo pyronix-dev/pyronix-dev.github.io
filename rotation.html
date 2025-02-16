@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Sensor Boolean Control</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .status-box {
+            width: 200px;
+            height: 200px;
+            background-color: #ff4444;
+            border-radius: 15px;
+            margin: 20px;
+            transition: background-color 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.2em;
+        }
+
+        .status-box.active {
+            background-color: #44ff44;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 1.1em;
+            margin: 20px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+        }
+
+        .data-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>Phone Tilt Detector</h1>
+    
+    <button id="startButton">Enable Sensors</button>
+    
+    <div class="status-box" id="statusBox">NOT TILTED</div>
+    
+    <div class="data-container">
+        <h3>Sensor Data:</h3>
+        <p>Beta (front/back tilt): <span id="betaValue">0</span>°</p>
+        <p>Gamma (left/right tilt): <span id="gammaValue">0</span>°</p>
+    </div>
+
+    <script>
+        const statusBox = document.getElementById('statusBox');
+        const startButton = document.getElementById('startButton');
+        const betaValue = document.getElementById('betaValue');
+        const gammaValue = document.getElementById('gammaValue');
+        
+        let isTilted = false;
+        const tiltThreshold = 30; // Degrees
+
+        function handleOrientation(event) {
+            const beta = Math.round(event.beta); // Front/back tilt (-180 to 180)
+            const gamma = Math.round(event.gamma); // Left/right tilt (-90 to 90)
+
+            // Update display values
+            betaValue.textContent = beta;
+            gammaValue.textContent = gamma;
+
+            // Update boolean state
+            isTilted = Math.abs(beta) > tiltThreshold;
+
+            // Update UI
+            statusBox.classList.toggle('active', isTilted);
+            statusBox.textContent = isTilted ? 'TILTED!' : 'NOT TILTED';
+        }
+
+        function initSensors() {
+            // iOS 13+ permission handling
+            if (typeof DeviceOrientationEvent !== 'undefined' && 
+                typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission()
+                    .then(permissionState => {
+                        if (permissionState === 'granted') {
+                            window.addEventListener('deviceorientation', handleOrientation);
+                            startButton.style.display = 'none';
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                window.addEventListener('deviceorientation', handleOrientation);
+                startButton.style.display = 'none';
+            }
+        }
+
+        startButton.addEventListener('click', initSensors);
+
+        // Initial compatibility check
+        if (!('DeviceOrientationEvent' in window)) {
+            statusBox.textContent = "Sensors not supported";
+            startButton.disabled = true;
+        }
+    </script>
+</body>
+</html>
