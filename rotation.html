@@ -42,6 +42,7 @@
         const ball = document.getElementById('ball');
         const instructions = document.getElementById('instructions');
         
+        // Start at center
         let posX = window.innerWidth / 2;
         let posY = window.innerHeight / 2;
         let velocityX = 0;
@@ -49,12 +50,15 @@
         const friction = 0.98;
         const sensitivity = 3;
 
+        // Initialize ball at center
+        ball.style.transform = `translate3d(${posX - 15}px, ${posY - 15}px, 0)`;
+
         function updateBallPosition() {
-            // Apply boundaries
+            // Keep ball within boundaries
             posX = Math.max(15, Math.min(window.innerWidth - 15, posX));
             posY = Math.max(15, Math.min(window.innerHeight - 15, posY));
 
-            // Update visual position
+            // Update position
             ball.style.transform = `translate3d(${posX - 15}px, ${posY - 15}px, 0)`;
             
             requestAnimationFrame(updateBallPosition);
@@ -64,12 +68,12 @@
             const acc = event.accelerationIncludingGravity;
             if (!acc) return;
 
-            // Adjust for different device orientations
+            // Adjust orientation based on device rotation
             const isPortrait = window.innerHeight > window.innerWidth;
             let ax = isPortrait ? acc.x : acc.y;
             let ay = isPortrait ? acc.y : acc.x;
 
-            // Invert values for natural movement
+            // Apply acceleration with sensitivity
             velocityX = (velocityX + (-ax * sensitivity)) * friction;
             velocityY = (velocityY + (ay * sensitivity)) * friction;
 
@@ -105,11 +109,13 @@
 
         // Handle window resize
         window.addEventListener('resize', () => {
+            // Keep ball in bounds after resize
             posX = Math.max(15, Math.min(window.innerWidth - 15, posX));
             posY = Math.max(15, Math.min(window.innerHeight - 15, posY));
+            ball.style.transform = `translate3d(${posX - 15}px, ${posY - 15}px, 0)`;
         });
 
-        // Initial position
+        // Start animation loop
         updateBallPosition();
     </script>
 </body>
