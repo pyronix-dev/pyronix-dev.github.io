@@ -3,120 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gravity Ball</title>
+    <title>Auto Sensor Control</title>
     <style>
         body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
             margin: 0;
-            overflow: hidden;
-            background-color: #000;
+            padding: 20px;
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
+
+        .status-box {
+            width: 200px;
+            height: 200px;
+            background-color: #ff4444;
+            border-radius: 15px;
+            margin: 20px;
+            transition: background-color 0.3s ease;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            touch-action: none;
-        }
-
-        #ball {
-            width: 30px;
-            height: 30px;
-            background-color: #fff;
-            border-radius: 50%;
-            position: absolute;
-            transition: transform 0.1s linear;
-        }
-
-        #instructions {
-            position: fixed;
-            top: 20px;
             color: white;
-            font-family: Arial, sans-serif;
+            font-size: 1.2em;
             text-align: center;
+        }
+
+        .status-box.active {
+            background-color: #44ff44;
+        }
+
+        .data-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .warning {
+            color: red;
+            text-align: center;
+            margin: 15px;
         }
     </style>
 </head>
 <body>
-    <div id="instructions">Tilt or move your device to control the ball</div>
-    <div id="ball"></div>
+    <h1>Phone Tilt Detector</h1>
+    <div class="status-box" id="statusBox">Initializing...</div>
+    <div class="data-container">
+        <h3>Sensor Data:</h3>
+        <p>Beta: <span id="betaValue">0</span>°</p>
+        <p>Gamma: <span id="gammaValue">0</span>°</p>
+    </div>
+    <div id="warningMessage" class="warning"></div>
 
     <script>
-        const ball = document.getElementById('ball');
-        const instructions = document.getElementById('instructions');
-        
-        // Start at center
-        let posX = window.innerWidth / 2;
-        let posY = window.innerHeight / 2;
-        let velocityX = 0;
-        let velocityY = 0;
-        const friction = 0.98;
-        const sensitivity = 3;
+        const statusBox = document.getElementById('statusBox');
+        const betaValue = document.getElementById('betaValue');
+        const gammaValue = document.getElementById('gammaValue');
+        const warningMessage = document.getElementById('warningMessage');
 
-        // Initialize ball at center
-        ball.style.transform = `translate3d(${posX - 15}px, ${posY - 15}px, 0)`;
+        let isTilted = false;
+        const tiltThreshold = 30;
 
-        function updateBallPosition() {
-            // Keep ball within boundaries
-            posX = Math.max(15, Math.min(window.innerWidth - 15, posX));
-            posY = Math.max(15, Math.min(window.innerHeight - 15, posY));
+        function handleOrientation(event) {
+            const beta = Math.round(event.beta);
+            const gamma = Math.round(event.gamma);
 
-            // Update position
-            ball.style.transform = `translate3d(${posX - 15}px, ${posY - 15}px, 0)`;
-            
-            requestAnimationFrame(updateBallPosition);
-        }
+            betaValue.textContent = beta;
+            gammaValue.textContent = gamma;
 
-        function handleMotion(event) {
-            const acc = event.accelerationIncludingGravity;
-            if (!acc) return;
-
-            // Adjust orientation based on device rotation
-            const isPortrait = window.innerHeight > window.innerWidth;
-            let ax = isPortrait ? acc.x : acc.y;
-            let ay = isPortrait ? acc.y : acc.x;
-
-            // Apply acceleration with sensitivity
-            velocityX = (velocityX + (-ax * sensitivity)) * friction;
-            velocityY = (velocityY + (ay * sensitivity)) * friction;
-
-            // Update position
-            posX += velocityX;
-            posY += velocityY;
+            isTilted = Math.abs(beta) > tiltThreshold;
+            statusBox.classList.toggle('active', isTilted);
+            statusBox.textContent = isTilted ? 'TILTED!' : 'NOT TILTED';
         }
 
         function initSensors() {
-            if (typeof DeviceMotionEvent !== 'undefined') {
-                if (typeof DeviceMotionEvent.requestPermission === 'function') {
-                    DeviceMotionEvent.requestPermission()
+            if (typeof DeviceOrientationEvent !== 'undefined') {
+                if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    DeviceOrientationEvent.requestPermission()
                         .then(permissionState => {
                             if (permissionState === 'granted') {
-                                window.addEventListener('devicemotion', handleMotion);
-                                instructions.textContent = '';
-                                updateBallPosition();
+                                window.addEventListener('deviceorientation', handleOrientation);
+                                statusBox.textContent = 'Ready';
+                            } else {
+                                warningMessage.textContent = 'Permission denied! Tap to enable';
                             }
                         })
-                        .catch(console.error);
+                        .catch(error => {
+                            warningMessage.textContent = 'Error accessing sensors: ' + error;
+                        });
                 } else {
-                    window.addEventListener('devicemotion', handleMotion);
-                    instructions.textContent = '';
-                    updateBallPosition();
+                    // Non-iOS devices
+                    window.addEventListener('deviceorientation', handleOrientation);
+                    statusBox.textContent = 'Ready';
                 }
             } else {
-                instructions.textContent = 'Device motion not supported';
+                warningMessage.textContent = 'Device orientation not supported';
             }
         }
 
-        // Start on any click (required for iOS)
-        document.body.addEventListener('click', initSensors);
+        // Try to initialize immediately
+        document.addEventListener('DOMContentLoaded', initSensors);
 
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            // Keep ball in bounds after resize
-            posX = Math.max(15, Math.min(window.innerWidth - 15, posX));
-            posY = Math.max(15, Math.min(window.innerHeight - 15, posY));
-            ball.style.transform = `translate3d(${posX - 15}px, ${posY - 15}px, 0)`;
+        // Fallback click handler for iOS
+        document.body.addEventListener('click', () => {
+            if (!window.DeviceOrientationEvent) return;
+            if (statusBox.textContent === 'Initializing...') {
+                initSensors();
+            }
         });
 
-        // Start animation loop
-        updateBallPosition();
+        // Handle visibility changes
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) initSensors();
+        });
     </script>
 </body>
 </html>
