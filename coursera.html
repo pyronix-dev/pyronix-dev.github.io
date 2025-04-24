@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My HTML Project</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #f8f9fa;
+        }
+
+        header {
+            text-align: center;
+            padding: 3rem;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .gallery-item {
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+        }
+
+        img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        figcaption {
+            margin-top: 15px;
+            color: #444;
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+        h2 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        ul,
+        ol {
+            padding-left: 25px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            color: #444;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #2c3e50;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Welcome to My HTML Project</h1>
+        <p>This project demonstrates modern web development techniques with semantic HTML and CSS</p>
+    </header>
+
+    <section id="gallery">
+        <h2>My Passion Gallery</h2>
+        <div class="gallery">
+            <figure class="gallery-item">
+                <img src="https://images.pexels.com/photos/546819/pexels-photo-546819.jpeg"
+                    alt="Developer working on code">
+                <figcaption>Coding & Technology: Building innovative solutions</figcaption>
+            </figure>
+            <figure class="gallery-item">
+                <img src="https://images.pexels.com/photos/1370295/pexels-photo-1370295.jpeg"
+                    alt="Person reading a book">
+                <figcaption>Reading & Learning: Expanding knowledge daily</figcaption>
+            </figure>
+            <figure class="gallery-item">
+                <img src="https://images.pexels.com/photos/731217/pexels-photo-731217.jpeg"
+                    alt="Person hiking in mountains">
+                <figcaption>Nature Exploration: Discovering the world's beauty</figcaption>
+            </figure>
+        </div>
+    </section>
+
+    <section id="hobbies">
+        <h2>My Favorite Hobbies</h2>
+        <ul>
+            <li>📚 Reading technical and philosophy books</li>
+            <li>💻 Coding projects and learning new frameworks</li>
+            <li>🥾 Hiking and outdoor photography</li>
+        </ul>
+    </section>
+
+    <section id="steps">
+        <h2>Development Process</h2>
+        <ol>
+            <li>📐 Wireframing and content planning</li>
+            <li>✍️ Semantic HTML structure creation</li>
+            <li>🎨 CSS styling and responsiveness testing</li>
+            <li>🚀 Deployment and performance optimization</li>
+        </ol>
+    </section>
+
+    <section id="resources">
+        <h2>Learn More</h2>
+        <p>Explore web development fundamentals at <a href="https://developer.mozilla.org/en-US/docs/Web/HTML"
+                target="_blank" rel="noopener noreferrer">MDN Web Docs</a>.</p>
+    </section>
+</body>
+
+</html>
